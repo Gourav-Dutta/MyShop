@@ -1,0 +1,227 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// schema.prisma
+
+// ─────────────────────────────
+// 1. User Roles
+// ─────────────────────────────
+model User_role {
+  id   Int    @id @default(autoincrement())
+  role String @unique
+
+  users User[]
+}
+
+// ─────────────────────────────
+// 2. User Table
+// ─────────────────────────────
+model User {
+  id       Int           @id @default(autoincrement())
+  name     String
+  email    String        @unique
+  phone_no String
+  password String
+  role_id  Int
+  role     User_role     @relation(fields: [role_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  product  Product[]
+  cart     Add_To_Cart[]
+  orders   Order[]
+  address  Address[]
+}
+
+// ----------------
+// Address Table
+//-----------------
+
+model Address {
+  id       Int    @id @default(autoincrement())
+  city     String
+  state    String
+  house_no String
+  pin_no   Int
+  user_id  Int
+  user     User   @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+}
+
+// ─────────────────────────────
+// 3. Categories
+// ─────────────────────────────
+model Main_Categories {
+  id   Int    @id @default(autoincrement())
+  name String @unique
+
+  sub_categories Sub_Categories[]
+}
+
+model Sub_Categories {
+  id                Int             @id @default(autoincrement())
+  name              String
+  main_catagoriy_id Int
+  main_category     Main_Categories @relation(fields: [main_catagoriy_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  products Product[]
+}
+
+// ----------------------------
+// Brand 
+// ----------------------------
+
+model Brand {
+  id       Int       @id @default(autoincrement())
+  name     String    @unique
+  products Product[]
+}
+
+// ─────────────────────────────
+// 4. Products
+// ─────────────────────────────
+model Product {
+  id              Int            @id @default(autoincrement())
+  name            String
+  description     String?
+  status          String         @default("active")
+  user_id         Int
+  base_image      String
+  brand_id        Int
+  created_at      DateTime       @default(now())
+  updated_at      DateTime       @updatedAt
+  sub_catagory_id Int
+  sub_category    Sub_Categories @relation(fields: [sub_catagory_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  user            User           @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  brand           Brand          @relation(fields: [brand_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  varirties Product_Variety[]
+  product_offers  product_Offer[]
+}
+
+// ------------------------
+//  Product Variety Table
+// -----------------------
+
+model Product_Variety {
+  id         Int      @id @default(autoincrement())
+  name       String
+  productId  Int
+  sku        String   @unique
+  color      String?
+  size       String?
+  liter      String?
+  weight     String?
+  price      Int
+  stock      Int      @default(0)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  product     Product         @relation(fields: [productId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  images      Product_Image[]
+  cart_items  Add_To_Cart[]
+  order_items Order_Item[]
+}
+
+//------------------------
+// Product Image Table
+// -----------------------
+model Product_Image {
+  id         Int     @id @default(autoincrement())
+  varietyId  Int
+  url        String
+  alt_text   String?
+  is_primary Boolean @default(false)
+
+  variety Product_Variety @relation(fields: [varietyId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+}
+
+// -------------------------
+// Offer Table
+//--------------------------
+
+enum DiscountType {
+  percentage
+  flat
+}
+
+model Offer{
+  id                 Int       @id  @default(autoincrement())
+  title              String
+  discount_type      DiscountType
+  discount_value     Decimal   @db.Decimal(10, 2)
+  is_active          Boolean   @default(false)
+  created_at         DateTime  @default(now())
+  updated_at         DateTime  @updatedAt
+
+  product_offer      product_Offer[]
+}
+
+// -------------------
+// Product Offer Table 
+// -------------------
+
+model product_Offer{
+  id         Int       @id   @default(autoincrement())
+  productId  Int
+  offerId    Int
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+
+  // Relations
+  product   Product   @relation(fields : [productId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  offer     Offer     @relation(fields: [offerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@unique([productId, offerId])
+}
+
+// ─────────────────────────────
+// 5. Add to Cart
+// ─────────────────────────────
+model Add_To_Cart {
+  id                Int @id @default(autoincrement())
+  quantity          Int @default(1)
+  user_id           Int
+  productVariety_id Int
+
+  user           User            @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  productVariety Product_Variety @relation(fields: [productVariety_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@unique([user_id, productVariety_id])
+}
+
+// ─────────────────────────────
+// 6. Orders
+// ─────────────────────────────
+model Order {
+  id          Int      @id @default(autoincrement())
+  user_id     Int
+  order_at    DateTime @default(now())
+  status      String   @default("pending")
+  total_price Int
+
+  user  User         @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  items Order_Item[]
+}
+
+// ─────────────────────────────
+// 7. Order Items
+// ─────────────────────────────
+model Order_Item {
+  id                Int     @id @default(autoincrement())
+  order_id          Int
+  productVariety_id Int
+  price             Decimal @db.Decimal(10, 2)
+  quantity          Int     @default(1)
+
+  order          Order           @relation(fields: [order_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  productVariety Product_Variety @relation(fields: [productVariety_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+}
