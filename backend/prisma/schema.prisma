@@ -91,10 +91,10 @@ model Brand {
 model Product {
   id              Int            @id @default(autoincrement())
   name            String
-  description     String?
+  description     String?        @db.Text
   status          String         @default("active")
   user_id         Int
-  base_image      String
+  base_image      String         @db.Text
   brand_id        Int
   created_at      DateTime       @default(now())
   updated_at      DateTime       @updatedAt
@@ -103,8 +103,8 @@ model Product {
   user            User           @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
   brand           Brand          @relation(fields: [brand_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
-  varirties Product_Variety[]
-  product_offers  product_Offer[]
+  varirties      Product_Variety[]
+  product_offers product_Offer[]
 }
 
 // ------------------------
@@ -137,7 +137,7 @@ model Product_Variety {
 model Product_Image {
   id         Int     @id @default(autoincrement())
   varietyId  Int
-  url        String
+  url        String  @db.Text
   alt_text   String?
   is_primary Boolean @default(false)
 
@@ -153,32 +153,32 @@ enum DiscountType {
   flat
 }
 
-model Offer{
-  id                 Int       @id  @default(autoincrement())
-  title              String
-  discount_type      DiscountType
-  discount_value     Decimal   @db.Decimal(10, 2)
-  is_active          Boolean   @default(false)
-  created_at         DateTime  @default(now())
-  updated_at         DateTime  @updatedAt
+model Offer {
+  id             Int          @id @default(autoincrement())
+  title          String
+  discount_type  DiscountType
+  discount_value Decimal      @db.Decimal(10, 2)
+  is_active      Boolean      @default(false)
+  created_at     DateTime     @default(now())
+  updated_at     DateTime     @updatedAt
 
-  product_offer      product_Offer[]
+  product_offer product_Offer[]
 }
 
 // -------------------
 // Product Offer Table 
 // -------------------
 
-model product_Offer{
-  id         Int       @id   @default(autoincrement())
+model product_Offer {
+  id         Int      @id @default(autoincrement())
   productId  Int
   offerId    Int
-  created_at DateTime  @default(now())
-  updated_at DateTime  @updatedAt
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
 
   // Relations
-  product   Product   @relation(fields : [productId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  offer     Offer     @relation(fields: [offerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  offer   Offer   @relation(fields: [offerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   @@unique([productId, offerId])
 }
