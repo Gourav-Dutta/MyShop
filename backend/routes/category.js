@@ -10,7 +10,7 @@ import { newCategoryFunction,
          getOneSub_CategoryFunction,
          updateOneSub_CategoryFunction,
          deleteOneSub_CategoryFunction
-       } from '../controllers/category.js';
+       } from '../controllers/category.controller.js';
 
 
 const router = Router();

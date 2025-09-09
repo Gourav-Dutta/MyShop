@@ -6,7 +6,7 @@ const prisma = new PrismaClient();
 
 
 
-// Define the schema for user registration 
+// Define the schema for user registration  -- any new user
 
 const userSchema = z.object({
     name : z.string().min(1, "Name is required"),

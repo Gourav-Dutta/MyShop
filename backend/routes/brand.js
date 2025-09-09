@@ -4,7 +4,7 @@ import {
         getAllBrand,
         updateBrand,
         deleteBrand
- } from '../controllers/brand.js';
+ } from '../controllers/brand.controller.js';
 import {Router} from "express";
 import { authMiddleware, adminMiddleware } from '../middleware/auth.js';
 

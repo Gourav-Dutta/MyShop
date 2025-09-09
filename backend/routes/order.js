@@ -10,7 +10,7 @@ import { insertOrderFunction,
         updateOrderStatus,
         getOrderDetailsByDate,
         deleteOrderByDate
-       } from '../controllers/order.js';
+       } from '../controllers/order.controller.js';
 import {authMiddleware,
         sellerAdminMiddleware,
         adminMiddleware

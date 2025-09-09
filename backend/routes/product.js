@@ -10,7 +10,7 @@ import { newProductEntryFunction,
          getProductByMain_Category,
          getProductByProductId,
          getProductByBrandId
-       } from "../controllers/product.js";
+       } from "../controllers/product.controller.js";
 import { sellerAdminMiddleware, authMiddleware, adminMiddleware } from "../middleware/auth.js";
 const router = Router();
 

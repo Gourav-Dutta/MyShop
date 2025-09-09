@@ -287,7 +287,7 @@ async function handleUpdateOneSub_CategoryItem(req, res){
         
         const updatedSub_Category = await prisma.sub_Categories.update({
             where : { id : categoryId},
-            data : {...updateData},
+            data : {...updateData},                              // If any seller want to change the main-category 
             include : { main_category : true}
         });
             

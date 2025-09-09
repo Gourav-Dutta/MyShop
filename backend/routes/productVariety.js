@@ -11,7 +11,7 @@ import {
         deleteVarietyByVarietyBySeller,
         deleteVarietyByVarietyByAdmin
 
-} from "../controllers/productVariety.js";
+} from "../controllers/productVariety.controller.js";
 import {
         authMiddleware,
         adminMiddleware,

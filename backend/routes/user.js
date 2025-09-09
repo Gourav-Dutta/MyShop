@@ -5,7 +5,7 @@ import { getOneUserFunction,
          deleteUser,
          getUserUsingRole,
          getUser_RoleFromUserId
-        } from '../controllers/user.js';
+        } from '../controllers/user.controller.js';
 import { authMiddleware,
          adminMiddleware
        } from '../middleware/auth.js';

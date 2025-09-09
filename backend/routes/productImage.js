@@ -6,7 +6,7 @@ import {
         UpdateImageByTheSellerFunction,
         DeleteImageByTheSellerFunction,
         DeleteImageByAdminFunction
-} from "../controllers/productImage.js";
+} from "../controllers/productImage.controller.js";
 import {
         authMiddleware,
         adminMiddleware,

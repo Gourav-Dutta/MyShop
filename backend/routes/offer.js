@@ -24,7 +24,7 @@ router
   // Product Offer Table
 
 router
-.post("/productOffer/new", authMiddleware, sellerAdminMiddleware(["SELLER"]), ProductOfferTableInsertation)
+.post("/productOffer/new", authMiddleware, ProductOfferTableInsertation)
 .patch("/update/productOffer/:productId/:offerId",authMiddleware, sellerAdminMiddleware(["SELLER"]), updateProductOfferCombination)
 .get("/productOffer/All", getAllProductOfferCombo)
 .get("/product/Get/One/:productId/:offerId", getSpecificProductOfferCombo)

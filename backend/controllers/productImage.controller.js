@@ -14,7 +14,7 @@ const imageSchema = z.object({
     .url("Image must be a valid URL")
     .min(1, "Image URL is mendatory"),
   alt_text: z.string().min(1, "Alt text is mendatory"),
-  is_primary: z.boolean().optional(),
+  is_primary: z.string().optional(),
 });
 
 // Insert Product Image
