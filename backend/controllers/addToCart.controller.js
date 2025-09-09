@@ -4,7 +4,7 @@ const prisma = new PrismaClient();
 
 const addToCartSchema = z.object({
   productVarietyId: z.string().min(1, "Product Variety Id is compulsory"),
-  quantity: z.string().min(1, "Quantity is compulsory"),
+  quantity: z.string().optional(),
 });
 async function handleAddToCart(req, res) {
   try {
@@ -14,7 +14,8 @@ async function handleAddToCart(req, res) {
     body.productVarietyId = parseInt(body.productVarietyId);
     body.quantity = parseInt(body.quantity);
 
-    const existingerUserProduct = await prisma.add_To_Cart.findMany({        // Checking if the combination already exists
+    const existingerUserProduct = await prisma.add_To_Cart.findMany({
+      // Checking if the combination already exists
       // findMany always return an array, In this case even there is no combination findMany always return an empty array. IN Jabascript even an empty array/not-null object also consider as true.
       where: {
         user_id: userId,
@@ -34,9 +35,9 @@ async function handleAddToCart(req, res) {
       data: {
         user_id: userId,
         productVariety_id: body.productVarietyId,
-        quantity: body.quantity,
+        quantity: body.quantity || 1,
       },
-      include: { productVariety :  true, user: true },
+      include: { productVariety: true, user: true },
     });
 
     if (!addToCart) {
@@ -54,7 +55,7 @@ async function handleAddToCart(req, res) {
     return res.status(500).json({
       Message: `An internal server error : ${err.message}`,
     });
-  } 
+  }
 }
 
 const updateAddToCartSchema = z.object({
@@ -101,6 +102,7 @@ async function handleUpdateAddToCart(req, res) {
   }
 }
 
+// Delete product using userId and productId
 const deleteAddToCartSchema = z.object({
   productVarietyId: z.string().min(1, "Product Variety Id is compulsory"),
 });
@@ -133,8 +135,42 @@ async function handleDeleteOneProduct(req, res) {
     return res.status(500).json({
       Message: `An internal server error : ${err.message}`,
     });
-  } finally {
-    await prisma.$disconnect();
+  }
+}
+
+// Get add to card based on the userId
+
+async function handleGetAddToCartValue(req, res) {
+  try {
+    const userId = parseInt(req.user.id);
+    // console.log(userId);
+
+    const products = await prisma.add_To_Cart.findMany({
+      where: { user_id: userId },
+      include: {
+        productVariety: {
+          include: {
+            product: true,
+            images: true,
+          },
+        },
+      },
+    });
+
+    if (!products) {
+      return res.status(400).json({
+        message: "No data found",
+      });
+    }
+
+    return res.status(200).json({
+      message: "Successfully get All data",
+      data: products,
+    });
+  } catch (err) {
+    return res.status(500).json({
+      Message: `An internal server error : ${err.message}`,
+    });
   }
 }
 
@@ -142,4 +178,5 @@ export {
   handleAddToCart as addToCartFunction,
   handleDeleteOneProduct as deleteUserWithProduct,
   handleUpdateAddToCart as updateAddToCart,
+  handleGetAddToCartValue as getAddToCartValue,
 };
