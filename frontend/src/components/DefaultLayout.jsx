@@ -10,7 +10,7 @@ export function DefaultLayout() {
   const dispatch = useDispatch();
   const auth = useSelector(getAuthSelector);
   const [open, setOpen] = useState(false);
-  console.log(auth);
+  console.log( "your token is : ", localStorage.getItem('ACCESS_TOKEN'));
 
   return (
     <div>
@@ -28,13 +28,13 @@ export function DefaultLayout() {
 
         {/* Nav Links */}
         <div className="flex space-x-8">
-          <Link to="/default/homepage" className="hover:text-blue-500 text-xl font-normal text-shadow-black">
+          <Link to="/homepage" className="hover:text-blue-500 text-xl font-normal text-shadow-black">
             Home
           </Link>
-          <Link to="/default/products" className="hover:text-blue-500 text-xl font-normal text-shadow-black">
+          <Link to="/cart" className="hover:text-blue-500 text-xl font-normal text-shadow-black">
             Cart
           </Link>
-          <Link to="/default/cart" className="hover:text-blue-500 text-xl font-normal text-shadow-black">
+          <Link to="#" className="hover:text-blue-500 text-xl font-normal text-shadow-black">
              Become a Seller
           </Link>
         </div>
@@ -87,7 +87,7 @@ export function DefaultLayout() {
             </div>
            ) : (
                 <Link
-                  to="/login"
+                  to="/auth/login"
                   className="px-2 py-1.5 rounded-lg bg-blue-600 text-white hover:bg-blue-700 text-xl font-medium "
                 >
                   Login

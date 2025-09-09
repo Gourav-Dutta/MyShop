@@ -5,43 +5,53 @@ import { Login} from "./views/Login";
 import { SignUp } from "./views/SignUp";
 import { HomePage } from "./views/HomePage";
 import {ProductPage} from "./views/ProductPage"
+import { LoginRequest } from "./views/requestToLogin";
+import { Cart } from "./views/cart";
 
 
 const router = createBrowserRouter([
     {
-        path: '/',
+        path: '/auth',
         element: <AuthPageLayout/>,
         children: [
             { 
-               path: '/',
-               element : <Navigate to="/login"/>
+               path: '/auth',
+               element : <Navigate to="/auth/login"/>
             },
             {
-                path: '/login',
+                path: '/auth/login',
                 element: <Login/>
             },
             {
-                path:'/signup',
+                path:'/auth/signup',
                 element: <SignUp/>
+            },
+            {
+                path: '/auth/requestLogin',
+                element: <LoginRequest/>
             }
         ]
    
     },
     {
-        path:'/default',
+        path:'/',
         element:<DefaultLayout/>,
         children: [
             {
-                path: '/default',
-                element : <Navigate to = "/default/homepage"/>
+                path: '/',
+                element : <Navigate to = "/homepage"/>
             },
             {
-                path: "/default/homepage",
+                path: "/homepage",
                 element: <HomePage/>
             },
             {
-                path : "/default/product/:id",
+                path : "/product/:id",
                 element : <ProductPage/>
+            },
+            {
+                path: "/cart",
+                element: <Cart/>
             }
         ]
     }

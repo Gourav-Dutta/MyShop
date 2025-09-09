@@ -1,6 +1,7 @@
 import { useState } from "react"
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import toast from "react-hot-toast";
 
 export function SignUp(){
 
@@ -40,8 +41,8 @@ export function SignUp(){
         try{
             const response = await axios.post("http://127.0.0.1:8000/api/user/register", payload);
             console.log(response.data);
-            
-           navigate("/login");
+            toast.success("Registration successful! Please log in.")
+           navigate("/auth/login");
         }catch(err){
             if(err.response && err.response.data){
                 setError(err.response.data.message || "Signup Failed Please Try Again");
