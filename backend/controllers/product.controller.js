@@ -47,9 +47,7 @@ async function handleProductEntry(req, res) {
     return res.status(500).json({
       Message: `An error occured durting enter new product : ${err.message}`,
     });
-  } finally {
-    await prisma.$disconnect();
-  }
+  } 
 }
 
 //Get product by the user itself - User and Admin only
@@ -64,7 +62,7 @@ async function handleGetProductByUserItself(req, res) {
     });
 
     if (products.length === 0) {
-      return res.status(400).json({
+      return res.status(200).json({
         message: "The user does't have any registered Product",
       });
     }
@@ -77,9 +75,7 @@ async function handleGetProductByUserItself(req, res) {
     return res.status(500).json({
       Message: `An error occured durting get user product : ${err.message}`,
     });
-  } finally {
-    await prisma.$disconnect();
-  }
+  } 
 }
 
 // Get all product - Admin only
@@ -92,8 +88,8 @@ async function handleGetAllProduct(req, res) {
     });
 
     if (!allProducts) {
-      return res.status(400).json({
-        message: "Failed to get Products",
+      return res.status(200).json({
+        message: "No Products",
       });
     }
 
@@ -105,9 +101,7 @@ async function handleGetAllProduct(req, res) {
     return res.status(500).json({
       Message: `An error occured durting get All  product : ${err.message}`,
     });
-  } finally {
-    await prisma.$disconnect();
-  }
+  } 
 }
 
 // Get product on the basis of the userId - Admin Only
@@ -123,8 +117,8 @@ async function handleGetProductUser_Id(req, res) {
     });
 
     if (Products.length === 0) {
-      return res.status(400).json({
-        message: "Failed to get Product",
+      return res.status(200).json({
+        message: "No product Found",
       });
     }
 
@@ -150,7 +144,7 @@ async function handleGetProductsub_category_name(req, res) {
           name: Sub_Category,
         },
       },
-      include: { stock: true, sub_category: true },
+      include: { sub_category: true },
     });
 
     // console.log(typeof(Products));  --> Object , even findMany always return an array , An Array is also an Object
@@ -160,7 +154,7 @@ async function handleGetProductsub_category_name(req, res) {
     // }
 
     if (!Products) {
-      return res.status(400).json({
+      return res.status(200).json({
         message: "Failed to get Product",
       });
     }
@@ -173,8 +167,6 @@ async function handleGetProductsub_category_name(req, res) {
     return res.status(500).json({
       Message: `An error occured durting get A user  product : ${err.message}`,
     });
-  } finally {
-    await prisma.$disconnect();
   }
 }
 
@@ -196,7 +188,7 @@ async function handleGetProductMain_category_name(req, res) {
     });
 
     if (Products.length === 0) {
-      return res.status(400).json({
+      return res.status(200).json({
         message: "Failed to get Product From main category",
       });
     }
@@ -209,9 +201,7 @@ async function handleGetProductMain_category_name(req, res) {
     return res.status(500).json({
       Message: `An error occured durting get A user  product based on Main-Category : ${err.message}`,
     });
-  } finally {
-    await prisma.$disconnect();
-  }
+  } 
 }
 
 // Get product based on the product Id - Admin, seller
@@ -224,7 +214,7 @@ async function handleGetProductByProductId(req, res) {
     });
 
     if (!product) {
-      return res.status(400).json({
+      return res.status(200).json({
         message: "No product found",
       });
     }
@@ -235,10 +225,39 @@ async function handleGetProductByProductId(req, res) {
     });
   } catch (err) {
     return res.status(500).json({
-      Message: `An error occured durting get update  product : ${err.message}`,
+      Message: `An error occured durting get  product : ${err.message}`,
     });
-  } finally {
-    await prisma.$disconnect();
+  } 
+}
+
+// Get product based on Sub-Category and Brand --
+
+async function handleGetProductOnSubCategoryandBrand(req, res) {
+  const subCategory = req.params.Sub_categoryName;
+  const brandName = req.params.BrandName;
+  try {
+    const products = await prisma.product.findMany({
+      where: {
+        sub_category: { name: subCategory },
+        brand: { name: brandName },
+      },
+      include: { sub_category: true, brand: true },
+    });
+
+    if (products.length === 0) {
+      return res.status(200).json({                // some APIs prefer returning 200 with data: [], so the frontend doesn’t treat it as an error (just "no results").
+        Message: "No product found",
+      });
+    }
+
+    return res.status(200).json({
+      message: "Product Founded Sucessfully",
+      data: products,
+    });
+  } catch (err) {
+    return res.status(500).json({
+      Message: `An error occured durting get  product on SubCategory and Brand name: ${err.message}`,
+    });
   }
 }
 
@@ -264,7 +283,7 @@ async function handleUpdateProductproduct_Id(req, res) {
     });
     if (!validateUser)
       return res
-        .status(400)
+        .status(200)
         .json({ message: "You are not authorized for this action" });
 
     const product = await prisma.product.update({
@@ -286,9 +305,7 @@ async function handleUpdateProductproduct_Id(req, res) {
     return res.status(500).json({
       Message: `An error occured durting get update  product : ${err.message}`,
     });
-  } finally {
-    await prisma.$disconnect();
-  }
+  } 
 }
 
 // Delete product based on product-Id -- Admin and seller
@@ -301,7 +318,7 @@ async function handleDeleteProductproduct_Id(req, res) {
     });
 
     if (!product) {
-      return res.status(400).json({
+      return res.status(200).json({
         message: "Failed to delete data",
       });
     }
@@ -314,8 +331,6 @@ async function handleDeleteProductproduct_Id(req, res) {
     return res.status(500).json({
       Message: `An error occured durting delete  product : ${err.message}`,
     });
-  } finally {
-    await prisma.$disconnect();
   }
 }
 
@@ -335,7 +350,7 @@ async function handleDeleteProductSub_Id(req, res) {
     });
 
     if (!product) {
-      return res.status(400).json({
+      return res.status(200).json({
         message: "Failed to delete data",
       });
     }
@@ -348,9 +363,7 @@ async function handleDeleteProductSub_Id(req, res) {
     return res.status(500).json({
       Message: `An error occured durting delete  product : ${err.message}`,
     });
-  } finally {
-    await prisma.$disconnect();
-  }
+  } 
 }
 
 // Get products on the basis of Brand
@@ -395,4 +408,5 @@ export {
   handleUpdateProductproduct_Id as updateProductByProduct_Id,
   handleGetProductByProductId as getProductByProductId,
   handleGetProductByBrand as getProductByBrandId,
+  handleGetProductOnSubCategoryandBrand as getProductOnSubCategoryAndBrand,
 };

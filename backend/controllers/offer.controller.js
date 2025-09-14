@@ -338,7 +338,10 @@ async function handleDeleteProductOffer(req, res) {
     if (!validateUser)
       return res
         .status(400)
-        .json({ message: "You are not authorized for this action as this product in inserted by another seller not you ! " });
+        .json({
+          message:
+            "You are not authorized for this action as this product in inserted by another seller not you ! ",
+        });
 
     const deletedValue = await prisma.product_Offer.deleteMany({
       where: {
@@ -375,5 +378,5 @@ export {
   handleUpdateProductOffer as updateProductOfferCombination,
   handleDeleteProductOffer as deleteProductOfferCombo,
   handleGetAllProductOffer as getAllProductOfferCombo,
-  handleGetOneProductOffer as getSpecificProductOfferCombo
+  handleGetOneProductOffer as getSpecificProductOfferCombo,
 };

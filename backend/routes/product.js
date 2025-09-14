@@ -9,7 +9,8 @@ import { newProductEntryFunction,
          deleteProductBySub_name,
          getProductByMain_Category,
          getProductByProductId,
-         getProductByBrandId
+         getProductByBrandId,
+         getProductOnSubCategoryAndBrand
        } from "../controllers/product.controller.js";
 import { sellerAdminMiddleware, authMiddleware, adminMiddleware } from "../middleware/auth.js";
 const router = Router();
@@ -22,10 +23,11 @@ router
 // .get("/product/getAll", authMiddleware, adminMiddleware, getAllProductFunction )
 .get("/product/getAll" , getAllProductFunction )
 .get("/product/getOne/:UserId", authMiddleware, adminMiddleware, getProductByUserId)
-.get("/product/sub_category/:sub_category_name", authMiddleware, adminMiddleware, getProductBySub_Category)
+.get("/product/sub_category/:sub_category_name",  getProductBySub_Category)
 // .get("/product/main_category/:main_category_name", authMiddleware, adminMiddleware, getProductByMain_Category)
 .get("/product/main_category/:main_category_name",  getProductByMain_Category)
 .get("/product/:productId", getProductByProductId )
+.get("/product/:Sub_categoryName/:BrandName", getProductOnSubCategoryAndBrand)
 .get("/product/brand/:brandId", getProductByBrandId)
 .patch("/product/update/:product_id", authMiddleware, sellerAdminMiddleware(["ADMIN", "SELLER"]), updateProductByProduct_Id)
 .delete("/product/delete/:product_id", authMiddleware, sellerAdminMiddleware(["ADMIN", "SELLER"]), deleteProductByProduct_Id)

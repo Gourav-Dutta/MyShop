@@ -21,6 +21,15 @@ export const productApi = createApi({
     getProductVerityBtProductId: builder.query({
       query: (id) => `variety/product/${id}`,
     }),
+    getProductBySubCategory : builder.query({
+      query : (subCategory)=> `product/sub_category/${subCategory}`
+    }),
+    getAllBrands : builder.query({
+      query : () => "brand/all"
+    }),
+    getBrandSpecificProduct : builder.query({
+      query : ({subCategoryName, brandName}) => `product/${subCategoryName}/${brandName}`
+    }),
     addToCart: builder.mutation({
       query: (task) => ({
         url: "/user/addToCart",
@@ -49,5 +58,8 @@ export const {
   useGetProductVerityBtProductIdQuery,
   useAddToCartMutation,
   useGetAddToCardQuery,
-  useRemoveFromAddToCartMutation
+  useRemoveFromAddToCartMutation,
+  useGetProductBySubCategoryQuery,
+  useGetAllBrandsQuery,
+  useLazyGetBrandSpecificProductQuery                               // Lazy Hook
 } = productApi;

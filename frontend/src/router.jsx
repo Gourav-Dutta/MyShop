@@ -7,6 +7,7 @@ import { HomePage } from "./views/HomePage";
 import {ProductPage} from "./views/ProductPage"
 import { LoginRequest } from "./views/requestToLogin";
 import { Cart } from "./views/cart";
+import { ProductListPage } from "./views/ProductListPage";
 
 
 const router = createBrowserRouter([
@@ -29,7 +30,8 @@ const router = createBrowserRouter([
             {
                 path: '/auth/requestLogin',
                 element: <LoginRequest/>
-            }
+            },
+           
         ]
    
     },
@@ -52,6 +54,10 @@ const router = createBrowserRouter([
             {
                 path: "/cart",
                 element: <Cart/>
+            },
+             {
+                path: "/productList/:Sub_Category",
+                element: <ProductListPage/>
             }
         ]
     }

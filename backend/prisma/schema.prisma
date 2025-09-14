@@ -95,7 +95,7 @@ model Product {
   status          String         @default("active")
   user_id         Int
   base_image      String         @db.Text
-  brand_id        Int
+  brand_id        Int 
   created_at      DateTime       @default(now())
   updated_at      DateTime       @updatedAt
   sub_catagory_id Int
