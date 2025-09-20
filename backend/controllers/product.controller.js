@@ -34,10 +34,20 @@ async function handleProductEntry(req, res) {
     });
 
     if (!newProduct) {
-      return res.status(400).json({
+      return res.status(200).json({
         Message: "Failed in enter new Product",
       });
     }
+
+    const productWithRelations = await prisma.product.findUnique({
+      where: { id: newProduct.id },
+      include: {
+        brand: true,
+        sub_category: true,
+      },
+    });
+
+    console.log("The product is : ", productWithRelations);
 
     return res.status(201).json({
       message: "New Product Inserted Successfully",
@@ -47,7 +57,7 @@ async function handleProductEntry(req, res) {
     return res.status(500).json({
       Message: `An error occured durting enter new product : ${err.message}`,
     });
-  } 
+  }
 }
 
 //Get product by the user itself - User and Admin only
@@ -75,10 +85,10 @@ async function handleGetProductByUserItself(req, res) {
     return res.status(500).json({
       Message: `An error occured durting get user product : ${err.message}`,
     });
-  } 
+  }
 }
 
-// Get all product - Admin only
+// Get all product
 async function handleGetAllProduct(req, res) {
   try {
     const allProducts = await prisma.product.findMany({
@@ -101,10 +111,10 @@ async function handleGetAllProduct(req, res) {
     return res.status(500).json({
       Message: `An error occured durting get All  product : ${err.message}`,
     });
-  } 
+  }
 }
 
-// Get product on the basis of the userId - Admin Only
+// // Get product on the basis of the userId - Admin Only
 async function handleGetProductUser_Id(req, res) {
   try {
     const userId = parseInt(req.params.UserId);
@@ -133,7 +143,7 @@ async function handleGetProductUser_Id(req, res) {
   }
 }
 
-// Get all products based on Sub-Category - Admin only
+// // Get all products based on Sub-Category - Admin only
 async function handleGetProductsub_category_name(req, res) {
   try {
     const Sub_Category = req.params.sub_category_name;
@@ -201,7 +211,7 @@ async function handleGetProductMain_category_name(req, res) {
     return res.status(500).json({
       Message: `An error occured durting get A user  product based on Main-Category : ${err.message}`,
     });
-  } 
+  }
 }
 
 // Get product based on the product Id - Admin, seller
@@ -227,7 +237,7 @@ async function handleGetProductByProductId(req, res) {
     return res.status(500).json({
       Message: `An error occured durting get  product : ${err.message}`,
     });
-  } 
+  }
 }
 
 // Get product based on Sub-Category and Brand --
@@ -245,7 +255,8 @@ async function handleGetProductOnSubCategoryandBrand(req, res) {
     });
 
     if (products.length === 0) {
-      return res.status(200).json({                // some APIs prefer returning 200 with data: [], so the frontend doesn’t treat it as an error (just "no results").
+      return res.status(200).json({
+        // some APIs prefer returning 200 with data: [], so the frontend doesn’t treat it as an error (just "no results").
         Message: "No product found",
       });
     }
@@ -305,7 +316,7 @@ async function handleUpdateProductproduct_Id(req, res) {
     return res.status(500).json({
       Message: `An error occured durting get update  product : ${err.message}`,
     });
-  } 
+  }
 }
 
 // Delete product based on product-Id -- Admin and seller
@@ -363,7 +374,7 @@ async function handleDeleteProductSub_Id(req, res) {
     return res.status(500).json({
       Message: `An error occured durting delete  product : ${err.message}`,
     });
-  } 
+  }
 }
 
 // Get products on the basis of Brand
@@ -396,6 +407,53 @@ async function handleGetProductByBrand(req, res) {
   }
 }
 
+async function searchProducts  (req, res)  {
+  const q = req.query.q || "";
+  const brand = req.query.brand || ""; // new
+
+  try {
+    const products = await prisma.product.findMany({
+      where: {
+        AND: [
+          {
+            OR: [
+              { name: { contains: q } },
+              {
+                sub_category: {
+                  is: {
+                    name: { contains: q },
+                  },
+                },
+              },
+            ],
+          },
+          // brand filter if provided
+          brand
+            ? {
+                brand: {
+                  is: {
+                    name: { contains: brand },
+                  },
+                },
+              }
+            : {}, // empty if no brand filter
+        ],
+      },
+      include: {
+        sub_category: true,
+        brand: true,
+      },
+    });
+
+    res.json({ data: products });
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ message: "Something went wrong", error: error.message });
+  }
+};
+
 export {
   handleProductEntry as newProductEntryFunction,
   handleGetProductByUserItself as getProductByTheLoginSeller,
@@ -409,4 +467,5 @@ export {
   handleGetProductByProductId as getProductByProductId,
   handleGetProductByBrand as getProductByBrandId,
   handleGetProductOnSubCategoryandBrand as getProductOnSubCategoryAndBrand,
+  searchProducts as searchProductFunction,
 };

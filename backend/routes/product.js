@@ -10,7 +10,8 @@ import { newProductEntryFunction,
          getProductByMain_Category,
          getProductByProductId,
          getProductByBrandId,
-         getProductOnSubCategoryAndBrand
+         getProductOnSubCategoryAndBrand,
+         searchProductFunction
        } from "../controllers/product.controller.js";
 import { sellerAdminMiddleware, authMiddleware, adminMiddleware } from "../middleware/auth.js";
 const router = Router();
@@ -32,7 +33,7 @@ router
 .patch("/product/update/:product_id", authMiddleware, sellerAdminMiddleware(["ADMIN", "SELLER"]), updateProductByProduct_Id)
 .delete("/product/delete/:product_id", authMiddleware, sellerAdminMiddleware(["ADMIN", "SELLER"]), deleteProductByProduct_Id)
 .delete("/product/delete_sub/:sub_id_name", authMiddleware, sellerAdminMiddleware(["ADMIN", "SELLER"]), deleteProductBySub_name)
-
+.get("/search", searchProductFunction)
 // Variety Routes
 
 // router.post("/variety/entry/:productId", authMiddleware, sellerAdminMiddleware(["ADMIN", "SELLER"]), newVarietyEntryFunction);

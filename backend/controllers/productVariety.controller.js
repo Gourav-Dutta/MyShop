@@ -1,6 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import { z } from "zod";
 
+
 const prisma = new PrismaClient();
 
 // 1. iNSERT PRODUCT VARIETY
@@ -36,6 +37,7 @@ async function handleVarietyEntery(req, res) {
       });
     }
     console.log("Product found");
+
     const newVariety = await prisma.product_Variety.create({
       data: {
         color: body.color || null,
@@ -59,6 +61,7 @@ async function handleVarietyEntery(req, res) {
       });
     }
 
+   
     return res.status(201).json({
       message: "New variety entered successfully",
       data: newVariety,
@@ -85,9 +88,9 @@ async function handleGetProductVarietyByProductId(req, res) {
         product: {
           include: {
             product_offers: {
-                include : {
-                    offer : true
-                }
+              include: {
+                offer: true,
+              },
             },
           },
         },
