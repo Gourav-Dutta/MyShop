@@ -10,11 +10,11 @@ export function DefaultLayout() {
   const dispatch = useDispatch();
   const auth = useSelector(getAuthSelector);
   const [open, setOpen] = useState(false);
-  const [subCategory, setSubCategory] = useState("");
+  const [searchItem, setSearchIten] = useState("");
   console.log("your token is : ", localStorage.getItem("ACCESS_TOKEN"));
 
-  function handleProductList(subCategory) {
-    navigate(`/productList/${subCategory}`);
+  function handleProductList(searchItem) {
+    navigate(`/productList/${searchItem}`);
   }
 
   return (
@@ -29,11 +29,11 @@ export function DefaultLayout() {
           type="text"
           placeholder="Search here..."
           className="px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 w-3xl"
-          onChange={(e)=> setSubCategory(e.target.value)}
+          onChange={(e)=> setSearchIten(e.target.value)}
           onKeyDown={(e) => {
             if (e.key === "Enter") {
               e.preventDefault();
-              handleProductList(subCategory);
+              handleProductList(searchItem);
             }
           }}
         />

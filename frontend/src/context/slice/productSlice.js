@@ -21,15 +21,23 @@ export const productApi = createApi({
     getProductVerityBtProductId: builder.query({
       query: (id) => `variety/product/${id}`,
     }),
-    getProductBySubCategory : builder.query({
-      query : (subCategory)=> `product/sub_category/${subCategory}`
+    getProductBySubCategory: builder.query({
+      query: (subCategory) => `product/sub_category/${subCategory}`,
     }),
-    getAllBrands : builder.query({
-      query : () => "brand/all"
+    getAllBrands: builder.query({
+      query: () => "brand/all",
     }),
-    getBrandSpecificProduct : builder.query({
-      query : ({subCategoryName, brandName}) => `product/${subCategoryName}/${brandName}`
+    // getProductsBySearch: builder.query({
+    //   query: (searchTerm) => `search?q=${searchTerm}`,
+    // }),
+    getProductsBySearch: builder.query({
+      query: ({ q, brand }) => {
+        let url = `search?q=${encodeURIComponent(q)}`;
+        if (brand) url += `&brand=${encodeURIComponent(brand)}`;
+        return url;
+      },
     }),
+
     addToCart: builder.mutation({
       query: (task) => ({
         url: "/user/addToCart",
@@ -38,18 +46,18 @@ export const productApi = createApi({
       }),
       invalidatesTags: ["getAddToCard"],
     }),
-    getAddToCard : builder.query({
-      query : () => "/user/addToCart/getProduct",
+    getAddToCard: builder.query({
+      query: () => "/user/addToCart/getProduct",
       providesTags: ["getAddToCard"],
     }),
-    removeFromAddToCart : builder.mutation({
-      query: ({productVarietyId}) => ({
-         url: "/user/addToCart/delete",
-         method : "DELETE",
-         body: {productVarietyId}                    // Because my backend require an object - productVarietyId : "1" , not simply "1"
-      }), 
+    removeFromAddToCart: builder.mutation({
+      query: ({ productVarietyId }) => ({
+        url: "/user/addToCart/delete",
+        method: "DELETE",
+        body: { productVarietyId }, // Because my backend require an object - productVarietyId : "1" , not simply "1"
+      }),
       invalidatesTags: ["getAddToCard"],
-    })
+    }),
   }),
 });
 
@@ -61,5 +69,6 @@ export const {
   useRemoveFromAddToCartMutation,
   useGetProductBySubCategoryQuery,
   useGetAllBrandsQuery,
-  useLazyGetBrandSpecificProductQuery                               // Lazy Hook
+  useGetProductsBySearchQuery,
+  useLazyGetProductsBySearchQuery
 } = productApi;
