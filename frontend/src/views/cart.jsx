@@ -1,26 +1,56 @@
 import {
   useGetAddToCardQuery,
   useRemoveFromAddToCartMutation,
+  useAddOrderMutation,
 } from "../context/slice/productSlice";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 
 export function Cart() {
   const navigate = useNavigate();
-  const { data, isLoading, isError, error } = useGetAddToCardQuery();
-  const [removeFromAddToCart] = useRemoveFromAddToCartMutation();
+  const { data, isLoading, isError, error } = useGetAddToCardQuery();    // Getting my Cart data
+  const [removeFromAddToCart] = useRemoveFromAddToCartMutation();        // Remove from cart mutation
+  const [addOrder, { isLoading: isPlacingOrder }] = useAddOrderMutation(); // Place order Mutation
   const products = data?.data || [];
   console.log(products);
 
   const token = localStorage.getItem("ACCESS_TOKEN");
   if (!token) {
-    navigate("/auth/requestLogin"); // ✅ fixed route
+    navigate("/auth/requestLogin");
     return;
+  }
+
+  // To place order 
+  async function handlePlaceOrder() {
+    if (products.length === 0) {
+      toast.error("Your cart is empty!");
+      return;
+    }
+
+    const orderData = {
+      status: "pending",
+      items: products.map((item) => ({
+        productVariety_id: String(item.productVariety.id),
+        price: String(item.productVariety.price),
+        quantity: String(item.quantity),
+      })),
+    };
+
+    try {
+      const res = await addOrder(orderData).unwrap();
+      console.log("Order placed:", res);
+      toast.success("Order placed successfully!");
+      navigate("/orders");
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to place order ❌");
+    }
   }
 
   if (isLoading) return <p className="text-gray-600">Loading cart...</p>;
   if (isError) return <p className="text-red-500">Error: {error.message}</p>;
 
+  // Remove from Cart function
   async function handleRemoveCart({ productVarietyId }) {
     try {
       await removeFromAddToCart({ productVarietyId }).unwrap();
@@ -112,6 +142,13 @@ export function Cart() {
           </div>
         </div>
       )}
+      <button
+        onClick={handlePlaceOrder}
+        className="mt-6 px-6 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+        disabled={isPlacingOrder}
+      >
+        {isPlacingOrder ? "Placing Order..." : "Place Order"}
+      </button>
     </div>
   );
 }

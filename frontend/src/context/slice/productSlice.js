@@ -37,7 +37,10 @@ export const productApi = createApi({
         return url;
       },
     }),
-
+    getUserOrder: builder.query({
+      query: () => "order/userId",
+      providesTags: ["getUserOrder"]
+    }),
     addToCart: builder.mutation({
       query: (task) => ({
         url: "/user/addToCart",
@@ -50,6 +53,9 @@ export const productApi = createApi({
       query: () => "/user/addToCart/getProduct",
       providesTags: ["getAddToCard"],
     }),
+    getUserProfile: builder.query({
+      query : ()=> "/user/one"
+    }),
     removeFromAddToCart: builder.mutation({
       query: ({ productVarietyId }) => ({
         url: "/user/addToCart/delete",
@@ -57,6 +63,14 @@ export const productApi = createApi({
         body: { productVarietyId }, // Because my backend require an object - productVarietyId : "1" , not simply "1"
       }),
       invalidatesTags: ["getAddToCard"],
+    }),
+    addOrder: builder.mutation({
+      query: (orderData) => ({
+        url: "/order/newOrder",
+        method: "POST",
+        body: orderData,
+      }),
+      invalidatesTags: ["getUserOrder"]
     }),
   }),
 });
@@ -70,5 +84,8 @@ export const {
   useGetProductBySubCategoryQuery,
   useGetAllBrandsQuery,
   useGetProductsBySearchQuery,
-  useLazyGetProductsBySearchQuery
+  useLazyGetProductsBySearchQuery,
+  useGetUserOrderQuery,
+  useAddOrderMutation,
+  useGetUserProfileQuery
 } = productApi;

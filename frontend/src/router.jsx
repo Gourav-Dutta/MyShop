@@ -8,6 +8,8 @@ import {ProductPage} from "./views/ProductPage"
 import { LoginRequest } from "./views/requestToLogin";
 import { Cart } from "./views/cart";
 import { ProductListPage } from "./views/ProductListPage";
+import { Order } from "./views/order";
+import { MyProfile } from "./views/MyProfile";
 
 
 const router = createBrowserRouter([
@@ -55,9 +57,17 @@ const router = createBrowserRouter([
                 path: "/cart",
                 element: <Cart/>
             },
-             {
+            {
                 path: "/productList/:Search_Item",
                 element: <ProductListPage/>
+            },
+            {
+                path: "/orders",
+                element: <Order/>
+            },
+            {
+                path : "/myProfile",
+                element: <MyProfile/>
             }
         ]
     }
