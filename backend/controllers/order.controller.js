@@ -5,7 +5,7 @@ const prisma = new PrismaClient();
 // Post order :
 
 // Creating order details schema
-const orderSchema = z.object({
+const orderSchema = z.object({                         // items is a array of object 
   status: z.string().optional(),
   items: z
     .array(
@@ -150,7 +150,11 @@ async function handleGetOredrByUserId(req, res) {
       where: {
         user_id: userId,
       },
-      include: { items: true },
+      include: { items: {
+        include: {
+          productVariety : true
+        }
+      } },
     });
 
     if (!order) {
@@ -160,8 +164,8 @@ async function handleGetOredrByUserId(req, res) {
     }
 
     if (order.length === 0) {
-      return res.status(400).json({
-        message: "You does't place any order till now",
+      return res.status(200).json({
+        message: "Your order List is empty..",
       });
     }
 

@@ -9,11 +9,11 @@ const prisma = new PrismaClient();
 // Get one user using userId  -- All can have access
 async function handleGetOneUser(req, res){
     try{
-        const userId = parseInt(req.params.id);
+        const userId = parseInt(req.user.id);
 
         const user = await prisma.user.findUnique({
             where: { id : userId},
-            include: { role: true },
+            include: { role: true, address: true },
         })
         if(!user) res.status(404).json({"message": "User not found", "status": "Failed"});
         return res.status(200).json({
@@ -24,9 +24,6 @@ async function handleGetOneUser(req, res){
         return res.status(500).json({
             "message" : `An error occured while fetching one user: ${err.message}`
         })
-    }
-    finally{
-        await prisma.$disconnect();
     }
 }
 
@@ -53,9 +50,7 @@ async function handleGetAllUsers(req, res){
             "message" : `An error occured while fetching all user: ${err.message}`,
         })
     }
-    finally{
-        await prisma.$disconnect();
-    }
+   
 
 }
 

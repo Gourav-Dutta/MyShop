@@ -15,9 +15,9 @@ const router =  Router();
 
 router
 .get("/user/all", authMiddleware, adminMiddleware, getAllUsers )
-.get("/user/:role" , authMiddleware, adminMiddleware, getUserUsingRole)
+.get("/user/one", authMiddleware, getOneUserFunction )
 .get("/user/userRole/:id", authMiddleware,adminMiddleware,  getUser_RoleFromUserId)
-.get("/user/one/:id", authMiddleware, getOneUserFunction )
+.get("/user/:role" , authMiddleware, adminMiddleware, getUserUsingRole)
 .patch("/user/:id", authMiddleware,  updateUser)
 .delete("/user/:id", authMiddleware,  deleteUser)
 

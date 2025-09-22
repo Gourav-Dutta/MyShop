@@ -47,13 +47,17 @@ model User {
 //-----------------
 
 model Address {
-  id       Int    @id @default(autoincrement())
-  city     String
-  state    String
-  house_no String
-  pin_no   Int
-  user_id  Int
-  user     User   @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  id         Int     @id @default(autoincrement())
+  city       String
+  state      String
+  house_no   String
+  pin_no     String
+  user_id    Int
+  is_primary Boolean @default(false)
+  user       User    @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  
+  @@index([user_id])      // When i search for user_id it make it faster
 }
 
 // ─────────────────────────────
@@ -95,7 +99,7 @@ model Product {
   status          String         @default("active")
   user_id         Int
   base_image      String         @db.Text
-  brand_id        Int 
+  brand_id        Int
   created_at      DateTime       @default(now())
   updated_at      DateTime       @updatedAt
   sub_catagory_id Int
