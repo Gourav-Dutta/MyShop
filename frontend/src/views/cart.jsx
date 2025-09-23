@@ -8,8 +8,8 @@ import toast from "react-hot-toast";
 
 export function Cart() {
   const navigate = useNavigate();
-  const { data, isLoading, isError, error } = useGetAddToCardQuery();    // Getting my Cart data
-  const [removeFromAddToCart] = useRemoveFromAddToCartMutation();        // Remove from cart mutation
+  const { data, isLoading, isError, error } = useGetAddToCardQuery(); // Getting my Cart data
+  const [removeFromAddToCart] = useRemoveFromAddToCartMutation(); // Remove from cart mutation
   const [addOrder, { isLoading: isPlacingOrder }] = useAddOrderMutation(); // Place order Mutation
   const products = data?.data || [];
   console.log(products);
@@ -20,7 +20,7 @@ export function Cart() {
     return;
   }
 
-  // To place order 
+  // To place order
   async function handlePlaceOrder() {
     if (products.length === 0) {
       toast.error("Your cart is empty!");
@@ -37,8 +37,7 @@ export function Cart() {
     };
 
     try {
-      const res = await addOrder(orderData).unwrap();
-      console.log("Order placed:", res);
+      await addOrder(orderData).unwrap();
       toast.success("Order placed successfully!");
       navigate("/orders");
     } catch (err) {

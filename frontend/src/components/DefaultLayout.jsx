@@ -102,6 +102,14 @@ export function DefaultLayout() {
                     </li>
                     <li>
                       <a
+                        href="/orders"
+                        className="block px-4 py-2 hover:bg-gray-100 text-xl font-normal"
+                      >
+                        Order
+                      </a>
+                    </li>
+                    <li>
+                      <a
                         href="#"
                         className="block px-4 py-2 hover:bg-gray-100 text-xl font-normal"
                       >

@@ -2,6 +2,7 @@ import { useParams } from "react-router-dom";
 import {
   useAddToCartMutation,
   useGetProductVerityBtProductIdQuery,
+  useAddOrderMutation
 } from "../context/slice/productSlice";
 import toast from "react-hot-toast";
 import { useState } from "react";
@@ -10,6 +11,7 @@ import { useNavigate } from "react-router-dom";
 export function ProductPage() {
   const { id } = useParams();
   const { data, isLoading, error } = useGetProductVerityBtProductIdQuery(id);
+  const [addOrder] = useAddOrderMutation();
   const [addToCart] = useAddToCartMutation();
   const [selectedVariety, setSelectedVariety] = useState(null);
   const [previewImg, setPreviewImg] = useState(null);
@@ -22,6 +24,7 @@ export function ProductPage() {
 
   const varieties = data?.data || [];
   const currentVariety = selectedVariety || varieties[0]; // Initially the first index of varieties is current variety , but when we use setSelectedVariety then this selected variety is become current variety
+  console.log("current variety: ", currentVariety);
 
   // pick primary image
   const primaryImage =
@@ -73,6 +76,28 @@ export function ProductPage() {
     });
 
     toast.success("Item added to your cart 🎉");
+  }
+
+  // To order :
+  async function handlePlaceOrder() {
+    const orderData = {
+      status: "pending",
+      items: [
+        {
+        productVariety_id: String(currentVariety.id),
+        price: String(currentVariety.price),
+        quantity: "1",
+        }
+      ]
+    };
+
+    try {
+      await addOrder(orderData).unwrap();
+      toast.success("Order placed successfully!");
+    } catch (err) {
+      console.error(err.message);
+      toast.error("Failed to place order ❌");
+    }
   }
 
   return (
@@ -216,7 +241,10 @@ export function ProductPage() {
             >
               Add To Cart
             </button>
-            <button className="flex-1 bg-red-400 text-white text-xl py-3 rounded-2xl shadow hover:bg-red-500">
+            <button
+              className="flex-1 bg-red-400 text-white text-xl py-3 rounded-2xl shadow hover:bg-red-500"
+              onClick={handlePlaceOrder}
+            >
               Buy Now
             </button>
           </div>
