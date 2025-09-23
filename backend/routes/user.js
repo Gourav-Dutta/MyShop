@@ -18,7 +18,7 @@ router
 .get("/user/one", authMiddleware, getOneUserFunction )
 .get("/user/userRole/:id", authMiddleware,adminMiddleware,  getUser_RoleFromUserId)
 .get("/user/:role" , authMiddleware, adminMiddleware, getUserUsingRole)
-.patch("/user/:id", authMiddleware,  updateUser)
+.patch("/user/update", authMiddleware,  updateUser)
 .delete("/user/:id", authMiddleware,  deleteUser)
 
 export {router as userRouter}

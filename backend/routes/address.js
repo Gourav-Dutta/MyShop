@@ -10,6 +10,9 @@ import {
   getAlluserAddress,
   getUserAddress,
   getUserAddressByAdmin,
+  GetAddressOnAddIdUserId,
+  UpdateAddress,
+  updateAddressIs_Primary
 } from "../controllers/address.controller.js";
 
 const router = Router();
@@ -24,6 +27,9 @@ router
     authMiddleware,
     adminMiddleware,
     getUserAddressByAdmin
-  );
+  )
+  .get("/add/addId/userId/:addId", authMiddleware, GetAddressOnAddIdUserId)
+  .patch("/update/Address/:addId", authMiddleware, UpdateAddress)
+  .put("/update/Address/is_primary", authMiddleware, updateAddressIs_Primary )
 
 export { router as addressRouter };

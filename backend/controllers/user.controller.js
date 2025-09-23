@@ -59,8 +59,8 @@ async function handleGetAllUsers(req, res){
 async function handleUpdateUser(req, res){
     try{
 
-        const userId = parseInt(req.params.id);
-        const {name, email, phone_no, address, password} = req.body;
+        const userId = parseInt(req.user.id);
+        const {name, email, phone_no, password} = req.body;
         
         // Build my updateData Dynamically
         const updateData = {};
@@ -68,7 +68,7 @@ async function handleUpdateUser(req, res){
         if(name) updateData.name = name;
         if(email) updateData.email = email;
         if(phone_no) updateData.phone_no = phone_no;
-        if(address) updateData.address = address;
+       
 
         if(password){
             updateData.password = await bcrypt.hash(password, 10);

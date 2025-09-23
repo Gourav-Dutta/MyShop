@@ -18,7 +18,7 @@ const PORT = 8000;
 app.use(
   cors({
     origin: ["http://localhost:5173", "http://localhost:3000"], // React frontend
-    methods: ["GET", "POST", "PATCH", "DELETE"],
+    methods: ["GET", "POST", "PATCH", "DELETE", "PUT"],
     credentials: true,
   })
 );

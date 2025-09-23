@@ -16,14 +16,12 @@ async function handleNewAddress(req, res) {
     const body = addressSchema.parse(req.body);
     const userId = parseInt(req.user.id);
     // console.log(body.is_primary);
-    
+
     if (typeof body.is_primary === "string") {
       if (body.is_primary.toLowerCase() === "true") {
         body.is_primary = true;
       } else if (body.is_primary.toLowerCase() === "false") {
         body.is_primary = false;
-        
-        
       } else {
         throw new Error(
           "This is a Invalid Boolean value, kindly use 'true' or 'false' "
@@ -31,14 +29,12 @@ async function handleNewAddress(req, res) {
       }
     }
     console.log(body.is_primary);
-   if (body.is_primary) {
-  // clear old primary first
-  await prisma.address.updateMany({
-    where: { user_id: userId, is_primary: true },
-    data: { is_primary: false }
-  });
-}
-
+    if (body.is_primary) {
+      await prisma.address.updateMany({          // Check if any address is primary that make it false
+        where: { user_id: userId, is_primary: true },
+        data: { is_primary: false },
+      });
+    }
 
     const newAddress = await prisma.address.create({
       data: {
@@ -191,10 +187,121 @@ async function handleGetUserAddressByUserIdByAdmin(req, res) {
     await prisma.$disconnect();
   }
 }
+
+// Get the address based on userId and AddressId:
+
+async function handleGetAddressOnAddId(req, res) {
+  const userId = parseInt(req.user.id);
+  const addId = parseInt(req.params.addId);
+
+  const myAddress = await prisma.address.findMany({
+    where: { id: addId, user_id: userId },
+  });
+
+  if (myAddress.length === 0) {
+    return res.status(200).json({
+      msg: "No addresss found",
+    });
+  }
+
+  return res.status(200).json({
+    msg: "Address founded successfully",
+    data: myAddress,
+  });
+}
+
+// To update address :
+
+async function handleUpdateAddress(req, res) {
+  const userId = parseInt(req.user.id);
+  const addId = parseInt(req.params.addId);
+
+  const { house_no, city, state, pin_no } = req.body;
+  const body = {};
+  if (house_no) body.house_no = house_no;
+  if (city) body.city = city;
+  if (state) body.state = state;
+  if (pin_no) body.pin_no = pin_no;
+  console.log(body);
+
+  const updateAddress = await prisma.address.updateMany({
+    where: { id: addId, user_id: userId },
+    data: { ...body },
+  });
+
+  if (updateAddress.count === 0) {
+    return res.status(200).json({
+      msg: "Address not updated",
+    });
+  }
+
+  return res.status(200).json({
+    msg: "Address update successfully",
+    data: updateAddress,
+  });
+}
+
+// Update the address is_primary :
+
+async function handleUpdateAddesssIs_Primary(req, res) {
+  try {
+    const userId = parseInt(req.user.id);
+    console.log(userId);
+
+    const addId = parseInt(req.body.addId);
+    let is_primary = req.body.is_primary ?? req.body.is_primary;
+    console.log(req.body);
+
+    if (typeof is_primary === "string") {   
+      if (is_primary.toLowerCase() === "true") {
+        is_primary = true;
+      } else if (is_primary.toLowerCase() === "false") {
+        is_primary = false;
+      } else {
+        throw new Error(
+          "This is a Invalid Boolean value, kindly use 'true' or 'false' "
+        );
+      }
+    }
+    
+    is_primary = Boolean(is_primary);
+    console.log(is_primary);
+
+    if (is_primary) {
+      await prisma.address.updateMany({
+        where: { user_id: userId, is_primary: true },
+        data: { is_primary: false },
+      });
+    }
+
+    const updateValue = await prisma.address.updateMany({
+      where: { id: addId, user_id: userId },
+      data: { is_primary: is_primary },
+    });
+
+    if (updateValue.count === 0) {
+      return res.status(200).json({
+        message: "Failde to update the Primary option",
+      });
+    }
+
+    return res.status(201).json({
+      message: "Successfully update the Primary option",
+      Address: updateValue,
+    });
+  } catch (err) {
+    return res.status(500).json({
+      message: `An internal server error during update address : ${err.message}`,
+    });
+  }
+}
 export {
   handleNewAddress as addNewAddress,
   handleGetAllAddress as getAlluserAddress,
   handleGetAllUserByCity as getAllUserByCityName,
   handleGetUserAddress as getUserAddress,
   handleGetUserAddressByUserIdByAdmin as getUserAddressByAdmin,
+  handleGetAddressOnAddId as GetAddressOnAddIdUserId,
+  handleUpdateAddress as UpdateAddress,
+  handleUpdateAddesssIs_Primary as updateAddressIs_Primary,
 };
