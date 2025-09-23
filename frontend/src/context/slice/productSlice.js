@@ -1,6 +1,7 @@
 import { fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { createApi } from "@reduxjs/toolkit/query/react";
 
+
 export const productApi = createApi({
   reducerPath: "productApi",
   baseQuery: fetchBaseQuery({
@@ -39,7 +40,7 @@ export const productApi = createApi({
     }),
     getUserOrder: builder.query({
       query: () => "order/userId",
-      providesTags: ["getUserOrder"]
+      providesTags: ["getUserOrder"],
     }),
     addToCart: builder.mutation({
       query: (task) => ({
@@ -54,7 +55,11 @@ export const productApi = createApi({
       providesTags: ["getAddToCard"],
     }),
     getUserProfile: builder.query({
-      query : ()=> "/user/one"
+      query: () => "/user/one",
+      providesTags: ["getUserProfile"],
+    }),
+    getAddOnaddId : builder.query({
+      query : (addId) => `add/addId/userId/${addId}`,
     }),
     removeFromAddToCart: builder.mutation({
       query: ({ productVarietyId }) => ({
@@ -70,8 +75,40 @@ export const productApi = createApi({
         method: "POST",
         body: orderData,
       }),
-      invalidatesTags: ["getUserOrder"]
+      invalidatesTags: ["getUserOrder"],
     }),
+    updateProfile: builder.mutation({
+      query: ({ name, email, phone_no }) => ({
+        url: "/user/update",
+        method: "PATCH",
+        body: { name, email, phone_no },
+      }),
+      invalidatesTags: ["getUserProfile"],
+    }),
+    updateAddress : builder.mutation({
+      query : ({addId, house_no, pin_no, state, city}) => ({
+        url : `/update/Address/${addId}`,
+        method: "PATCH",
+        body: {house_no, pin_no, state, city}
+      }),
+      invalidatesTags : ['getUserProfile'],
+    }),
+    updateAddIs_Primary : builder.mutation({
+      query: ({addId, is_primary}) => ({
+        url: "/update/Address/is_primary",
+        method: "PUT",
+        body: {addId, is_primary}
+      }),
+       invalidatesTags : ['getUserProfile'],
+    }),
+    addAddress : builder.mutation({
+      query : ({city, house_no, pin_no, state, is_primary}) => ({
+        url : "/address/new",
+        method : "POST",
+        body : {city, house_no, pin_no, state, is_primary}
+      }),
+      invalidatesTags : ['getUserProfile'],
+    })
   }),
 });
 
@@ -87,5 +124,10 @@ export const {
   useLazyGetProductsBySearchQuery,
   useGetUserOrderQuery,
   useAddOrderMutation,
-  useGetUserProfileQuery
+  useGetUserProfileQuery,
+  useUpdateProfileMutation,
+  useGetAddOnaddIdQuery,
+  useUpdateAddressMutation,
+  useUpdateAddIs_PrimaryMutation,
+  useAddAddressMutation
 } = productApi;

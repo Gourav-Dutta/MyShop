@@ -10,6 +10,9 @@ import { Cart } from "./views/cart";
 import { ProductListPage } from "./views/ProductListPage";
 import { Order } from "./views/order";
 import { MyProfile } from "./views/MyProfile";
+import { UpdateProfile } from "./views/UpdateProfile";
+import { AddAddress } from "./views/AddAddress";
+import { UpdateAddress } from "./views/UpdateAddress";
 
 
 const router = createBrowserRouter([
@@ -68,6 +71,18 @@ const router = createBrowserRouter([
             {
                 path : "/myProfile",
                 element: <MyProfile/>
+            },
+            {
+                path : "/update/profile",
+                element : <UpdateProfile/>
+            },
+            {
+                path : "/new/address",
+                element : <AddAddress/>
+            },
+            {
+                path : "/update/address/:addId",
+                element : <UpdateAddress/>
             }
         ]
     }
