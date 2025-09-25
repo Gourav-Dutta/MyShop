@@ -13,6 +13,11 @@ import { MyProfile } from "./views/MyProfile";
 import { UpdateProfile } from "./views/UpdateProfile";
 import { AddAddress } from "./views/AddAddress";
 import { UpdateAddress } from "./views/UpdateAddress";
+import { SellerLayout } from "./components/SellerLayout";
+import { SellerProductList } from "./views/vendor/SellerProductList";
+import { SellerPortal } from "./views/vendor/SellerPortal";
+import { SellerProduct } from "./views/vendor/SellerProduct";
+import { SellerAddProduct } from "./views/vendor/SellerAddProduct";
 
 
 const router = createBrowserRouter([
@@ -83,6 +88,33 @@ const router = createBrowserRouter([
             {
                 path : "/update/address/:addId",
                 element : <UpdateAddress/>
+            }
+        ]
+    },
+    {
+        path: "/seller/layout",
+        element: <SellerLayout/>,
+        children: [
+            
+            {
+                path: '/seller/layout',
+                element : <Navigate to = "/seller/layout/sellerDashboard"/>
+            },
+            {
+                path: "/seller/layout/sellerDashboard",
+                element: <SellerPortal/>
+            },
+            {
+                path: "/seller/layout/seller/products/:Search_Item",
+                element : <SellerProductList/>
+            },
+            {
+                path: "/seller/layout/product",
+                element : <SellerProduct/>
+            },
+            {
+               path: "/seller/layout/addProduct",
+               element: <SellerAddProduct/>
             }
         ]
     }

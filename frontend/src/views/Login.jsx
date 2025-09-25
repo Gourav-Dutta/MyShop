@@ -39,9 +39,13 @@ export function Login() {
 
       // Save token + user in redux
       dispatch(login({ token: response.data.token, user: response.data.data.name }));
-
-      // Redirect to homepage (✅ correct route)
+      console.log( "The role is: ", response);
+      if(response.data.data.role.role == "SELLER"){
+        navigate("/seller/layout/sellerDashboard");
+      }else{
+      // Redirect to homepage 
       navigate("/homepage");
+      }
     } catch (err) {
       if (err.response && err.response.data) {
         setError(err.response.data.message || "Invalid email or password");

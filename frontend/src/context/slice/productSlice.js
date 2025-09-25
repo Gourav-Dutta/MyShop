@@ -1,7 +1,6 @@
 import { fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { createApi } from "@reduxjs/toolkit/query/react";
 
-
 export const productApi = createApi({
   reducerPath: "productApi",
   baseQuery: fetchBaseQuery({
@@ -16,21 +15,27 @@ export const productApi = createApi({
   }),
 
   endpoints: (builder) => ({
+    // Get product by category
     getProductsByCategory: builder.query({
       query: () => `product/getAll`,
     }),
+    // Get product veriety
     getProductVerityBtProductId: builder.query({
       query: (id) => `variety/product/${id}`,
     }),
+    // Get product by sub category
     getProductBySubCategory: builder.query({
       query: (subCategory) => `product/sub_category/${subCategory}`,
     }),
+    // Get all brands
     getAllBrands: builder.query({
       query: () => "brand/all",
     }),
     // getProductsBySearch: builder.query({
     //   query: (searchTerm) => `search?q=${searchTerm}`,
     // }),
+
+    // Get product by product name or sub-ctaegory name  (Based on search input)
     getProductsBySearch: builder.query({
       query: ({ q, brand }) => {
         let url = `search?q=${encodeURIComponent(q)}`;
@@ -38,10 +43,12 @@ export const productApi = createApi({
         return url;
       },
     }),
+    // Get a particular user order list
     getUserOrder: builder.query({
       query: () => "order/userId",
       providesTags: ["getUserOrder"],
     }),
+    // Add to cart function
     addToCart: builder.mutation({
       query: (task) => ({
         url: "/user/addToCart",
@@ -50,17 +57,21 @@ export const productApi = createApi({
       }),
       invalidatesTags: ["getAddToCard"],
     }),
+    // Get a user cart product list
     getAddToCard: builder.query({
       query: () => "/user/addToCart/getProduct",
       providesTags: ["getAddToCard"],
     }),
+    // Get a user profile
     getUserProfile: builder.query({
       query: () => "/user/one",
       providesTags: ["getUserProfile"],
     }),
-    getAddOnaddId : builder.query({
-      query : (addId) => `add/addId/userId/${addId}`,
+    // Get address of a user using address-id (Since A User May Have Multiple address)
+    getAddOnaddId: builder.query({
+      query: (addId) => `add/addId/userId/${addId}`,
     }),
+    // Remove from add-to-cart function
     removeFromAddToCart: builder.mutation({
       query: ({ productVarietyId }) => ({
         url: "/user/addToCart/delete",
@@ -69,6 +80,7 @@ export const productApi = createApi({
       }),
       invalidatesTags: ["getAddToCard"],
     }),
+    // Placing new Order function
     addOrder: builder.mutation({
       query: (orderData) => ({
         url: "/order/newOrder",
@@ -77,6 +89,7 @@ export const productApi = createApi({
       }),
       invalidatesTags: ["getUserOrder"],
     }),
+    // Update profile function
     updateProfile: builder.mutation({
       query: ({ name, email, phone_no }) => ({
         url: "/user/update",
@@ -85,30 +98,68 @@ export const productApi = createApi({
       }),
       invalidatesTags: ["getUserProfile"],
     }),
-    updateAddress : builder.mutation({
-      query : ({addId, house_no, pin_no, state, city}) => ({
-        url : `/update/Address/${addId}`,
+    // Update address of a user based on address-Id function
+    updateAddress: builder.mutation({
+      query: ({ addId, house_no, pin_no, state, city }) => ({
+        url: `/update/Address/${addId}`,
         method: "PATCH",
-        body: {house_no, pin_no, state, city}
+        body: { house_no, pin_no, state, city },
       }),
-      invalidatesTags : ['getUserProfile'],
+      invalidatesTags: ["getUserProfile"],
     }),
-    updateAddIs_Primary : builder.mutation({
-      query: ({addId, is_primary}) => ({
+    // Update user address status function (Is_Primary)
+    updateAddIs_Primary: builder.mutation({
+      query: ({ addId, is_primary }) => ({
         url: "/update/Address/is_primary",
         method: "PUT",
-        body: {addId, is_primary}
+        body: { addId, is_primary },
       }),
-       invalidatesTags : ['getUserProfile'],
+      invalidatesTags: ["getUserProfile"],
     }),
-    addAddress : builder.mutation({
-      query : ({city, house_no, pin_no, state, is_primary}) => ({
-        url : "/address/new",
-        method : "POST",
-        body : {city, house_no, pin_no, state, is_primary}
+    // Add new address function
+    addAddress: builder.mutation({
+      query: ({ city, house_no, pin_no, state, is_primary }) => ({
+        url: "/address/new",
+        method: "POST",
+        body: { city, house_no, pin_no, state, is_primary },
       }),
-      invalidatesTags : ['getUserProfile'],
-    })
+      invalidatesTags: ["getUserProfile"],
+    }),
+    // Get product that inserted of that seller using the product name or sub-category name
+    getSellerProduct: builder.query({
+      query: ({ q, brand }) => {
+        let url = `search/seller?q=${encodeURIComponent(q)}`;
+        if (brand) url += `&brand=${encodeURIComponent(brand)}`;
+        return url;
+      },
+    }),
+    // Get seller order details
+    getSellerOrderDetails: builder.query({
+      query: () => "orderItem/seller",
+    }),
+    // Get how many product a seller listed query
+    getProductOfLoginSeller: builder.query({
+      query: () => "seller/get",
+    }),
+    // Inserted new product in seller list
+    addNewProduct: builder.mutation({
+      query: ({
+        name,
+        description,
+        sub_catagory_id,
+        base_image,
+        brand,
+        status,
+      }) => ({
+        url: "/seller/entry",
+        method: "POST",
+        body: { name, description, sub_catagory_id, base_image, brand, status },
+      }),
+    }),
+    // Get all sub-categories
+    getAllSubCategories: builder.query({
+      query: () => "sub_category/All",
+    }),
   }),
 });
 
@@ -129,5 +180,10 @@ export const {
   useGetAddOnaddIdQuery,
   useUpdateAddressMutation,
   useUpdateAddIs_PrimaryMutation,
-  useAddAddressMutation
+  useAddAddressMutation,
+  useGetSellerProductQuery,
+  useGetSellerOrderDetailsQuery,
+  useGetProductOfLoginSellerQuery,
+  useAddNewProductMutation,
+  useGetAllSubCategoriesQuery,
 } = productApi;

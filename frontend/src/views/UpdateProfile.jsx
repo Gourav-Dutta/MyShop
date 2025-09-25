@@ -12,7 +12,7 @@ export const UpdateProfile = () => {
   const navigate = useNavigate();
   const user = data?.data;
 
-  // Local state for form fields
+  
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -29,7 +29,7 @@ export const UpdateProfile = () => {
     }
   }, [user]);
 
-  // Handle change
+ 
   const handleChange = (e) => {
     setFormData({
       ...formData,
