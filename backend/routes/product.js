@@ -11,7 +11,8 @@ import { newProductEntryFunction,
          getProductByProductId,
          getProductByBrandId,
          getProductOnSubCategoryAndBrand,
-         searchProductFunction
+         searchProductFunction,
+         searchProductBySellerFunction
        } from "../controllers/product.controller.js";
 import { sellerAdminMiddleware, authMiddleware, adminMiddleware } from "../middleware/auth.js";
 const router = Router();
@@ -34,6 +35,7 @@ router
 .delete("/product/delete/:product_id", authMiddleware, sellerAdminMiddleware(["ADMIN", "SELLER"]), deleteProductByProduct_Id)
 .delete("/product/delete_sub/:sub_id_name", authMiddleware, sellerAdminMiddleware(["ADMIN", "SELLER"]), deleteProductBySub_name)
 .get("/search", searchProductFunction)
+.get("/search/seller", authMiddleware, sellerAdminMiddleware(["SELLER"]),searchProductBySellerFunction)
 // Variety Routes
 
 // router.post("/variety/entry/:productId", authMiddleware, sellerAdminMiddleware(["ADMIN", "SELLER"]), newVarietyEntryFunction);

@@ -60,7 +60,7 @@ async function handleProductEntry(req, res) {
   }
 }
 
-//Get product by the user itself - User and Admin only
+//Get  All product by the user itself - User and Admin only
 async function handleGetProductByUserItself(req, res) {
   try {
     const userId = parseInt(req.user.id);
@@ -454,6 +454,59 @@ async function searchProducts  (req, res)  {
   }
 };
 
+
+
+// Get specific product of a seller
+
+async function searchProductsBySeller  (req, res)  {
+  const q = req.query.q || "";
+  const brand = req.query.brand || ""; 
+  const userId = parseInt(req.user.id);
+
+  try {
+    const products = await prisma.product.findMany({
+      where: {
+        AND: [
+          {
+            OR: [
+              { name: { contains: q } },
+              {
+                sub_category: {
+                  is: {
+                    name: { contains: q },
+                  },
+                },
+              },
+            ],
+          },
+          // brand filter if provided
+          brand
+            ? {
+                brand: {
+                  is: {
+                    name: { contains: brand },
+                  },
+                },
+              }
+            : {}, // empty if no brand filter
+          { user_id : userId}
+        ],
+      },
+      include: {
+        sub_category: true,
+        brand: true,
+      },
+    });
+
+    res.json({ data: products });
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ message: "Something went wrong", error: error.message });
+  }
+};
+
 export {
   handleProductEntry as newProductEntryFunction,
   handleGetProductByUserItself as getProductByTheLoginSeller,
@@ -468,4 +521,5 @@ export {
   handleGetProductByBrand as getProductByBrandId,
   handleGetProductOnSubCategoryandBrand as getProductOnSubCategoryAndBrand,
   searchProducts as searchProductFunction,
+  searchProductsBySeller as searchProductBySellerFunction
 };

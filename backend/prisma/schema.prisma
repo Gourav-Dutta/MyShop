@@ -56,8 +56,7 @@ model Address {
   is_primary Boolean @default(false)
   user       User    @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
-  
-  @@index([user_id])      // When i search for user_id it make it faster
+  @@index([user_id]) // When i search for user_id it make it faster
 }
 
 // ─────────────────────────────
@@ -202,14 +201,22 @@ model Add_To_Cart {
   @@unique([user_id, productVariety_id])
 }
 
+//
+// Order status
+//
+enum OrderStatus {
+  PENDING
+  REJECTED
+  DELIVERED
+}
+
 // ─────────────────────────────
 // 6. Orders
 // ─────────────────────────────
 model Order {
-  id          Int      @id @default(autoincrement())
+  id          Int         @id @default(autoincrement())
   user_id     Int
-  order_at    DateTime @default(now())
-  status      String   @default("pending")
+  order_at    DateTime    @default(now())
   total_price Int
 
   user  User         @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
@@ -220,12 +227,12 @@ model Order {
 // 7. Order Items
 // ─────────────────────────────
 model Order_Item {
-  id                Int     @id @default(autoincrement())
+  id                Int             @id @default(autoincrement())
   order_id          Int
   productVariety_id Int
-  price             Decimal @db.Decimal(10, 2)
-  quantity          Int     @default(1)
-
-  order          Order           @relation(fields: [order_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  productVariety Product_Variety @relation(fields: [productVariety_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  price             Decimal         @db.Decimal(10, 2)
+  quantity          Int             @default(1)
+  status            OrderStatus     @default(PENDING)
+  order             Order           @relation(fields: [order_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  productVariety    Product_Variety @relation(fields: [productVariety_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }

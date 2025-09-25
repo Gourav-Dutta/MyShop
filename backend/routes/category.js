@@ -1,5 +1,5 @@
 import Router from 'express';
-import { adminMiddleware, authMiddleware } from '../middleware/auth.js';
+import { adminMiddleware, authMiddleware, sellerAdminMiddleware } from '../middleware/auth.js';
 import { newCategoryFunction,
          newSub_CategoryFunction,
          getAllCategoryItem,
@@ -30,7 +30,7 @@ router
 // sun-category routes
 router
 .post("/sub_category/post",authMiddleware, adminMiddleware, newSub_CategoryFunction )
-.get("/sub_category/All", authMiddleware, adminMiddleware, getAllSub_CategoryFunction)
+.get("/sub_category/All", authMiddleware, sellerAdminMiddleware(["SELLER", "ADMIN"]), getAllSub_CategoryFunction)
 .get("/sub_category/one/:categoryId", authMiddleware, adminMiddleware,getOneSub_CategoryFunction )
 .patch("/sub_category/update/:categoryId", authMiddleware, adminMiddleware, updateOneSub_CategoryFunction)
 .delete("/sub_category/delete/:categoryId", authMiddleware, adminMiddleware, deleteOneSub_CategoryFunction )

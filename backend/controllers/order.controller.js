@@ -6,7 +6,6 @@ const prisma = new PrismaClient();
 
 // Creating order details schema
 const orderSchema = z.object({                         // items is a array of object 
-  status: z.string().optional(),
   items: z
     .array(
       z.object({
@@ -465,6 +464,51 @@ async function handleDeleteOrderByDate(req, res) {
   }
 }
 
+
+// Get order-Item of a seller 
+
+async function handleGetOrderItemOfSeller(req, res){
+  const userId = parseInt(req.user.id);
+
+  try{
+ const Items = await prisma.order_Item.findMany({
+    where: {
+      productVariety : {
+        product : {  user_id : userId}
+      }
+    },
+    include: {
+      order : {
+        include : {
+          user: true
+        }
+      },
+      productVariety: {
+        include : {
+          product : true
+        }
+      }
+    },
+  });
+
+  if(Items.length === 0) {
+    return res.status(200).json({
+      "message" : "No order found"
+    })
+  }
+
+  return res.status(200).json({
+    "message" : "Successfully get all order",
+    "data" : Items
+  })
+  }catch(err){
+    return res.status(500).json({
+      "Message" : `An internal server error occured : ${err.message}`
+    })
+  }
+ 
+}
+
 export {
   handleInsertOrder as insertOrderFunction,
   handleGetAllOrder as getAllOrderFunction,
@@ -477,4 +521,5 @@ export {
   handleUpdateOrderStatus as updateOrderStatus,
   handleGetOrderByDate as getOrderDetailsByDate,
   handleDeleteOrderByDate as deleteOrderByDate,
+  handleGetOrderItemOfSeller as GetOrderItemBySeller
 };

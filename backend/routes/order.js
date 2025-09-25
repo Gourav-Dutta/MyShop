@@ -9,7 +9,8 @@ import { insertOrderFunction,
         deleteOrderByUserID,
         updateOrderStatus,
         getOrderDetailsByDate,
-        deleteOrderByDate
+        deleteOrderByDate,
+        GetOrderItemBySeller
        } from '../controllers/order.controller.js';
 import {authMiddleware,
         sellerAdminMiddleware,
@@ -25,6 +26,7 @@ router
 .get("/order/orderId/:orderId", authMiddleware, sellerAdminMiddleware(["ADMIN", "SELLER"]), getAllOrderByOrderId)
 .get("/order/productVarietyId/:productVariety_Id", authMiddleware, sellerAdminMiddleware(["ADMIN", "SELLER"]), getAllOrderByProductVarietyId)
 .get("/order/date", authMiddleware, adminMiddleware, getOrderDetailsByDate)
+.get("/orderItem/seller", authMiddleware, sellerAdminMiddleware(["SELLER", "ADMIN"]), GetOrderItemBySeller)
 .patch("/order/status", authMiddleware, sellerAdminMiddleware(["ADMIN", "SELLER"]), updateOrderStatus )
 .delete("/order/orderId/:orderId", authMiddleware, sellerAdminMiddleware(["ADMIN", "SELLER"]), deleteOrderByOrderId)
 .delete("/order/userId", authMiddleware, deleteOrderByUserID)
