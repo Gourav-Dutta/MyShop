@@ -3,8 +3,8 @@ import { useGetSellerOrderDetailsQuery, useGetProductOfLoginSellerQuery } from "
 export const SellerPortal = () => {
   const { data, isLoading, isError } = useGetSellerOrderDetailsQuery();
   const {data:productData, isLoading:productLoading} = useGetProductOfLoginSellerQuery();
-//   console.log(data);
-console.log(productData);
+  console.log(data);
+// console.log(productData);
 
   
 

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, Outlet, Link } from "react-router-dom";
 import { getAuthSelector } from "../context/slice/authSlice";
 import { logout } from "../context/slice/authSlice";
@@ -11,7 +11,16 @@ export function DefaultLayout() {
   const auth = useSelector(getAuthSelector);
   const [open, setOpen] = useState(false);
   const [searchItem, setSearchIten] = useState("");
-  console.log("your token is : ", localStorage.getItem("ACCESS_TOKEN"));
+  // console.log("your token is : ", localStorage.getItem("ACCESS_TOKEN"));
+
+  // Securing Default-Layout from seller :
+  const user = JSON.parse(localStorage.getItem("USER") || "null");
+  console.log("user: ", user);
+  useEffect(() => {
+    if (user?.role?.role === "SELLER") {
+      navigate("/seller/layout/sellerDashboard");
+    }
+  }, [user, navigate]);
 
   function handleProductList(searchItem) {
     navigate(`/productList/${searchItem}`);
@@ -29,7 +38,7 @@ export function DefaultLayout() {
           type="text"
           placeholder="Search here..."
           className="px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 w-3xl"
-          onChange={(e)=> setSearchIten(e.target.value)}
+          onChange={(e) => setSearchIten(e.target.value)}
           onKeyDown={(e) => {
             if (e.key === "Enter") {
               e.preventDefault();
@@ -69,7 +78,7 @@ export function DefaultLayout() {
                 className="flex items-center space-x-2 px-3 py-2  rounded-full hover:bg-gray-300"
               >
                 <span className="font-medium text-xl">
-                  {auth.user || "User"}
+                  {auth.user?.name || "User"}
                 </span>
                 <svg
                   className={`w-3 h-3 transition-transform ${

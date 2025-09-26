@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate, Outlet, Link } from "react-router-dom";
 import { getAuthSelector, logout } from "../context/slice/authSlice";
 import { useSelector, useDispatch } from "react-redux";
+import { useEffect } from "react";
 
 export function SellerLayout() {
   const navigate = useNavigate();
@@ -9,6 +10,20 @@ export function SellerLayout() {
   const auth = useSelector(getAuthSelector);
   const [open, setOpen] = useState(false);
   const [searchItem, setSearchItem] = useState("");
+
+  useEffect(() => {
+    const token = localStorage.getItem("ACCESS_TOKEN");
+    const storedUser = localStorage.getItem("USER");
+    const user = storedUser ? JSON.parse(storedUser) : null;
+
+    if (!token) {
+      navigate("/auth/login");
+    } else {
+      if (user?.role?.role !== "SELLER") {
+        navigate("/homepage");
+      }
+    }
+  }, [navigate]);
 
   function handleProductSearch(searchItem) {
     navigate(`/seller/layout/seller/products/${searchItem}`);
@@ -77,7 +92,7 @@ export function SellerLayout() {
                 className="flex items-center space-x-2 px-3 py-2  rounded-full hover:bg-gray-300"
               >
                 <span className="font-medium text-lg">
-                  {auth.user || "Seller"}
+                  {auth.user?.name || "Seller"}
                 </span>
                 <svg
                   className={`w-4 h-4 transition-transform ${
