@@ -1,7 +1,7 @@
 import { useGetProductOfLoginSellerQuery } from "../../context/slice/productSlice";
 
 
-export const SellerProduct = () => {
+export const SellerAllProduct = () => {
   const { data, isLoading, isError } = useGetProductOfLoginSellerQuery();
 
   if (isLoading) return <p className="text-center mt-10">Loading products...</p>;

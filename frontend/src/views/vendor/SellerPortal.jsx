@@ -1,22 +1,30 @@
-import { useGetSellerOrderDetailsQuery, useGetProductOfLoginSellerQuery } from "../../context/slice/productSlice";
+import {
+  useGetSellerOrderDetailsQuery,
+  useGetProductOfLoginSellerQuery,
+} from "../../context/slice/productSlice";
+import { Link } from "react-router-dom";
 
 export const SellerPortal = () => {
   const { data, isLoading, isError } = useGetSellerOrderDetailsQuery();
-  const {data:productData, isLoading:productLoading} = useGetProductOfLoginSellerQuery();
+  const { data: productData, isLoading: productLoading } =
+    useGetProductOfLoginSellerQuery();
   console.log(data);
-// console.log(productData);
-
-  
+  // console.log(productData);
 
   if (isLoading) return <p className="text-center mt-10">Loading...</p>;
-  if (isError) return <p className="text-center mt-10 text-red-500">Failed to fetch orders</p>;
+  if (isError)
+    return (
+      <p className="text-center mt-10 text-red-500">Failed to fetch orders</p>
+    );
 
   const orders = data?.data || [];
   const products = productData?.data || [];
 
-  
   const totalOrders = orders.length;
-  const totalRevenue = orders.reduce((acc, item) => acc + parseFloat(item.price), 0);
+  const totalRevenue = orders.reduce(
+    (acc, item) => acc + parseFloat(item.price),
+    0
+  );
   const pendingOrders = orders.filter((o) => o.status === "PENDING").length;
 
   return (
@@ -34,7 +42,9 @@ export const SellerPortal = () => {
         </div>
         <div className="bg-gradient-to-r from-green-500 to-emerald-600 text-white p-6 rounded-xl shadow hover:scale-105 transition">
           <h3 className="text-lg font-medium">Revenue</h3>
-          <p className="text-3xl font-bold mt-2">₹{totalRevenue.toLocaleString()}</p>
+          <p className="text-3xl font-bold mt-2">
+            ₹{totalRevenue.toLocaleString()}
+          </p>
         </div>
         <div className="bg-gradient-to-r from-amber-500 to-orange-600 text-white p-6 rounded-xl shadow hover:scale-105 transition">
           <h3 className="text-lg font-medium">Pending Orders</h3>
@@ -48,20 +58,29 @@ export const SellerPortal = () => {
 
       {/* Quick Actions */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-        <div className="bg-blue-50 p-6 rounded-xl shadow hover:shadow-md transition cursor-pointer">
-          <h4 className="text-xl font-semibold text-blue-700">➕ Add Product</h4>
-          <p className="text-gray-600 mt-2 text-sm">
-            List a new product and expand your catalog.
-          </p>
-        </div>
+        <Link to="/seller/layout/addProduct">
+          <div className="bg-blue-50 p-6 rounded-xl shadow hover:shadow-md transition cursor-pointer">
+            <h4 className="text-xl font-semibold text-blue-700">
+              ➕ Add Product
+            </h4>
+
+            <p className="text-gray-600 mt-2 text-sm">
+              List a new product and expand your catalog.
+            </p>
+          </div>
+        </Link>
         <div className="bg-green-50 p-6 rounded-xl shadow hover:shadow-md transition cursor-pointer">
-          <h4 className="text-xl font-semibold text-green-700">📦 Manage Orders</h4>
+          <h4 className="text-xl font-semibold text-green-700">
+            📦 Manage Orders
+          </h4>
           <p className="text-gray-600 mt-2 text-sm">
             Track, update, and fulfill customer orders.
           </p>
         </div>
         <div className="bg-amber-50 p-6 rounded-xl shadow hover:shadow-md transition cursor-pointer">
-          <h4 className="text-xl font-semibold text-amber-700">📊 View Analytics</h4>
+          <h4 className="text-xl font-semibold text-amber-700">
+            📊 View Analytics
+          </h4>
           <p className="text-gray-600 mt-2 text-sm">
             Monitor your store's performance and growth.
           </p>
@@ -90,8 +109,12 @@ export const SellerPortal = () => {
               {orders.slice(0, 5).map((order) => (
                 <tr key={order.id} className="border-b hover:bg-gray-50">
                   <td className="py-2">#{order.order_id}</td>
-                  <td className="py-2">{order.productVariety?.name || "N/A"}</td>
-                  <td className="py-2">{order.order?.user?.name || "Unknown"}</td>
+                  <td className="py-2">
+                    {order.productVariety?.name || "N/A"}
+                  </td>
+                  <td className="py-2">
+                    {order.order?.user?.name || "Unknown"}
+                  </td>
                   <td
                     className={`py-2 font-medium ${
                       order.status === "PENDING"

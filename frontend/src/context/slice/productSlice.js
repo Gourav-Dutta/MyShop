@@ -19,7 +19,7 @@ export const productApi = createApi({
     getProductsByCategory: builder.query({
       query: () => `product/getAll`,
     }),
-    // Get product veriety
+    // Get product veriety by Product Id
     getProductVerityBtProductId: builder.query({
       query: (id) => `variety/product/${id}`,
     }),

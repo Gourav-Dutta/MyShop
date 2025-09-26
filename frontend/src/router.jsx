@@ -14,10 +14,11 @@ import { UpdateProfile } from "./views/UpdateProfile";
 import { AddAddress } from "./views/AddAddress";
 import { UpdateAddress } from "./views/UpdateAddress";
 import { SellerLayout } from "./components/SellerLayout";
-import { SellerProductList } from "./views/vendor/SellerProductList";
+import { SellerSearchProductPage } from "./views/vendor/SellerSearchProductPage";
 import { SellerPortal } from "./views/vendor/SellerPortal";
-import { SellerProduct } from "./views/vendor/SellerProduct";
+import { SellerAllProduct } from "./views/vendor/SellerAllProduct";
 import { SellerAddProduct } from "./views/vendor/SellerAddProduct";
+import { SellerProductVerietyPage } from "./views/vendor/SellerProductVerietyPage";
 
 
 const router = createBrowserRouter([
@@ -106,15 +107,19 @@ const router = createBrowserRouter([
             },
             {
                 path: "/seller/layout/seller/products/:Search_Item",
-                element : <SellerProductList/>
+                element : <SellerSearchProductPage/>
             },
             {
                 path: "/seller/layout/product",
-                element : <SellerProduct/>
+                element : <SellerAllProduct/>
             },
             {
                path: "/seller/layout/addProduct",
                element: <SellerAddProduct/>
+            },
+            {
+                path: "/seller/layout/productVeriety/:productId",
+                element: <SellerProductVerietyPage/>
             }
         ]
     }

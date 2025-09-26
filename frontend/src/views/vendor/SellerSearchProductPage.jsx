@@ -6,7 +6,7 @@ import {
 } from "../../context/slice/productSlice";
 import { useState } from "react";
 
-export function SellerProductList() {
+export function SellerSearchProductPage() {
   const { Search_Item } = useParams();
   const navigate = useNavigate();
   const [selectedBrand, setSelectedBrand] = useState("");
@@ -159,6 +159,13 @@ export function SellerProductList() {
                         >
                           Delete
                         </button>
+                        <button
+                          onClick={() => navigate(`/seller/layout/productVeriety/${product.id}`)}
+                          className="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700 text-xs"
+                        >
+                          Veriety
+                        </button>
+
                       </td>
                     </tr>
                   ))}
