@@ -22,7 +22,7 @@ const router = Router();
 
 
 router
-.post("/image/upload", authMiddleware, sellerAdminMiddleware(["ADMIN", "SELLER"]),InsertImageFunction )
+.post("/image/upload/:varietyId", authMiddleware, sellerAdminMiddleware(["ADMIN", "SELLER"]),InsertImageFunction )
 .get("/image/variety/:varietyId", GetImageByVarietyIdFunction)
 .patch('/image/update/admin', authMiddleware, adminMiddleware, UpdateImageByAdminFunction)
 .patch("/image/update/seller/:sellerId", authMiddleware, sellerAdminMiddleware(["SELLER"]), UpdateImageByTheSellerFunction)

@@ -8,7 +8,6 @@ const prisma = new PrismaClient();
 // Insert Product Image Schema
 
 const imageSchema = z.object({
-  varietyId: z.string().min(1, "Product Varitey Id is mendatory"),
   url: z
     .string()
     .url("Image must be a valid URL")
@@ -16,28 +15,51 @@ const imageSchema = z.object({
   alt_text: z.string().min(1, "Alt text is mendatory"),
   is_primary: z.string().optional(),
 });
+const imagesSchema = z.array(imageSchema); // This is because my Backend is sending an Array not an object
 
 // Insert Product Image
 
 async function handleInsertImage(req, res) {
   try {
-    const body = imageSchema.parse(req.body);
-    body.varietyId = parseInt(body.varietyId);
+    const body = imagesSchema.parse(req.body);
+    const varietyId = parseInt(req.params.varietyId);
+    // console.log(body);
 
-    if (typeof body.is_primary === "string") {
-      if (body.is_primary.toLowerCase() === "true") {
-        body.is_primary = true;
-      } else if (body.is_primary.toLowerCase() === "false") {
-        body.is_primary = false;
-      } else {
-        throw new Error(
-          "This is a Invalid Boolean value, kindly use 'true' or 'false' "
-        );
+    // if (typeof body.is_primary === "string") {
+    //   if (body.is_primary.toLowerCase() === "true") {
+    //     body.is_primary = true;
+    //   } else if (body.is_primary.toLowerCase() === "false") {
+    //     body.is_primary = false;
+    //   } else {
+    //     throw new Error(
+    //       "This is a Invalid Boolean value, kindly use 'true' or 'false' "
+    //     );
+    //   }
+    // }
+
+    body.map((img) => {
+      if (typeof img.is_primary === "string") {
+        if (img.is_primary.toLowerCase() === "true") {
+          img.is_primary = true;
+        } else if (img.is_primary.toLowerCase() === "false") {
+          img.is_primary = false;
+        } else {
+          throw new Error(
+            "This is a Invalid Boolean value, kindly use 'true' or 'false' "
+          );
+        }
       }
-    }
+    });
 
-    const productImage = await prisma.product_Image.create({
-      data: { ...body },
+    console.log(body);
+
+    const productImage = await prisma.product_Image.createMany({
+      data: body.map((img) => ({
+        varietyId: varietyId,
+        url: img.url,
+        alt_text: img.alt_text,
+        is_primary: img.is_primary,
+      })),
     });
     if (!productImage) {
       return res.status(400).json({

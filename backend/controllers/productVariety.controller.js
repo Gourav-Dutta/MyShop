@@ -1,7 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { z } from "zod";
 
-
 const prisma = new PrismaClient();
 
 // 1. iNSERT PRODUCT VARIETY
@@ -32,7 +31,7 @@ async function handleVarietyEntery(req, res) {
     });
 
     if (!findProduct) {
-      return res.status(400).json({
+      return res.status(200).json({
         message: "No product find with the given productId",
       });
     }
@@ -56,12 +55,11 @@ async function handleVarietyEntery(req, res) {
     });
 
     if (!newVariety) {
-      res.status(400).json({
+      res.status(200).json({
         message: "Failed to enter new variety",
       });
     }
 
-   
     return res.status(201).json({
       message: "New variety entered successfully",
       data: newVariety,
@@ -72,6 +70,104 @@ async function handleVarietyEntery(req, res) {
     });
   }
 }
+
+// const imageSchema = z.object({
+//   url: z.string().url("Image URL must be valid"),
+//   alt_text: z.string().optional(),       
+//   is_primary: z.boolean().default(false) 
+// });
+
+// const singleVarietySchema = z.object({
+//   sku: z.string().min(1, "SKU is required"),
+//   color: z.string().optional(),
+//   size: z.string().optional(),
+//   weight: z.string().optional(),
+//   liter: z.string().optional(),
+//   price: z.string().min(1, "Price is required"),
+//   stock: z.string().min(1, "Stock is required"),
+//   images: z.array(imageSchema).optional()
+// });
+
+
+// export const varietySchema = z.array(singleVarietySchema);
+
+// async function handleVarietyEntery(req, res) {
+//   const body = varietySchema.parse(req.body);
+//   body.price = parseInt(body.price);
+//   body.stock = parseInt(body.stock);
+//   body.productId = parseInt(req.params.productId);
+//   console.log(body);
+
+//   body.images.map( (img) => {
+//  if (typeof img.is_primary === "string") {
+//     if (img.is_primary.toLowerCase() === "true") {
+//       img.is_primary = true;
+//     } else if (img.is_primary.toLowerCase() === "false") {
+//       img.is_primary = false;
+//     } else {
+//       throw new Error(
+//         "This is a Invalid Boolean value, kindly use 'true' or 'false' "
+//       );
+//     }
+//   }
+//   })
+ 
+  // body.images.is_primary  = Boolean(body.images.is_primary);
+
+  // try {
+  //   const findProduct = await prisma.product.findUnique({
+  //     where: { id: body.productId, user_id : parseInt(req.user.id) },
+  //   });
+
+  //   if (!findProduct) {
+  //     return res.status(200).json({
+  //       message: "No product find with the given productId",
+  //     });
+  //   }
+  //   console.log("Product found");
+
+  //   const newVariety = await prisma.product_Variety.create({
+  //     data: {
+  //       color: body.color || null,
+  //       size: body.size || null,
+  //       weight: body.weight || null,
+  //       liter: body.liter || null,
+  //       sku: body.sku,
+  //       price: body.price,
+  //       name: body.name,
+  //       stock: body.stock,
+  //       product: {
+  //         connect: { id: body.productId },
+  //       },
+  //       images: {
+  //         create: 
+  //           body.images.map( (img) => ({
+  //             url: img.url,
+  //             alt_text: img.alt_text,
+  //             is_primary: img.is_primary ?? false
+  //           }))
+          
+  //       },
+  //     },
+  //     include: { product: true,images: true },
+  //   });
+
+//     if (!newVariety) {
+//       res.status(200).json({
+//         message: "Failed to enter new variety",
+//       });
+//     }
+
+//     return res.status(201).json({
+//       message: "New variety entered successfully",
+//       data: newVariety,
+//     });
+//   } catch (err) {
+//     return res.status(500).json({
+//       Message: `An error occured durting enter new variety of  product : ${err.message}`,
+//     });
+//   }
+// }
 
 // 2 . GET PRODUCT VARIETY
 
@@ -98,7 +194,7 @@ async function handleGetProductVarietyByProductId(req, res) {
     });
 
     if (Products.length === 0) {
-      return res.status(404).json({
+      return res.status(200).json({
         message: "No variety found of this product",
       });
     }

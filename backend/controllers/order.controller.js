@@ -40,7 +40,6 @@ async function handleInsertOrder(req, res) {
     const orderDetails = await prisma.order.create({
       data: {
         user: { connect: { id: parseInt(userId) } },
-        status: body.status,
         total_price: parseInt(total_price),
 
         items: {
@@ -485,7 +484,11 @@ async function handleGetOrderItemOfSeller(req, res){
       },
       productVariety: {
         include : {
-          product : true
+          product : {
+            include: {
+              user: true
+            }
+          }
         }
       }
     },
