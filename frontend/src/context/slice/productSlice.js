@@ -22,6 +22,7 @@ export const productApi = createApi({
     // Get product veriety by Product Id
     getProductVerityBtProductId: builder.query({
       query: (id) => `variety/product/${id}`,
+      providesTags: ['getProductVerietyBtProductId'],
     }),
     // Get product by sub category
     getProductBySubCategory: builder.query({
@@ -160,6 +161,24 @@ export const productApi = createApi({
     getAllSubCategories: builder.query({
       query: () => "sub_category/All",
     }),
+    // Insert new variety function 
+    insertNewVariety: builder.mutation({
+      query: ({productId, sku, name, price, color, weight, liter, stock, size}) => ({
+        url: `variety/entry/${productId}`,
+        method: "POST",
+        body:{sku, name, price, color, weight, liter, stock, size}
+      }),
+      invalidatesTags: ["getProductVerietyBtProductId"],
+    }),
+    // insert product variety image 
+    insertImage : builder.mutation({
+      query : ({varietyId, images}) => ({
+         url: `image/upload/${varietyId}`,
+         method: "POST",
+         body: images
+      }),
+      invalidatesTags: ['getProductVerietyBtProductId']
+    })
   }),
 });
 
@@ -186,4 +205,6 @@ export const {
   useGetProductOfLoginSellerQuery,
   useAddNewProductMutation,
   useGetAllSubCategoriesQuery,
+  useInsertNewVarietyMutation,
+  useInsertImageMutation
 } = productApi;

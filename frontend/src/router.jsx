@@ -19,7 +19,8 @@ import { SellerPortal } from "./views/vendor/SellerPortal";
 import { SellerAllProduct } from "./views/vendor/SellerAllProduct";
 import { SellerAddProduct } from "./views/vendor/SellerAddProduct";
 import { SellerProductVerietyPage } from "./views/vendor/SellerProductVerietyPage";
-
+import { SellerAddProductVeriety } from "./views/vendor/SellerAddProductVeriety";
+import { SellerAddProductVerietyImage } from "./views/vendor/SellerAddProductVerietyImage";
 
 const router = createBrowserRouter([
     {
@@ -120,6 +121,14 @@ const router = createBrowserRouter([
             {
                 path: "/seller/layout/productVeriety/:productId",
                 element: <SellerProductVerietyPage/>
+            },
+            {
+                path: "/seller/layout/add/productVeriety/:productId",
+                element: <SellerAddProductVeriety/>
+            },
+            {
+                path : "/seller/layout/add/productVarietyImage/:productVerietyId",
+                element: <SellerAddProductVerietyImage/>
             }
         ]
     }

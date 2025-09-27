@@ -28,7 +28,6 @@ export function Cart() {
     }
 
     const orderData = {
-      status: "pending",
       items: products.map((item) => ({
         productVariety_id: String(item.productVariety.id),
         price: String(item.productVariety.price),

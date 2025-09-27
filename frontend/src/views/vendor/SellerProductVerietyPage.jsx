@@ -8,6 +8,8 @@ export const SellerProductVerietyPage = () => {
     useGetProductVerityBtProductIdQuery(productId);
 
   const productVariety = data?.data || [];
+  console.log("Product Id: ", productId);
+  
 
   if (isLoading)
     return <p className="text-center py-10">Loading product varieties...</p>;
@@ -24,7 +26,7 @@ export const SellerProductVerietyPage = () => {
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-gray-900">Product Varieties</h1>
         <Link
-          to="#"
+          to={`/seller/layout/add/productVeriety/${productId}`}
           className="px-5 py-2 bg-blue-600 text-white rounded-xl shadow hover:bg-blue-700 transition"
         >
           + Add Variety
@@ -36,7 +38,7 @@ export const SellerProductVerietyPage = () => {
         <div className="bg-white rounded-xl shadow p-10 text-center">
           <p className="text-gray-500 mb-4">No product varieties found.</p>
           <Link
-            to="#"
+            to={`/seller/layout/add/productVeriety/${productId}`}
             className="px-5 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition"
           >
             Add Your First Variety
