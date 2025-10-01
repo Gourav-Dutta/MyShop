@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useNavigate, Outlet, Link } from "react-router-dom";
 import { getAuthSelector } from "../context/slice/authSlice";
 import { logout } from "../context/slice/authSlice";
@@ -10,6 +10,7 @@ export function DefaultLayout() {
   const dispatch = useDispatch();
   const auth = useSelector(getAuthSelector);
   const [open, setOpen] = useState(false);
+   const dropdownRef = useRef(null);
   const [searchItem, setSearchIten] = useState("");
   // console.log("your token is : ", localStorage.getItem("ACCESS_TOKEN"));
 
@@ -25,6 +26,26 @@ export function DefaultLayout() {
   function handleProductList(searchItem) {
     navigate(`/productList/${searchItem}`);
   }
+
+
+  
+    useEffect(() => {
+      function handleClickOutside(event) {
+        if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+          setOpen(false);
+        }
+      }
+  
+      if (open) {
+        document.addEventListener("mousedown", handleClickOutside);
+      } else {
+        document.removeEventListener("mousedown", handleClickOutside);
+      }
+  
+      return () => {
+        document.removeEventListener("mousedown", handleClickOutside);
+      };
+    }, [open]);
 
   return (
     <div>
@@ -62,14 +83,14 @@ export function DefaultLayout() {
             Cart
           </Link>
           <Link
-            to="#"
+            to="auth/seller/signup"
             className="hover:text-blue-500 text-xl font-normal text-shadow-black"
           >
             Become a Seller
           </Link>
         </div>
 
-        <div className="relative inline-block text-left">
+        <div className="relative inline-block text-left" ref={dropdownRef}>
           {/* Profile Button */}
           {auth.token ? (
             <div>
@@ -104,6 +125,7 @@ export function DefaultLayout() {
                     <li>
                       <a
                         href="/myProfile"
+                        onClick={() => setOpen(false)}
                         className="block px-4 py-2 hover:bg-gray-100 text-xl font-normal"
                       >
                         Profile
@@ -112,6 +134,7 @@ export function DefaultLayout() {
                     <li>
                       <a
                         href="/orders"
+                        onClick={() => setOpen(false)}
                         className="block px-4 py-2 hover:bg-gray-100 text-xl font-normal"
                       >
                         Order
@@ -120,6 +143,7 @@ export function DefaultLayout() {
                     <li>
                       <a
                         href="#"
+                        onClick={() => setOpen(false)}
                         className="block px-4 py-2 hover:bg-gray-100 text-xl font-normal"
                       >
                         Settings

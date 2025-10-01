@@ -21,6 +21,12 @@ export function ProductPage() {
 
   if (isLoading) return <p className="text-center">...loading</p>;
   if (error) return <p className="text-red-500">{error.message}</p>;
+ if (data?.message === "No variety found of this product")
+    return (
+      <p className="text-center text-gray-600 py-10">
+        Sorry, we are unable to find this product. Please try again later.
+      </p>
+    );
 
   const varieties = data?.data || [];
   const currentVariety = selectedVariety || varieties[0]; // Initially the first index of varieties is current variety , but when we use setSelectedVariety then this selected variety is become current variety
@@ -188,7 +194,7 @@ export function ProductPage() {
 
             {/* description */}
             <p className="text-gray-800 text-xl font-medium">
-              {currentVariety.product?.description}
+              {currentVariety?.product?.description}
             </p>
 
             {/* Stock info */}

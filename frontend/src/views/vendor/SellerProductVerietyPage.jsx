@@ -1,11 +1,13 @@
 import { useParams, Link } from "react-router-dom";
-import { useGetProductVerityBtProductIdQuery } from "../../context/slice/productSlice";
+import { useGetProductVerityBtProductIdQuery, useDeleteVarietyMutation } from "../../context/slice/productSlice";
 import { Edit, Trash2 } from "lucide-react";
+import toast from "react-hot-toast";
 
 export const SellerProductVerietyPage = () => {
   const { productId } = useParams();
   const { data, isLoading, isError } =
     useGetProductVerityBtProductIdQuery(productId);
+    const [deleteVariety] = useDeleteVarietyMutation();
 
   const productVariety = data?.data || [];
   console.log("Product Id: ", productId);
@@ -19,6 +21,16 @@ export const SellerProductVerietyPage = () => {
         Failed to load product varieties
       </p>
     );
+
+    const handleDeleteVariety =  async (varietyId) => {
+        try {
+          await deleteVariety({ varietyId: varietyId });
+          toast.success("Product variety deleted");
+        } catch (err) {
+          console.log(err.message);
+          toast.fail("Failed to delete variety");
+        }
+      };
 
   return (
     <div className="p-6">
@@ -91,13 +103,13 @@ export const SellerProductVerietyPage = () => {
               {/* Actions */}
               <div className="flex gap-3">
                 <Link
-                  to="#"
+                  to={`/seller/layout/update/productVariety/${variety.id}`}
                   className="p-2 bg-green-100 text-green-700 rounded-lg hover:bg-green-200 transition"
                 >
                   <Edit size={18} />
                 </Link>
                 <button
-                  onClick={() => console.log("Delete variety", variety.id)}
+                  onClick={() => handleDeleteVariety(variety.id)}
                   className="p-2 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition"
                 >
                   <Trash2 size={18} />

@@ -3,6 +3,7 @@ import { useNavigate, Outlet, Link } from "react-router-dom";
 import { getAuthSelector, logout } from "../context/slice/authSlice";
 import { useSelector, useDispatch } from "react-redux";
 import { useEffect } from "react";
+import { useRef } from "react";
 
 export function SellerLayout() {
   const navigate = useNavigate();
@@ -10,6 +11,7 @@ export function SellerLayout() {
   const auth = useSelector(getAuthSelector);
   const [open, setOpen] = useState(false);
   const [searchItem, setSearchItem] = useState("");
+  const dropdownRef = useRef(null);
 
   useEffect(() => {
     const token = localStorage.getItem("ACCESS_TOKEN");
@@ -28,6 +30,24 @@ export function SellerLayout() {
   function handleProductSearch(searchItem) {
     navigate(`/seller/layout/seller/products/${searchItem}`);
   }
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setOpen(false);
+      }
+    }
+
+    if (open) {
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [open]);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -70,7 +90,7 @@ export function SellerLayout() {
             Products
           </Link>
           <Link
-            to="/seller/orders"
+            to="/seller/layout/order/All"
             className="hover:text-blue-500 text-xl font-normal text-shadow-black"
           >
             Orders
@@ -84,7 +104,7 @@ export function SellerLayout() {
         </div>
 
         {/* Profile Dropdown */}
-        <div className="relative inline-block text-left">
+        <div className="relative inline-block text-left"  ref={dropdownRef}>
           {auth.token ? (
             <div>
               <button
@@ -116,7 +136,8 @@ export function SellerLayout() {
                   <ul className="py-2 text-sm">
                     <li>
                       <Link
-                        to="/seller/profile"
+                        to="/seller/layout/myProfile"
+                        onClick={() => setOpen(false)}
                         className="block px-4 py-2 hover:bg-gray-100 text-xl font-normal"
                       >
                         Profile
@@ -124,7 +145,8 @@ export function SellerLayout() {
                     </li>
                     <li>
                       <Link
-                        to="/seller/payouts"
+                        to="#"
+                        onClick={() => setOpen(false)}
                         className="block px-4 py-2 hover:bg-gray-100 text-xl font-normal"
                       >
                         Payouts
@@ -132,7 +154,8 @@ export function SellerLayout() {
                     </li>
                     <li>
                       <Link
-                        to="/seller/settings"
+                        to="#"
+                        onClick={() => setOpen(false)}
                         className="block px-4 py-2 hover:bg-gray-100 text-xl font-normal"
                       >
                         Settings

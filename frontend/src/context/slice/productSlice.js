@@ -15,7 +15,7 @@ export const productApi = createApi({
   }),
 
   endpoints: (builder) => ({
-    // Get product by category
+    // Get All Product :
     getProductsByCategory: builder.query({
       query: () => `product/getAll`,
     }),
@@ -63,7 +63,7 @@ export const productApi = createApi({
       query: () => "/user/addToCart/getProduct",
       providesTags: ["getAddToCard"],
     }),
-    // Get a user profile
+    // Get a user profile 
     getUserProfile: builder.query({
       query: () => "/user/one",
       providesTags: ["getUserProfile"],
@@ -101,10 +101,10 @@ export const productApi = createApi({
     }),
     // Update address of a user based on address-Id function
     updateAddress: builder.mutation({
-      query: ({ addId, house_no, pin_no, state, city }) => ({
+      query: ({ addId, house_no, pin_no, state, city, shop_line }) => ({
         url: `/update/Address/${addId}`,
         method: "PATCH",
-        body: { house_no, pin_no, state, city },
+        body: { house_no, pin_no, state, city, shop_line },
       }),
       invalidatesTags: ["getUserProfile"],
     }),
@@ -119,10 +119,10 @@ export const productApi = createApi({
     }),
     // Add new address function
     addAddress: builder.mutation({
-      query: ({ city, house_no, pin_no, state, is_primary }) => ({
+      query: ({ city, house_no, pin_no, state, is_primary, shop_line }) => ({
         url: "/address/new",
         method: "POST",
-        body: { city, house_no, pin_no, state, is_primary },
+        body: { city, house_no, pin_no, state, is_primary, shop_line },
       }),
       invalidatesTags: ["getUserProfile"],
     }),
@@ -178,7 +178,63 @@ export const productApi = createApi({
          body: images
       }),
       invalidatesTags: ['getProductVerietyBtProductId']
-    })
+    }),
+    // Get order of a Seller
+    getOrderOfSeller : builder.query({
+      query : () => "orderItem/seller",
+      providesTags: ['getOrderOfSeller'],
+    }),
+    // update order status
+    updateOrderStatus: builder.mutation({
+      query : ({orderId, status}) => ({
+        url: `order/status/${orderId}`,
+        method: "PATCH",
+        body: {status}
+      }),
+      invalidatesTags: ['getOrderOfSeller'],
+    }),
+    // Get specific variety details by varietyId
+    getSpecificVarietyDetails: builder.query({
+      query: (varietyId) => `variety/varietyId/${varietyId}`
+    }),
+    // Update Product Variety
+    updateProductVariety: builder.mutation({
+      query: ({varietyId, formData}) => ({
+        url: `/variety/update/seller/${varietyId}`,
+        method: "PATCH",
+        body: formData
+      }),
+      invalidatesTags: [""]
+    }),
+    // Get product By product Id
+    getProductDetailsByProductId: builder.query({
+      query: (productId) => `product/${productId}`
+    }),
+    // Update product by Product ID
+    updateProduct: builder.mutation({
+      query : ({productId, formData}) => ({
+        url: `product/update/${productId}`,
+        method: "PATCH",
+        body: formData
+      })
+    }),
+    // Delete product by product ID
+    deleteProduct: builder.mutation({
+      query : ({productId})=> ({
+        url: `product/delete/${productId}`,
+        method: "DELETE"
+      })
+    }),
+    // Delete product variety by Variety-ID
+    deleteVariety: builder.mutation({
+      query: ({varietyId}) => ({
+        url: `/variety/delete/${varietyId}`,
+        method: "DELETE"
+      }) 
+    }),
+     
+    
+
   }),
 });
 
@@ -206,5 +262,14 @@ export const {
   useAddNewProductMutation,
   useGetAllSubCategoriesQuery,
   useInsertNewVarietyMutation,
-  useInsertImageMutation
+  useInsertImageMutation,
+  useGetOrderOfSellerQuery,
+  useUpdateOrderStatusMutation,
+  useGetSpecificVarietyDetailsQuery,
+  useUpdateProductVarietyMutation,
+  useGetProductDetailsByProductIdQuery,
+  useUpdateProductMutation,
+  useDeleteProductMutation,
+  useDeleteVarietyMutation
+  
 } = productApi;

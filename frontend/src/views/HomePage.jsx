@@ -20,9 +20,11 @@ export function HomePage() {
         <p className="text-lg md:text-xl font-medium text-center">
           Shop at <span className="font-bold">MyShop</span> and save big today!
         </p>
+        <Link to={"/allProductPage"}>
         <button className="mt-6 px-6 py-3 bg-white text-indigo-600 font-semibold rounded-full shadow hover:bg-gray-100 transition">
           Start Shopping
         </button>
+        </Link>
       </div>
 
       {/* Top Products */}

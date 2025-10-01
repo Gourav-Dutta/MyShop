@@ -21,7 +21,16 @@ import { SellerAddProduct } from "./views/vendor/SellerAddProduct";
 import { SellerProductVerietyPage } from "./views/vendor/SellerProductVerietyPage";
 import { SellerAddProductVeriety } from "./views/vendor/SellerAddProductVeriety";
 import { SellerAddProductVerietyImage } from "./views/vendor/SellerAddProductVerietyImage";
-
+import { SellerAllOrders } from "./views/vendor/SellerAllOrders";
+import { SellerUpdateOrder } from "./views/vendor/SellerUpdateOrder";
+import { SellerUpdateProductVariety } from "./views/vendor/SellerUpdateProductVariety";
+import { SellerUpdateProductPage } from "./views/vendor/SellerUpdateProductPage";
+import { SellerProfilePage } from "./views/vendor/SellerProfilePage";
+import { SellerUpdateProfilePage } from "./views/vendor/SellerUpdateProfilePage";
+import { SellerAddNewAddress } from "./views/vendor/SellerAddNewAddress";
+import { SellerUpdateAddressPage } from "./views/vendor/SellerUpdateAddressPage";
+import { SellerSignUpPage } from "./views/vendor/SellerSignUpPage";
+import { AllProductPage } from "./views/AllProductPage";
 const router = createBrowserRouter([
     {
         path: '/auth',
@@ -43,6 +52,10 @@ const router = createBrowserRouter([
                 path: '/auth/requestLogin',
                 element: <LoginRequest/>
             },
+            {
+                path: "/auth/seller/signup",
+                element: <SellerSignUpPage/>
+            }
            
         ]
    
@@ -90,6 +103,10 @@ const router = createBrowserRouter([
             {
                 path : "/update/address/:addId",
                 element : <UpdateAddress/>
+            },
+            {
+                path: "/allProductPage",
+                element: <AllProductPage/>
             }
         ]
     },
@@ -129,6 +146,38 @@ const router = createBrowserRouter([
             {
                 path : "/seller/layout/add/productVarietyImage/:productVerietyId",
                 element: <SellerAddProductVerietyImage/>
+            },
+            {
+                path : "/seller/layout/order/All",
+                element: <SellerAllOrders/>
+            },
+            {
+                path: "/seller/layout/update/order/:orderId/:currentOrderStatus",
+                element: <SellerUpdateOrder/>
+            },
+            {
+                path: "/seller/layout/update/productVariety/:varietyId",
+                element: <SellerUpdateProductVariety/>
+            },
+            {
+                path: "/seller/layout/update/product/:productId",
+                element: <SellerUpdateProductPage/>
+            },
+            {
+                path: "/seller/layout/myProfile",
+                element: <SellerProfilePage/>
+            },
+            {
+                path: "/seller/layout/update/profile",
+                element: <SellerUpdateProfilePage/>
+            },
+            {
+                path: "/seller/layout/add/Address",
+                element: <SellerAddNewAddress/>
+            },
+            {
+                path: "/seller/layout/update/Address/:addId",
+                element: <SellerUpdateAddressPage/>
             }
         ]
     }

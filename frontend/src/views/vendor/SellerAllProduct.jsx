@@ -1,11 +1,31 @@
-import { useGetProductOfLoginSellerQuery } from "../../context/slice/productSlice";
-
-
+import {
+  useGetProductOfLoginSellerQuery,
+  useDeleteProductMutation,
+} from "../../context/slice/productSlice";
+import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 export const SellerAllProduct = () => {
   const { data, isLoading, isError } = useGetProductOfLoginSellerQuery();
+  const [deleteProduct] = useDeleteProductMutation();
+  const navigate = useNavigate();
 
-  if (isLoading) return <p className="text-center mt-10">Loading products...</p>;
-  if (isError) return <p className="text-center text-red-500 mt-10">Failed to fetch products.</p>;
+  if (isLoading)
+    return <p className="text-center mt-10">Loading products...</p>;
+  if (isError)
+    return (
+      <p className="text-center text-red-500 mt-10">
+        Failed to fetch products.
+      </p>
+    );
+  const handleDeleteProduct = async (productId) => {
+    try {
+      await deleteProduct({ productId: productId });
+      toast.success("Product deleted");
+    } catch (err) {
+      console.log(err.message);
+      toast.fail("Failed to delete product");
+    }
+  };
 
   const products = data?.data || [];
 
@@ -57,10 +77,18 @@ export const SellerAllProduct = () => {
 
                 {/* Actions */}
                 <div className="flex gap-17 mt-5 flex-row absolute bottom-3">
-                  <button className="w-36 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl">
+                  <button
+                    className="w-36 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl"
+                    onClick={() =>
+                      navigate(`/seller/layout/update/product/${product.id}`)
+                    }
+                  >
                     Edit
                   </button>
-                  <button className="w-36 bg-red-600 hover:bg-red-700 text-white rounded-2xl">
+                  <button
+                    className="w-36 bg-red-600 hover:bg-red-700 text-white rounded-2xl"
+                    onClick={() => handleDeleteProduct(product.id)}
+                  >
                     Delete
                   </button>
                 </div>

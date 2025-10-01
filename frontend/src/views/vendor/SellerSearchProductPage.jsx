@@ -3,8 +3,10 @@ import {
   useGetAllBrandsQuery,
   useLazyGetProductsBySearchQuery,
   useGetSellerProductQuery,
+  useDeleteProductMutation
 } from "../../context/slice/productSlice";
 import { useState } from "react";
+import toast from "react-hot-toast";
 
 export function SellerSearchProductPage() {
   const { Search_Item } = useParams();
@@ -18,6 +20,7 @@ export function SellerSearchProductPage() {
     isError: productError,
     error: productErr,
   } = useGetSellerProductQuery({ q: Search_Item });
+  const [deleteProduct] = useDeleteProductMutation();
 
   // Brands query
   const {
@@ -43,6 +46,16 @@ export function SellerSearchProductPage() {
         Failed to fetch products: {productErr?.data?.message || "Something went wrong"}
       </p>
     );
+  }
+
+  const handleDeleteProduct = async (productId) => {
+      try{
+        await deleteProduct({productId: productId});
+        toast.success("Product deleted");
+      }catch(err){
+        console.log(err.message);
+        toast.fail("Failed to delete product");
+      }
   }
 
   return (
@@ -148,13 +161,13 @@ export function SellerSearchProductPage() {
                       </td>
                       <td className="px-4 py-3 flex justify-end space-x-2">
                         <button
-                          onClick={() => navigate(`/seller/editProduct/${product.id}`)}
+                          onClick={() => navigate(`/seller/layout/update/product/${product.id}`)}
                           className="px-3 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600 text-xs"
                         >
                           Edit
                         </button>
                         <button
-                          onClick={() => console.log("Delete product", product.id)}
+                          onClick={() => handleDeleteProduct(product.id)}
                           className="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 text-xs"
                         >
                           Delete

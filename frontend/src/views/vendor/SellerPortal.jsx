@@ -69,6 +69,7 @@ export const SellerPortal = () => {
             </p>
           </div>
         </Link>
+        <Link to="/seller/layout/order/All">
         <div className="bg-green-50 p-6 rounded-xl shadow hover:shadow-md transition cursor-pointer">
           <h4 className="text-xl font-semibold text-green-700">
             📦 Manage Orders
@@ -77,6 +78,7 @@ export const SellerPortal = () => {
             Track, update, and fulfill customer orders.
           </p>
         </div>
+        </Link>
         <div className="bg-amber-50 p-6 rounded-xl shadow hover:shadow-md transition cursor-pointer">
           <h4 className="text-xl font-semibold text-amber-700">
             📊 View Analytics
