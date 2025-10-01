@@ -8,8 +8,8 @@ import {
         getVarietyUsingSellerIdByAdmin,
         updateVarietyByVarietyId,
         updateVarietyByVarietyIdOfThatSeller,
-        deleteVarietyByVarietyBySeller,
-        deleteVarietyByVarietyByAdmin
+        // deleteVarietyByVarietyBySeller,
+        deleteVarietyByVariety
 
 } from "../controllers/productVariety.controller.js";
 import {
@@ -30,10 +30,10 @@ router
 .get("/variety/seller/:sellerId", authMiddleware, sellerAdminMiddleware(["SELLER"]), getVarietyByThatSeller)
 .get("/variety/varietyId/:varietyId", getVarietyByVarietyId)
 .get("/variety/admin/seller", authMiddleware, adminMiddleware, getVarietyUsingSellerIdByAdmin)
-.patch("/variety/update/seller/:sellerId", authMiddleware, sellerAdminMiddleware(["SELLER"]), updateVarietyByVarietyIdOfThatSeller)
+.patch("/variety/update/seller/:varietyId", authMiddleware, sellerAdminMiddleware(["SELLER"]), updateVarietyByVarietyIdOfThatSeller)
 .patch("/variety/update/admin/:varietyId", authMiddleware, adminMiddleware, updateVarietyByVarietyId)
-.delete("/variety/delete/seller/:sellerId", authMiddleware, sellerAdminMiddleware(["SELLER"]), deleteVarietyByVarietyBySeller)
-.delete('/variety/delete/admin/:varietyId', authMiddleware, adminMiddleware, deleteVarietyByVarietyByAdmin)
+// .delete("/variety/delete/seller/:sellerId", authMiddleware, sellerAdminMiddleware(["SELLER"]), deleteVarietyByVarietyBySeller)
+.delete('/variety/delete/:varietyId', authMiddleware, sellerAdminMiddleware(["SELLER", "ADMIN"]), deleteVarietyByVariety)
 
 
 

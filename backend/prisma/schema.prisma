@@ -51,6 +51,7 @@ model Address {
   city       String
   state      String
   house_no   String
+  shop_line  String?
   pin_no     String
   user_id    Int
   is_primary Boolean @default(false)
@@ -201,6 +202,16 @@ model Add_To_Cart {
   @@unique([user_id, productVariety_id])
 }
 
+// 
+// Payment Method //
+//
+
+model Payment_Method {
+  id             Int     @id @default(autoincrement())
+  payment_method String
+  // Order          Order[]
+}
+
 //
 // Order status
 //
@@ -214,13 +225,15 @@ enum OrderStatus {
 // 6. Orders
 // ─────────────────────────────
 model Order {
-  id          Int         @id @default(autoincrement())
-  user_id     Int
-  order_at    DateTime    @default(now())
-  total_price Int
+  id           Int      @id @default(autoincrement())
+  user_id      Int
+  order_at     DateTime @default(now())
+  total_price  Int
+  // payment_type Int     
 
-  user  User         @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  items Order_Item[]
+  user    User           @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  // payment Payment_Method @relation(fields: [payment_type], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  items   Order_Item[]
 }
 
 // ─────────────────────────────

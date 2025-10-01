@@ -13,7 +13,7 @@ const userSchema = z.object({
     email : z.string().email("Invalid email fromat"),
     password : z.string().min(6, "Password must be at least 6 character Long"),
     phone_no : z.string().min(10, "Phone number must be at least 10 digits").max(15, "Phone number must not exceed 15 digits"),
-    role_id : z.string().optional()
+    role_id : z.string().optional(),
 })
 
 async function handleUserSignUp(req, res){

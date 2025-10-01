@@ -97,9 +97,9 @@ async function handleGetAllProduct(req, res) {
       },
     });
 
-    if (!allProducts) {
+    if (allProducts.length === 0) {
       return res.status(200).json({
-        message: "No Products",
+        message: "No Products found ",
       });
     }
 
@@ -276,18 +276,21 @@ async function handleGetProductOnSubCategoryandBrand(req, res) {
 
 async function handleUpdateProductproduct_Id(req, res) {
   try {
-    console.log(req.user);
+    // console.log(req.user);
 
     const product_Id = parseInt(req.params.product_id);
     const user_Id = parseInt(req.user.id);
 
-    const { name, description, sub_catagory_id, base_image, brand } = req.body;
+    const { name, description, sub_catagory_id, base_image, brand, status } = req.body;
     const updateData = {};
     if (name) updateData.name = name;
     if (description) updateData.description = description;
     if (sub_catagory_id) updateData.sub_catagory_id = parseInt(sub_catagory_id);
     if (base_image) updateData.base_image = base_image;
     if (brand) updateData.base_image = brand;
+    if (status) updateData.status = status;
+    console.log(updateData);
+    
 
     const validateUser = await prisma.product.findFirst({
       where: { id: product_Id, user_id: user_Id },

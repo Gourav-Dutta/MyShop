@@ -73,8 +73,8 @@ async function handleVarietyEntery(req, res) {
 
 // const imageSchema = z.object({
 //   url: z.string().url("Image URL must be valid"),
-//   alt_text: z.string().optional(),       
-//   is_primary: z.boolean().default(false) 
+//   alt_text: z.string().optional(),
+//   is_primary: z.boolean().default(false)
 // });
 
 // const singleVarietySchema = z.object({
@@ -87,7 +87,6 @@ async function handleVarietyEntery(req, res) {
 //   stock: z.string().min(1, "Stock is required"),
 //   images: z.array(imageSchema).optional()
 // });
-
 
 // export const varietySchema = z.array(singleVarietySchema);
 
@@ -111,46 +110,46 @@ async function handleVarietyEntery(req, res) {
 //     }
 //   }
 //   })
- 
-  // body.images.is_primary  = Boolean(body.images.is_primary);
 
-  // try {
-  //   const findProduct = await prisma.product.findUnique({
-  //     where: { id: body.productId, user_id : parseInt(req.user.id) },
-  //   });
+// body.images.is_primary  = Boolean(body.images.is_primary);
 
-  //   if (!findProduct) {
-  //     return res.status(200).json({
-  //       message: "No product find with the given productId",
-  //     });
-  //   }
-  //   console.log("Product found");
+// try {
+//   const findProduct = await prisma.product.findUnique({
+//     where: { id: body.productId, user_id : parseInt(req.user.id) },
+//   });
 
-  //   const newVariety = await prisma.product_Variety.create({
-  //     data: {
-  //       color: body.color || null,
-  //       size: body.size || null,
-  //       weight: body.weight || null,
-  //       liter: body.liter || null,
-  //       sku: body.sku,
-  //       price: body.price,
-  //       name: body.name,
-  //       stock: body.stock,
-  //       product: {
-  //         connect: { id: body.productId },
-  //       },
-  //       images: {
-  //         create: 
-  //           body.images.map( (img) => ({
-  //             url: img.url,
-  //             alt_text: img.alt_text,
-  //             is_primary: img.is_primary ?? false
-  //           }))
-          
-  //       },
-  //     },
-  //     include: { product: true,images: true },
-  //   });
+//   if (!findProduct) {
+//     return res.status(200).json({
+//       message: "No product find with the given productId",
+//     });
+//   }
+//   console.log("Product found");
+
+//   const newVariety = await prisma.product_Variety.create({
+//     data: {
+//       color: body.color || null,
+//       size: body.size || null,
+//       weight: body.weight || null,
+//       liter: body.liter || null,
+//       sku: body.sku,
+//       price: body.price,
+//       name: body.name,
+//       stock: body.stock,
+//       product: {
+//         connect: { id: body.productId },
+//       },
+//       images: {
+//         create:
+//           body.images.map( (img) => ({
+//             url: img.url,
+//             alt_text: img.alt_text,
+//             is_primary: img.is_primary ?? false
+//           }))
+
+//       },
+//     },
+//     include: { product: true,images: true },
+//   });
 
 //     if (!newVariety) {
 //       res.status(200).json({
@@ -288,8 +287,8 @@ async function handleGetVarietyByVarietyId(req, res) {
     });
 
     if (Products.length === 0) {
-      return res.status(404).json({
-        message: "No variety found of yours",
+      return res.status(200).json({
+        message: "No variety found of that product",
       });
     }
 
@@ -335,8 +334,8 @@ async function handleGetAllVariety(req, res) {
 
 async function handleUpdateVarietyByVarietyIdOfThatSeller(req, res) {
   try {
-    const sellerId = parseInt(req.params.sellerId);
-    const varietyId = parseInt(req.body.varietyId);
+    const sellerId = parseInt(req.user.id);
+    const varietyId = parseInt(req.params.varietyId);
     const { color, size, product_id, weight, liter, price, sku, stock } =
       req.body;
     const updateData = {};
@@ -345,23 +344,28 @@ async function handleUpdateVarietyByVarietyIdOfThatSeller(req, res) {
     if (product_id) updateData.product_id = product_id;
     if (weight) updateData.weight = weight;
     if (liter) updateData.liter = liter;
-    if (price) updateData.price = price;
+    if (price) updateData.price = parseInt(price);
     if (sku) updateData.sku = sku;
-    if (stock) updateData.stock = stock;
+    if (stock) updateData.stock = parseInt(stock);
+    console.log(updateData);
 
     const variety = await prisma.product_Variety.findFirst({
       where: { id: varietyId, product: { user_id: sellerId } },
     });
 
-    if (!variety) return res.status(403).json({ message: "Unauthorized" });
+    if (!variety)
+      return res
+        .status(200)
+        .json({ message: "No product variety found with this credentials" });
 
     const product = await prisma.product_Variety.update({
       where: { id: varietyId },
       data: updateData,
+      include: { product: true },
     });
 
     if (!product) {
-      return res.status(400).json({
+      return res.status(200).json({
         message: "Failed to update data",
       });
     }
@@ -382,6 +386,7 @@ async function handleUpdateVarietyByVarietyIdOfThatSeller(req, res) {
 async function handleUpdateVarietyByVarietyIdByAdmin(req, res) {
   try {
     const varietyId = parseInt(req.params.varietyId);
+    // const userId = parseInt(req.user.id);
     const { color, size, product_id, weight, liter, price, sku, stock } =
       req.body;
     const updateData = {};
@@ -400,7 +405,7 @@ async function handleUpdateVarietyByVarietyIdByAdmin(req, res) {
     });
 
     if (!product) {
-      return res.status(400).json({
+      return res.status(200).json({
         message: "Failed to update data",
       });
     }
@@ -420,56 +425,66 @@ async function handleUpdateVarietyByVarietyIdByAdmin(req, res) {
 
 // Delete Product Variety by product Variety Id -- seller only
 
-async function handleDeleteVarietyByVarietyIdOfThatSeller(req, res) {
-  try {
-    const sellerId = parseInt(req.params.sellerId);
-    const varietyId = parseInt(req.body.varietyId);
+// async function handleDeleteVarietyByVarietyIdOfThatSeller(req, res) {
+//   try {
+//     const sellerId = parseInt(req.params.sellerId);
+//     const varietyId = parseInt(req.body.varietyId);
 
+//     const variety = await prisma.product_Variety.findFirst({
+//       where: { id: varietyId, product: { user_id: sellerId } },
+//     });
+
+//     if (!variety)
+//       return res
+//         .status(403)
+//         .json({ message: "You are not authorized to perform this action" });
+
+//     const product = await prisma.product_Variety.deleteMany({
+//       where: {
+//         id: varietyId,
+//       },
+//     });
+
+//     if (!product) {
+//       return res.status(400).json({
+//         message: "Failed to update data",
+//       });
+//     }
+
+//     return res.status(200).json({
+//       message: "Successfully Updated Product",
+//       product: product,
+//     });
+//   } catch (err) {
+//     return res.status(500).json({
+//       Message: `An error occured durting get update  product : ${err.message}`,
+//     });
+//   }
+// }
+
+// Delete product variety by product variety ID by Seller.
+
+async function handleDeleteVarietyByVarietyId(req, res) {
+  try {
+    const varietyId = parseInt(req.params.varietyId);
+    const sellerId = parseInt(req.user.id);
     const variety = await prisma.product_Variety.findFirst({
       where: { id: varietyId, product: { user_id: sellerId } },
     });
 
-    if (!variety)
-      return res
-        .status(403)
-        .json({ message: "You are not authorized to perform this action" });
-    const product = await prisma.product_Variety.deleteMany({
-      where: {
-        id: varietyId,
-      },
-    });
-
-    if (!product) {
-      return res.status(400).json({
-        message: "Failed to update data",
+    if (!variety) {
+      return res.status(403).json({
+        msg: "Sorry you are not authorizied to perform this action !",
       });
     }
-
-    return res.status(200).json({
-      message: "Successfully Updated Product",
-      product: product,
-    });
-  } catch (err) {
-    return res.status(500).json({
-      Message: `An error occured durting get update  product : ${err.message}`,
-    });
-  }
-}
-
-// Delete product variety by product variety ID by Admin --- Admin only
-
-async function handleDeleteVarietyByVarietyIdByAdmin(req, res) {
-  try {
-    const varietyId = parseInt(req.params.varietyId);
-
     const product = await prisma.product_Variety.deleteMany({
       where: {
         id: varietyId,
       },
     });
 
-    if (!product) {
-      return res.status(400).json({
+    if (product.count === 0) {
+      return res.status(200).json({
         message: "Failed to update data",
       });
     }
@@ -494,6 +509,6 @@ export {
   handleGetVarietyByVarietyId as getVarietyByVarietyId,
   handleUpdateVarietyByVarietyIdOfThatSeller as updateVarietyByVarietyIdOfThatSeller,
   handleUpdateVarietyByVarietyIdByAdmin as updateVarietyByVarietyId,
-  handleDeleteVarietyByVarietyIdOfThatSeller as deleteVarietyByVarietyBySeller,
-  handleDeleteVarietyByVarietyIdByAdmin as deleteVarietyByVarietyByAdmin,
+  // handleDeleteVarietyByVarietyIdOfThatSeller as deleteVarietyByVarietyBySeller,
+  handleDeleteVarietyByVarietyId as deleteVarietyByVariety,
 };

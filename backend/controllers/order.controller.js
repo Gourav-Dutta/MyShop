@@ -381,24 +381,27 @@ async function handleDeleteOrderByProductVarietyId(req, res) {
 async function handleUpdateOrderStatus(req, res) {
   try {
     const updateData = {};
-    const { status, orderId } = req.body;
+    const { status } = req.body;
+    const orderItemId = parseInt(req.params.orderItemId);  
 
     if (status) updateData.status = status;
+    console.log(updateData.status);
+    
 
     // const {status, orderId} = req.body;
 
-    const orderDetails = await prisma.order.update({
-      where: { id: parseInt(orderId) },
+    const orderDetails = await prisma.order_Item.update({
+      where: { id: orderItemId },
       data: {
         status: updateData.status,
         // status : status
         // ...updateData
       },
-      include: { items: true },
+      include: { order: true },
     });
 
     if (!orderDetails) {
-      return res.status(400).json({
+      return res.status(200).json({
         Message: "Order not found",
       });
     }

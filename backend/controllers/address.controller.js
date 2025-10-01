@@ -9,6 +9,7 @@ const addressSchema = z.object({
   pin_no: z.string().min(1, "Please enter your current PIN NO "),
   state: z.string().min(1, "You have to provide your State Name"),
   is_primary: z.string(),
+  shop_line: z.string().optional()
 });
 
 async function handleNewAddress(req, res) {
@@ -28,7 +29,7 @@ async function handleNewAddress(req, res) {
         );
       }
     }
-    console.log(body.is_primary);
+    console.log(body);
     if (body.is_primary) {
       await prisma.address.updateMany({          // Check if any address is primary that make it false
         where: { user_id: userId, is_primary: true },
@@ -44,6 +45,7 @@ async function handleNewAddress(req, res) {
         pin_no: body.pin_no,
         user_id: userId,
         is_primary: body.is_primary,
+        shop_line: body.shop_line 
       },
       include: { user: true },
     });
@@ -216,12 +218,13 @@ async function handleUpdateAddress(req, res) {
   const userId = parseInt(req.user.id);
   const addId = parseInt(req.params.addId);
 
-  const { house_no, city, state, pin_no } = req.body;
+  const { house_no, city, state, pin_no, shop_line } = req.body;
   const body = {};
   if (house_no) body.house_no = house_no;
   if (city) body.city = city;
   if (state) body.state = state;
   if (pin_no) body.pin_no = pin_no;
+  if (shop_line) body.shop_line = shop_line;
   console.log(body);
 
   const updateAddress = await prisma.address.updateMany({
