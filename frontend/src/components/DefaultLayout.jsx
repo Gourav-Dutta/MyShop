@@ -10,7 +10,7 @@ export function DefaultLayout() {
   const dispatch = useDispatch();
   const auth = useSelector(getAuthSelector);
   const [open, setOpen] = useState(false);
-   const dropdownRef = useRef(null);
+  const dropdownRef = useRef(null);
   const [searchItem, setSearchIten] = useState("");
   // console.log("your token is : ", localStorage.getItem("ACCESS_TOKEN"));
 
@@ -27,25 +27,23 @@ export function DefaultLayout() {
     navigate(`/productList/${searchItem}`);
   }
 
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setOpen(false);
+      }
+    }
 
-  
-    useEffect(() => {
-      function handleClickOutside(event) {
-        if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-          setOpen(false);
-        }
-      }
-  
-      if (open) {
-        document.addEventListener("mousedown", handleClickOutside);
-      } else {
-        document.removeEventListener("mousedown", handleClickOutside);
-      }
-  
-      return () => {
-        document.removeEventListener("mousedown", handleClickOutside);
-      };
-    }, [open]);
+    if (open) {
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [open]);
 
   return (
     <div>
@@ -120,7 +118,7 @@ export function DefaultLayout() {
 
               {/* Dropdown Menu */}
               {open && (
-                <div className="absolute right-0 mt-2 w-40 bg-white rounded-lg shadow-lg border border-gray-200">
+                <div className="absolute right-0 mt-2 w-50 bg-white rounded-lg shadow-lg border border-gray-200">
                   <ul className="py-2 text-sm">
                     <li>
                       <a
@@ -149,6 +147,21 @@ export function DefaultLayout() {
                         Settings
                       </a>
                     </li>
+                    {user?.role?.role === "ADMIN" && (
+                      <li>
+                        <a
+                          href="/adminDashboard"
+                          onClick={() => setOpen(false)}
+                          className="block px-5 py-3 rounded-xl text-lg font-medium 
+                 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 
+                 text-white shadow-md hover:shadow-xl hover:scale-105 
+                 transition-all duration-300 ease-in-out"
+                        >
+                          Admin Dashboard
+                        </a>
+                      </li>
+                    )}
+
                     <li>
                       <button
                         onClick={(e) => dispatch(logout())}

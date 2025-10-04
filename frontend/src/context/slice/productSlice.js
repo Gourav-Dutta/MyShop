@@ -232,6 +232,23 @@ export const productApi = createApi({
         method: "DELETE"
       }) 
     }),
+    // Delete order by Order-Id
+    deleteOrder: builder.mutation({
+      query: ({orderId}) => 
+      ({
+        url: `order/orderId/${orderId}`,
+        method: "DELETE"
+      }),
+      invalidatesTags: ["getUserOrder"]
+    }),
+    // Get all user -- Only for Admin
+    getAllUser: builder.query({
+      query: () => "/user/all"
+    }),
+    // Get all order -- Only for Admin
+    getAllOrder: builder.query({
+      query: () => "/order/getAll"
+    }), 
      
     
 
@@ -270,6 +287,9 @@ export const {
   useGetProductDetailsByProductIdQuery,
   useUpdateProductMutation,
   useDeleteProductMutation,
-  useDeleteVarietyMutation
+  useDeleteVarietyMutation,
+  useDeleteOrderMutation,
+  useGetAllUserQuery,
+  useGetAllOrderQuery
   
 } = productApi;

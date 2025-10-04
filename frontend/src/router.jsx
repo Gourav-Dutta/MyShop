@@ -31,6 +31,7 @@ import { SellerAddNewAddress } from "./views/vendor/SellerAddNewAddress";
 import { SellerUpdateAddressPage } from "./views/vendor/SellerUpdateAddressPage";
 import { SellerSignUpPage } from "./views/vendor/SellerSignUpPage";
 import { AllProductPage } from "./views/AllProductPage";
+import { AdminDashboard } from "./views/AdminDashboard";
 const router = createBrowserRouter([
     {
         path: '/auth',
@@ -107,6 +108,10 @@ const router = createBrowserRouter([
             {
                 path: "/allProductPage",
                 element: <AllProductPage/>
+            },
+            {
+                path: "/adminDashboard",
+                element: <AdminDashboard/>
             }
         ]
     },

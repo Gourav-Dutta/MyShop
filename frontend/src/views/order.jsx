@@ -1,9 +1,14 @@
 import { useNavigate } from "react-router-dom";
-import { useGetUserOrderQuery } from "../context/slice/productSlice";
+import {
+  useGetUserOrderQuery,
+  useDeleteOrderMutation,
+} from "../context/slice/productSlice";
+import toast from "react-hot-toast";
 
 export function Order() {
   const navigate = useNavigate();
   const { data, isLoading, isError } = useGetUserOrderQuery();
+  const [deleteOrder] = useDeleteOrderMutation();
   const token = localStorage.getItem("ACCESS_TOKEN");
 
   if (!token) {
@@ -27,6 +32,16 @@ export function Order() {
     );
   }
 
+  const handleDeleteOrder = async (orderId) => {
+    try {
+      await deleteOrder({ orderId: orderId });
+      toast.success("Successfully deleted your order");
+    } catch (err) {
+      console.log(err.message);
+      toast.error("Failed to delete order");
+    }
+  };
+
   const orders = data?.data || [];
   console.log("Orders:", JSON.stringify(orders, null, 2));
 
@@ -44,17 +59,23 @@ export function Order() {
             key={order.id}
             className="bg-white shadow-md rounded-2xl mb-8 overflow-hidden"
           >
+            <div className="flex justify-end p-4">
+              <button
+                onClick={() => handleDeleteOrder(order.id)}
+                className="px-4 py-2 bg-red-600 text-white rounded-lg shadow hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-400 transition"
+              >
+                🗑 Delete Order
+              </button>
+            </div>
             {/* Order Summary */}
             <div className="p-6 bg-gray-50 border-b">
               <div className="flex flex-wrap justify-between items-center">
                 <div>
                   <p className="text-sm text-gray-500">Order ID: #{order.id}</p>
-                 
                 </div>
                 <div className="text-right">
                   <p className="text-gray-700">
-                    Ordered on:{" "}
-                    {new Date(order.order_at).toLocaleDateString()}
+                    Ordered on: {new Date(order.order_at).toLocaleDateString()}
                   </p>
                   <p className="text-lg font-bold text-gray-800">
                     Total: ₹{order.total_price}
@@ -73,7 +94,9 @@ export function Order() {
                     <th className="py-2 px-4 border-b text-left">Price</th>
                     <th className="py-2 px-4 border-b text-left">Quantity</th>
                     <th className="py-2 px-4 border-b text-left">Subtotal</th>
-                    <th className="py-2 px-4 border-b text-left">Item Status</th>
+                    <th className="py-2 px-4 border-b text-left">
+                      Item Status
+                    </th>
                   </tr>
                 </thead>
                 <tbody>

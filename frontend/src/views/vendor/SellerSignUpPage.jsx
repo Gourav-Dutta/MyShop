@@ -112,7 +112,7 @@ export function SellerSignUpPage(){
 
           <p className="message text-sm mt-4 text-center text-gray-700">
             Already Registered?{' '}
-            <Link to="/login" className="text-blue-600 hover:underline">
+            <Link to="/auth/login" className="text-blue-600 hover:underline">
               Login here
             </Link>
           </p>
