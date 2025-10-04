@@ -296,7 +296,7 @@ async function handleDeleteOrderByOrderId(req, res) {
     });
 
     if (!deletedOrder) {
-      return res.status(400).json({
+      return res.status(200).json({
         Message: "Order not founded",
       });
     }
@@ -309,9 +309,7 @@ async function handleDeleteOrderByOrderId(req, res) {
     return res.status(500).json({
       message: `An error occured during deleteing a order : ${err.message}`,
     });
-  } finally {
-    await prisma.$disconnect();
-  }
+  } 
 }
 
 // Delete order by User ID

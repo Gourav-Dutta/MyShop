@@ -28,7 +28,7 @@ router
 .get("/order/date", authMiddleware, adminMiddleware, getOrderDetailsByDate)
 .get("/orderItem/seller", authMiddleware, sellerAdminMiddleware(["SELLER", "ADMIN"]), GetOrderItemBySeller)
 .patch("/order/status/:orderItemId", authMiddleware, sellerAdminMiddleware(["ADMIN", "SELLER"]), updateOrderStatus )
-.delete("/order/orderId/:orderId", authMiddleware, sellerAdminMiddleware(["ADMIN", "SELLER"]), deleteOrderByOrderId)
+.delete("/order/orderId/:orderId", authMiddleware, deleteOrderByOrderId)
 .delete("/order/userId", authMiddleware, deleteOrderByUserID)
 .delete("/order/productVarietyId/:productVariety_Id", authMiddleware, sellerAdminMiddleware(["ADMIN", "SELLER"]), deleteOrderByProductVarietyId)
 .delete("/order/date", authMiddleware, adminMiddleware, deleteOrderByDate)
