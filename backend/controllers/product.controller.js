@@ -412,7 +412,7 @@ async function handleGetProductByBrand(req, res) {
 
 async function searchProducts  (req, res)  {
   const q = req.query.q || "";
-  const brand = req.query.brand || ""; // new
+  const brand = req.query.brand || ""; 
 
   try {
     const products = await prisma.product.findMany({
@@ -420,11 +420,11 @@ async function searchProducts  (req, res)  {
         AND: [
           {
             OR: [
-              { name: { contains: q } },
+              { name: { contains: q, mode: 'insensitive' } },           // Since i am now in postgreSQL mode is necessary
               {
                 sub_category: {
                   is: {
-                    name: { contains: q },
+                    name: { contains: q, mode: 'insensitive' },
                   },
                 },
               },
@@ -448,6 +448,11 @@ async function searchProducts  (req, res)  {
       },
     });
 
+    if(products.length === 0){
+      return res.status(200).json({
+        "message" : "No record found"
+      })
+    }
     res.json({ data: products });
   } catch (error) {
     console.error(error);
@@ -472,11 +477,11 @@ async function searchProductsBySeller  (req, res)  {
         AND: [
           {
             OR: [
-              { name: { contains: q } },
+              { name: { contains: q, mode: 'insensitive'  } },
               {
                 sub_category: {
                   is: {
-                    name: { contains: q },
+                    name: { contains: q, mode: 'insensitive'  },
                   },
                 },
               },

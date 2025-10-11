@@ -8,7 +8,6 @@ const prisma = new PrismaClient();
 // Insert Product - Variety  -- Admin and seller only
 
 const varietySchema = z.object({
-  sku: z.string().min(1, "SKU is must needed"),
   color: z.string().optional(),
   size: z.string().optional(),
   weight: z.string().optional(),
@@ -23,6 +22,8 @@ async function handleVarietyEntery(req, res) {
   body.price = parseInt(body.price);
   body.stock = parseInt(body.stock);
   body.productId = parseInt(req.params.productId);
+  const generatedSku = `SKU-${body.productId}-${Date.now()}`;
+  body.sku = generatedSku;
   console.log(body);
 
   try {

@@ -11,7 +11,7 @@ async function handleGetOneUser(req, res){
     try{
         const userId = parseInt(req.user.id);
 
-        const user = await prisma.user.findUnique({
+        const user = await prisma.UserTable.findUnique({
             where: { id : userId},
             include: { role: true, address: true },
         })
@@ -31,7 +31,7 @@ async function handleGetOneUser(req, res){
 // Get all user -- Admin 
 async function handleGetAllUsers(req, res){
     try{
-        const users = await prisma.user.findMany({
+        const users = await prisma.UserTable.findMany({
             include: {role : true}
         })
 
@@ -75,7 +75,7 @@ async function handleUpdateUser(req, res){
         }
 
 
-        const user = await prisma.user.update({
+        const user = await prisma.UserTable.update({
             where: {id : userId},
             data : updateData,
             include : {role : true}
@@ -110,7 +110,7 @@ async function handleDeleteOneUser(req, res){
 
         // Find and delete the user 
 
-        const user = await prisma.user.delete({
+        const user = await prisma.UserTable.delete({
             where : {id : userId},
             include : {role : true}
         })
@@ -145,7 +145,7 @@ async function handleGetAllUserUsingRole(req, res){
 
         const userRole = req.params.role;
 
-        const user = await prisma.user.findMany({
+        const user = await prisma.UserTable.findMany({
         where : {
             role : {
                 role : userRole

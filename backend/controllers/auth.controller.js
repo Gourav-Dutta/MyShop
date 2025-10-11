@@ -19,11 +19,11 @@ const userSchema = z.object({
 async function handleUserSignUp(req, res){
     try{
         const body = userSchema.parse(req.body);
-        // console.log(body);
+        console.log(body);
 
 
         // check if user already exists 
-        const existingerUser= await prisma.user.findFirst({
+        const existingerUser= await prisma.UserTable.findFirst({
             where : {email : body.email}
         });
 
@@ -40,7 +40,7 @@ async function handleUserSignUp(req, res){
         body.password = hashPassword
 
         // Create a new user
-        const user = await prisma.user.create({
+        const user = await prisma.UserTable.create({
         data : {
         ...body,
         role_id: parseInt(body.role_id) || 3 // Default to customer role if not provided
@@ -112,7 +112,7 @@ async function handleUserLogin(req, res){
      const body  = loginSchema.parse(req.body);
     
     // check if user exists
-    const userExists = await prisma.user.findFirst({
+    const userExists = await prisma.UserTable.findFirst({
         where: {email: body.email},
         include: {role : true}
     })

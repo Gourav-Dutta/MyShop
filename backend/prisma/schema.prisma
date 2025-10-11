@@ -9,11 +9,9 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
-
-// schema.prisma
 
 // ─────────────────────────────
 // 1. User Roles
@@ -22,13 +20,13 @@ model User_role {
   id   Int    @id @default(autoincrement())
   role String @unique
 
-  users User[]
+  users UserTable[]
 }
 
 // ─────────────────────────────
-// 2. User Table
+// 2. User Table 
 // ─────────────────────────────
-model User {
+model UserTable {
   id       Int           @id @default(autoincrement())
   name     String
   email    String        @unique
@@ -45,7 +43,6 @@ model User {
 // ----------------
 // Address Table
 //-----------------
-
 model Address {
   id         Int     @id @default(autoincrement())
   city       String
@@ -55,9 +52,9 @@ model Address {
   pin_no     String
   user_id    Int
   is_primary Boolean @default(false)
-  user       User    @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  user       UserTable @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
-  @@index([user_id]) // When i search for user_id it make it faster
+  @@index([user_id])
 }
 
 // ─────────────────────────────
@@ -82,7 +79,6 @@ model Sub_Categories {
 // ----------------------------
 // Brand 
 // ----------------------------
-
 model Brand {
   id       Int       @id @default(autoincrement())
   name     String    @unique
@@ -104,7 +100,7 @@ model Product {
   updated_at      DateTime       @updatedAt
   sub_catagory_id Int
   sub_category    Sub_Categories @relation(fields: [sub_catagory_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  user            User           @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  user            UserTable      @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
   brand           Brand          @relation(fields: [brand_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   varirties      Product_Variety[]
@@ -112,9 +108,8 @@ model Product {
 }
 
 // ------------------------
-//  Product Variety Table
+// Product Variety Table
 // -----------------------
-
 model Product_Variety {
   id         Int      @id @default(autoincrement())
   name       String
@@ -151,7 +146,6 @@ model Product_Image {
 // -------------------------
 // Offer Table
 //--------------------------
-
 enum DiscountType {
   percentage
   flat
@@ -172,7 +166,6 @@ model Offer {
 // -------------------
 // Product Offer Table 
 // -------------------
-
 model product_Offer {
   id         Int      @id @default(autoincrement())
   productId  Int
@@ -180,7 +173,6 @@ model product_Offer {
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 
-  // Relations
   product Product @relation(fields: [productId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   offer   Offer   @relation(fields: [offerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
@@ -196,25 +188,23 @@ model Add_To_Cart {
   user_id           Int
   productVariety_id Int
 
-  user           User            @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  user           UserTable       @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
   productVariety Product_Variety @relation(fields: [productVariety_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   @@unique([user_id, productVariety_id])
 }
 
-// 
-// Payment Method //
-//
-
+// -------------------
+// Payment Method
+// -------------------
 model Payment_Method {
   id             Int     @id @default(autoincrement())
   payment_method String
-  // Order          Order[]
 }
 
-//
+// -------------------
 // Order status
-//
+// -------------------
 enum OrderStatus {
   PENDING
   REJECTED
@@ -229,10 +219,8 @@ model Order {
   user_id      Int
   order_at     DateTime @default(now())
   total_price  Int
-  // payment_type Int     
 
-  user    User           @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  // payment Payment_Method @relation(fields: [payment_type], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  user    UserTable     @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
   items   Order_Item[]
 }
 
@@ -246,6 +234,8 @@ model Order_Item {
   price             Decimal         @db.Decimal(10, 2)
   quantity          Int             @default(1)
   status            OrderStatus     @default(PENDING)
-  order             Order           @relation(fields: [order_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  productVariety    Product_Variety @relation(fields: [productVariety_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  order          Order           @relation(fields: [order_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  productVariety Product_Variety @relation(fields: [productVariety_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
+
