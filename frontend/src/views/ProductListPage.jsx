@@ -5,6 +5,7 @@ import {
   useGetProductsBySearchQuery
 } from "../context/slice/productSlice";
 import { useState } from "react";
+import { ProductPageLoader } from "./ProductPageLoader";
 
 export function ProductListPage() {
   const { Search_Item } = useParams();
@@ -36,7 +37,7 @@ export function ProductListPage() {
   const brands = brandsData?.data || [];
 
   if (productLoading || brandsLoading || brandProductLoading) {
-    return <p className="text-center mt-10 text-xl">Loading products...</p>;
+    return <ProductPageLoader/>;
   }
 
   if (productError) {

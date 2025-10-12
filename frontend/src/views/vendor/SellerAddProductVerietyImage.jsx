@@ -2,10 +2,15 @@ import { useState } from "react";
 import { useParams } from "react-router-dom";
 import toast from "react-hot-toast";
 import { useInsertImageMutation } from "../../context/slice/productSlice";
+import { useNavigate } from "react-router-dom";
+import { ProductPageLoader } from "../ProductPageLoader";
 
 export const SellerAddProductVerietyImage = () => {
   const { productVerietyId } = useParams();
   const [insertImage] = useInsertImageMutation();
+  const navigate = useNavigate();
+
+
 
   const [images, setImages] = useState([
     { url: "", alt_text: "", is_primary: "false" },
@@ -37,6 +42,7 @@ export const SellerAddProductVerietyImage = () => {
       await insertImage({ varietyId: productVerietyId, images }).unwrap();
       toast.success("All images added successfully!");
       setImages([{ url: "", alt_text: "", is_primary: "false" }]);
+      navigate("/seller/layout/sellerDashboard");
     } catch (err) {
       console.error(err);
       toast.error("Failed to add images");
@@ -130,7 +136,7 @@ export const SellerAddProductVerietyImage = () => {
         <button
           type="button"
           onClick={addImageField}
-          className="px-4 py-2 bg-green-600 text-white rounded-lg shadow hover:bg-green-700 transition"
+          className="px-4 py-2 mr-126 bg-green-600 text-white rounded-lg shadow hover:bg-green-700 transition"
         >
           + Add Another Image
         </button>

@@ -1,11 +1,12 @@
 import { Link } from "react-router-dom";
 import { useGetProductsByCategoryQuery } from "../context/slice/productSlice";
+import { ProductPageLoader } from "./ProductPageLoader";
 
 export function HomePage() {
   const { data, isLoading, error } = useGetProductsByCategoryQuery();
   const products = data?.data || [];
 
-  if (isLoading) return <p className="text-gray-600">Loading products...</p>;
+  if (isLoading) return <ProductPageLoader/>;
   if (error) return <p className="text-red-500">Error loading products</p>;
 
   const topProducts = products.slice(0, 10);
@@ -13,7 +14,7 @@ export function HomePage() {
   return (
     <div className="p-6">
       {/* Hero Section */}
-      <div className="h-72 w-full bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-xl mb-6 flex flex-col justify-center items-center text-white shadow-lg">
+      <div className="h-72 w-full bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-xl mb-6 flex flex-col justify-center items-center text-white shadow-lg cursor-pointer">
         <h1 className="text-4xl md:text-5xl font-extrabold mb-4 text-center drop-shadow-lg">
           GRAB THE BEST DEAL NOW!
         </h1>
@@ -21,14 +22,14 @@ export function HomePage() {
           Shop at <span className="font-bold">MyShop</span> and save big today!
         </p>
         <Link to={"/allProductPage"}>
-        <button className="mt-6 px-6 py-3 bg-white text-indigo-600 font-semibold rounded-full shadow hover:bg-gray-100 transition">
+        <button className="mt-6 px-6 py-3 bg-white text-indigo-600 font-semibold rounded-full shadow hover:bg-gray-100 transition cursor-pointer">
           Start Shopping
         </button>
         </Link>
       </div>
 
       {/* Top Products */}
-      <h2 className="text-2xl text-gray-800 font-bold mb-4">Top Products</h2>
+      <h2 className="text-2xl text-gray-800 font-bold mb-4 cursor-pointer">Top Products</h2>
       <ul className="flex gap-4 overflow-x-auto scrollbar-hide p-2 bg-gray-200 rounded-lg">
         {topProducts.map((product) => (
           <li
@@ -58,7 +59,7 @@ export function HomePage() {
       <div className="my-15"></div>
 
       {/* More Products */}
-      <h2 className="text-2xl text-gray-800 font-bold mb-4">More Products</h2>
+      <h2 className="text-2xl text-gray-800 font-bold mb-4 cursor-pointer">More Products</h2>
       <ul className="grid grid-cols-7 gap-4">
         {products.length > 0 ? (
           products.map((product) => (

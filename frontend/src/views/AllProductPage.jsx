@@ -1,10 +1,11 @@
 import { useGetProductsByCategoryQuery } from "../context/slice/productSlice";
 import { Link } from "react-router-dom";
+import { ProductPageLoader } from "./ProductPageLoader";
 
 export const AllProductPage = () => {
   const { data, isLoading, isError } = useGetProductsByCategoryQuery();
 
-  if (isLoading) return <p className="text-center py-10">Loading products...</p>;
+  if (isLoading) return <ProductPageLoader/>;
   if (isError) return <p className="text-center py-10 text-red-500">Failed to load products</p>;
 
   const products = data?.data || [];

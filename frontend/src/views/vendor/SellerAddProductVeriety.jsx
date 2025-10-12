@@ -8,7 +8,6 @@ export const SellerAddProductVeriety = () => {
   const { productId } = useParams();
   const [insertNewVariety, { isLoading }] = useInsertNewVarietyMutation();
   const [formData, setFormData] = useState({
-    sku: "",
     color: "",
     weight: "",
     size: "",
@@ -31,7 +30,6 @@ const navigate = useNavigate();
       navigate(`/seller/layout/add/productVarietyImage/${res.data.id}`)
       setFormData({
         ...formData,
-        sku: "",
         color: "",
         weight: "",
         size: "",
@@ -57,7 +55,6 @@ const navigate = useNavigate();
         {/* Form */}
         <form onSubmit={onSubmit} className="space-y-6">
           {[
-            { label: "SKU", name: "sku", required: true },
             { label: "Name", name: "name", required: true },
             { label: "Color", name: "color" },
             { label: "Weight", name: "weight" },

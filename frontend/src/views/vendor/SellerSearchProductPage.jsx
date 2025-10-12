@@ -7,6 +7,7 @@ import {
 } from "../../context/slice/productSlice";
 import { useState } from "react";
 import toast from "react-hot-toast";
+import { ProductPageLoader } from "../ProductPageLoader";
 
 export function SellerSearchProductPage() {
   const { Search_Item } = useParams();
@@ -37,7 +38,7 @@ export function SellerSearchProductPage() {
   const brands = brandsData?.data || [];
 
   if (productLoading || brandsLoading || brandProductLoading) {
-    return <p className="text-center mt-10 text-xl">Loading products...</p>;
+    return <ProductPageLoader/>;
   }
 
   if (productError) {

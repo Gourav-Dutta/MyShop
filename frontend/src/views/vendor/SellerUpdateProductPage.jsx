@@ -2,6 +2,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useGetProductDetailsByProductIdQuery, useUpdateProductMutation } from "../../context/slice/productSlice";
 import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
+import { ProductPageLoader } from "../ProductPageLoader";
 
 export const SellerUpdateProductPage = () => {
   const { productId } = useParams();
@@ -45,7 +46,7 @@ export const SellerUpdateProductPage = () => {
     navigate(-1);
   };
 
-  if (isLoading) return <p className="text-center py-10">Loading product...</p>;
+  if (isLoading) return <ProductPageLoader/>;
   if (isError) return <p className="text-center text-red-500">Failed to load product.</p>;
 
   return (

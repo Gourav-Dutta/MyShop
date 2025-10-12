@@ -1,6 +1,7 @@
 import { useGetOrderOfSellerQuery } from "../../context/slice/productSlice";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import { ProductPageLoader } from "../ProductPageLoader";
 
 export const SellerAllOrders = () => {
   const { data, isLoading, isError, error } = useGetOrderOfSellerQuery();
@@ -8,7 +9,7 @@ export const SellerAllOrders = () => {
   
   const navigate = useNavigate();
 
-  if (isLoading) return <p className="text-center py-6">Loading orders...</p>;
+  if (isLoading) return <ProductPageLoader/>;
   if (isError) return <p className="text-center text-red-500">Error: {error?.message}</p>;
 
   const orders = data?.data || [];

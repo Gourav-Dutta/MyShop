@@ -4,13 +4,14 @@ import {
 } from "../../context/slice/productSlice";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import { ProductPageLoader } from "../ProductPageLoader";
 export const SellerAllProduct = () => {
   const { data, isLoading, isError } = useGetProductOfLoginSellerQuery();
   const [deleteProduct] = useDeleteProductMutation();
   const navigate = useNavigate();
 
   if (isLoading)
-    return <p className="text-center mt-10">Loading products...</p>;
+    return <ProductPageLoader/>;
   if (isError)
     return (
       <p className="text-center text-red-500 mt-10">

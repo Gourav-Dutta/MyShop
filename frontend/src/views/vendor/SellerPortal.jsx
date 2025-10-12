@@ -3,6 +3,7 @@ import {
   useGetProductOfLoginSellerQuery,
 } from "../../context/slice/productSlice";
 import { Link } from "react-router-dom";
+import { ProductPageLoader } from "../ProductPageLoader";
 
 export const SellerPortal = () => {
   const { data, isLoading, isError } = useGetSellerOrderDetailsQuery();
@@ -11,7 +12,7 @@ export const SellerPortal = () => {
   console.log(data);
   // console.log(productData);
 
-  if (isLoading) return <p className="text-center mt-10">Loading...</p>;
+  if (isLoading) return <ProductPageLoader/>;
   if (isError)
     return (
       <p className="text-center mt-10 text-red-500">Failed to fetch orders</p>

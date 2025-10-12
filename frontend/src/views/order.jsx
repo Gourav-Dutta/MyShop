@@ -4,144 +4,178 @@ import {
   useDeleteOrderMutation,
 } from "../context/slice/productSlice";
 import toast from "react-hot-toast";
+import { ProductPageLoader } from "./ProductPageLoader";
 
 export function Order() {
   const navigate = useNavigate();
   const { data, isLoading, isError } = useGetUserOrderQuery();
   const [deleteOrder] = useDeleteOrderMutation();
   const token = localStorage.getItem("ACCESS_TOKEN");
+  const user = JSON.parse(localStorage.getItem("USER") || "null");
 
   if (!token) {
     navigate("/auth/requestLogin");
     return null;
   }
 
-  if (isLoading) {
-    return (
-      <div className="p-6 text-center text-gray-500">
-        Loading your orders...
-      </div>
-    );
-  }
-
-  if (isError) {
+  if (isLoading) return <ProductPageLoader />;
+  if (isError)
     return (
       <div className="p-6 text-center text-red-500">
         Something went wrong while loading orders.
       </div>
     );
-  }
 
   const handleDeleteOrder = async (orderId) => {
     try {
-      await deleteOrder({ orderId: orderId });
-      toast.success("Successfully deleted your order");
+      await deleteOrder({ orderId });
+      toast.success("Order Cancled successfully!");
     } catch (err) {
-      console.log(err.message);
-      toast.error("Failed to delete order");
+      toast.error("Failed to cancel order");
     }
   };
 
   const orders = data?.data || [];
-  console.log("Orders:", JSON.stringify(orders, null, 2));
 
   return (
-    <div className="max-w-5xl mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold text-gray-800 mb-6">My Orders</h1>
-
-      {orders.length === 0 ? (
-        <div className="text-center text-gray-500">
-          You don’t have any orders yet.
-        </div>
-      ) : (
-        orders.map((order) => (
-          <div
-            key={order.id}
-            className="bg-white shadow-md rounded-2xl mb-8 overflow-hidden"
-          >
-            <div className="flex justify-end p-4">
-              <button
-                onClick={() => handleDeleteOrder(order.id)}
-                className="px-4 py-2 bg-red-600 text-white rounded-lg shadow hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-400 transition"
-              >
-                🗑 Delete Order
-              </button>
-            </div>
-            {/* Order Summary */}
-            <div className="p-6 bg-gray-50 border-b">
-              <div className="flex flex-wrap justify-between items-center">
-                <div>
-                  <p className="text-sm text-gray-500">Order ID: #{order.id}</p>
-                </div>
-                <div className="text-right">
-                  <p className="text-gray-700">
-                    Ordered on: {new Date(order.order_at).toLocaleDateString()}
-                  </p>
-                  <p className="text-lg font-bold text-gray-800">
-                    Total: ₹{order.total_price}
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Order Items */}
-            <div className="p-6 overflow-x-auto">
-              <table className="min-w-full border border-gray-200">
-                <thead>
-                  <tr className="bg-gray-100">
-                    <th className="py-2 px-4 border-b text-left">Item #</th>
-                    <th className="py-2 px-4 border-b text-left">Product</th>
-                    <th className="py-2 px-4 border-b text-left">Price</th>
-                    <th className="py-2 px-4 border-b text-left">Quantity</th>
-                    <th className="py-2 px-4 border-b text-left">Subtotal</th>
-                    <th className="py-2 px-4 border-b text-left">
-                      Item Status
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {order.items.map((item, index) => (
-                    <tr key={item.id} className="hover:bg-gray-50">
-                      <td className="py-2 px-4 border-b">{index + 1}</td>
-                      <td className="py-2 px-4 border-b">
-                        {item.productVariety?.name || "N/A"}
-                      </td>
-                      <td className="py-2 px-4 border-b">₹{item.price}</td>
-                      <td className="py-2 px-4 border-b">{item.quantity}</td>
-                      <td className="py-2 px-4 border-b">
-                        ₹{(parseFloat(item.price) * item.quantity).toFixed(2)}
-                      </td>
-                      <td className="py-2 px-4 border-b">
-                        <span
-                          className={`capitalize px-2 py-1 rounded-md text-white ${
-                            item.status === "PENDING"
-                              ? "bg-yellow-500"
-                              : item.status === "DELIVERED"
-                              ? "bg-green-500"
-                              : item.status === "REJECTED"
-                              ? "bg-red-500"
-                              : "bg-gray-500"
-                          }`}
-                        >
-                          {item.status}
-                        </span>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+    <div className="flex max-w-7xl mx-auto min-h-screen px-4 py-8">
+      
+      <aside className="w-64 hidden md:block mr-8">
+        <div className="bg-white rounded-2xl shadow-md p-6 sticky top-10">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-12 h-12 rounded-full bg-gray-200" />
+            <div>
+              <p className="font-semibold text-gray-800">{user.name}</p>
+              
             </div>
           </div>
-        ))
-      )}
+          <nav className="space-y-3">
+            <button className="w-full text-left px-4 py-2 rounded-lg bg-gray-100 font-medium text-gray-700 cursor-pointer">
+              🛒 My Orders
+            </button>
+            <button className="w-full text-left px-4 py-2 rounded-lg hover:bg-gray-100 text-gray-600 cursor-pointer">
+              💳 Payments
+            </button>
+            <button className="w-full text-left px-4 py-2 rounded-lg hover:bg-gray-100 text-gray-600 cursor-pointer">
+              🏠 Address Book
+            </button>
+            <button className="w-full text-left px-4 py-2 rounded-lg hover:bg-gray-100 text-gray-600 cursor-pointer">
+              ⚙️ Settings
+            </button>
+          </nav>
+        </div>
+      </aside>
 
-      <div className="text-center">
-        <button
-          onClick={() => navigate("/")}
-          className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-        >
-          Continue Shopping
-        </button>
+     
+      <div className="flex-1">
+        <h1 className="text-3xl font-bold text-gray-800 mb-6">My Orders</h1>
+
+       
+        <div className="flex gap-4 mb-6 border-b pb-2">
+          <button className="font-semibold text-emerald-600 border-b-2 border-emerald-600 pb-1 cursor-pointer">Upcoming Orders</button>
+          <button className="text-gray-500 hover:text-gray-700 cursor-pointer">Previous Orders</button>
+          <button className="text-gray-500 hover:text-gray-700 cursor-pointer">Scheduled Orders</button>
+        </div>
+
+        {/* Order Cards */}
+        {orders.length === 0 ? (
+          <div className="text-center text-gray-500">You don’t have any orders yet.</div>
+        ) : (
+          <div className="space-y-6">
+            {orders.map((order) => {
+              const orderDate = new Date(order.order_at);
+              const deliveryDate = new Date(orderDate);
+              deliveryDate.setDate(deliveryDate.getDate() + 7);
+              const formattedDeliveryDate = deliveryDate.toLocaleDateString(undefined, {
+                day: "numeric",
+                month: "short",
+                year: "numeric",
+              });
+
+              return (
+                <div
+                  key={order.id}
+                  className="bg-white rounded-xl shadow border p-6 space-y-4"
+                >
+                  
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <h2 className="text-lg font-semibold text-gray-800">
+                        Order #{order.id}
+                      </h2>
+                      <p className="text-sm text-gray-500">
+                        Ordered on: {orderDate.toLocaleDateString()} • Delivery by:{" "}
+                        <span className="text-gray-800 font-medium">{formattedDeliveryDate}</span>
+                      </p>
+                    </div>
+
+                    <div className="flex gap-2">
+                      <button className="text-sm px-4 py-2 bg-gray-100 text-gray-800 rounded-md hover:bg-gray-200 cursor-pointer">
+                        Order Details
+                      </button>
+                      <button
+                        onClick={() => handleDeleteOrder(order.id)}
+                        className="text-sm px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 cursor-pointer"
+                      >
+                        Cancel Order
+                      </button>
+                    </div>
+                  </div>
+
+                  
+                  <div className="flex items-center gap-4 mt-2">
+                    {["Confirmed", "Preparing", "Picked up", "Delivered"].map(
+                      (stage, index) => (
+                        <div key={stage} className="flex items-center gap-2">
+                          <div
+                            className={`w-3 h-3 rounded-full ${
+                              index <= 1
+                                ? "bg-emerald-500"
+                                : "bg-gray-300"
+                            }`}
+                          ></div>
+                          <p
+                            className={`text-xs ${
+                              index <= 1 ? "text-emerald-600" : "text-gray-400"
+                            }`}
+                          >
+                            {stage}
+                          </p>
+                          {index < 3 && (
+                            <div className="w-6 h-px bg-gray-300"></div>
+                          )}
+                        </div>
+                      )
+                    )}
+                  </div>
+
+                  {/* Order Items  */}
+                  <div className="text-sm text-gray-600 mt-3 space-y-1">
+                    <p className="font-medium text-gray-800 mb-1">Items:</p>
+                    {order.items.map((item) => (
+                      <div key={item.id} className="pl-2">
+                        • {item.productVariety?.name || "Unnamed Product"} x {item.quantity}
+                      </div>
+                    ))}
+                    <p className="mt-2">
+                      <span className="font-medium">Total: ₹{order.total_price}</span>
+                    </p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+        {/* Continue Shopping */}
+        <div className="mt-10 text-center">
+          <button
+            onClick={() => navigate("/")}
+            className="px-6 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 cursor-pointer"
+          >
+            Continue Shopping
+          </button>
+        </div>
       </div>
     </div>
   );

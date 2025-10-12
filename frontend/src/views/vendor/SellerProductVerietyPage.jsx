@@ -2,7 +2,7 @@ import { useParams, Link } from "react-router-dom";
 import { useGetProductVerityBtProductIdQuery, useDeleteVarietyMutation } from "../../context/slice/productSlice";
 import { Edit, Trash2 } from "lucide-react";
 import toast from "react-hot-toast";
-
+import { ProductPageLoader } from "../ProductPageLoader";
 export const SellerProductVerietyPage = () => {
   const { productId } = useParams();
   const { data, isLoading, isError } =
@@ -14,7 +14,7 @@ export const SellerProductVerietyPage = () => {
   
 
   if (isLoading)
-    return <p className="text-center py-10">Loading product varieties...</p>;
+    return <ProductPageLoader/>;
   if (isError)
     return (
       <p className="text-center py-10 text-red-500">

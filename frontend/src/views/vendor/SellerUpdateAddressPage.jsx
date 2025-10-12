@@ -2,6 +2,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useGetAddOnaddIdQuery, useUpdateAddressMutation } from "../../context/slice/productSlice";
 import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
+import { ProductPageLoader } from "../ProductPageLoader";
 
 
 export const SellerUpdateAddressPage = () => {
@@ -62,7 +63,7 @@ export const SellerUpdateAddressPage = () => {
   };
 
   if (isLoading)
-    return <p className="text-gray-500 text-center mt-10">Loading...</p>;
+    return <ProductPageLoader/>;
 
   if (isError)
     return (

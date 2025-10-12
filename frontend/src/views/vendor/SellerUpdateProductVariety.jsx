@@ -5,6 +5,7 @@ import {
   useUpdateProductVarietyMutation
 } from "../../context/slice/productSlice";
 import toast from "react-hot-toast";
+import { ProductPageLoader } from "../ProductPageLoader";
 
 export const SellerUpdateProductVariety = () => {
   const { varietyId } = useParams();
@@ -61,7 +62,7 @@ export const SellerUpdateProductVariety = () => {
   };
 
   if (isLoading)
-    return <p className="text-center py-6">Loading variety details...</p>;
+    return <ProductPageLoader/>;
   if (isError)
     return (
       <p className="text-center text-red-500">Error: {error?.message}</p>

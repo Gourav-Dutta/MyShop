@@ -50,7 +50,7 @@ export function DefaultLayout() {
       {/* Navbar */}
       <div className="bg-white shadow-md px-4 py-3 flex justify-evenly items-center">
         {/* Logo */}
-        <h1 className="text-3xl font-bold text-blue-600">MyShop</h1>
+        <h1 className="text-3xl font-bold text-blue-600 cursor-pointer">MyShop</h1>
 
         {/* Search */}
         <input

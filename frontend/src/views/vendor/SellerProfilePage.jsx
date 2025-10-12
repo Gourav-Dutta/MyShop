@@ -1,6 +1,7 @@
 import { useGetUserProfileQuery, useUpdateAddIs_PrimaryMutation } from "../../context/slice/productSlice";
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
+import { ProductPageLoader } from "../ProductPageLoader";
 
 export const SellerProfilePage = () => {
   const { data, isLoading, isError, error } = useGetUserProfileQuery();
@@ -20,7 +21,7 @@ export const SellerProfilePage = () => {
     console.log("Handle Make Primary Called");
     updateAddIs_Primary({ addId: addId, is_primary: is_primary });
   };
-  if (isLoading) return <p className="text-gray-500">Loading...</p>;
+  if (isLoading) return <ProductPageLoader/>;
   if (isError) return <p className="text-red-500">Error: {error.message}</p>;
 
   return (
@@ -48,8 +49,8 @@ export const SellerProfilePage = () => {
           <p className="text-gray-700">
             <span className="font-semibold">Phone:</span> {user.phone_no}
           </p>
-          <p className="text-gray-700 sm:col-span-2">
-            <span className="font-semibold">Role:</span> {user.role.role}
+          <p className="text-green-700 sm:col-span-2 font-bold">
+            <span className="font-semibold"></span>SELLER
           </p>
         </div>
       </div>

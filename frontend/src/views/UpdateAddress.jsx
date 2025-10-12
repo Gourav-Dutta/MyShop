@@ -5,7 +5,7 @@ import {
 } from "../context/slice/productSlice";
 import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
-
+import { ProductPageLoader } from "./ProductPageLoader";
 
 export const UpdateAddress = () => {
   const { addId } = useParams();
@@ -62,7 +62,7 @@ export const UpdateAddress = () => {
   };
 
   if (isLoading)
-    return <p className="text-gray-500 text-center mt-10">Loading...</p>;
+    return <ProductPageLoader/>;
 
   if (isError)
     return (

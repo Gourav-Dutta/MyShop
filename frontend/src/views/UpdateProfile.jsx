@@ -5,7 +5,7 @@ import {
 import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-
+import { ProductPageLoader } from "./ProductPageLoader";
 export const UpdateProfile = () => {
   const { data, isLoading, isError, error } = useGetUserProfileQuery();
   const [UpdateProfile] = useUpdateProfileMutation();
@@ -50,7 +50,7 @@ export const UpdateProfile = () => {
     }
   };
 
-  if (isLoading) return <p className="text-gray-500">Loading...</p>;
+  if (isLoading) return <ProductPageLoader/>;
   if (isError) return <p className="text-red-500">Error: {error.message}</p>;
 
   return (

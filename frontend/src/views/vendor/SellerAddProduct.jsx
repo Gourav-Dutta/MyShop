@@ -1,18 +1,17 @@
 import {
   useGetAllSubCategoriesQuery,
   useAddNewProductMutation,
-  useGetAllBrandsQuery
+  useGetAllBrandsQuery,
 } from "../../context/slice/productSlice";
 import { useState } from "react";
 import toast from "react-hot-toast";
+import { ProductPageLoader } from "../ProductPageLoader";
 
 export const SellerAddProduct = () => {
   const { data, isLoading, isError } = useGetAllSubCategoriesQuery();
-  const {data: brandsData, isLoading: brandLoading} = useGetAllBrandsQuery();
-//   console.log("Sub-Categories: ", data);
-//   console.log("Brand data : ", brandsData);
-  
-  
+  const { data: brandsData, isLoading: brandLoading } = useGetAllBrandsQuery();
+  //   console.log("Sub-Categories: ", data);
+  //   console.log("Brand data : ", brandsData);
 
   const [addProduct] = useAddNewProductMutation();
 
@@ -25,13 +24,14 @@ export const SellerAddProduct = () => {
     status: "Active",
   });
   console.log(formData);
-  
+
   const handleChange = (e) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
     });
   };
+  if (brandLoading) return <ProductPageLoader />;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -39,7 +39,7 @@ export const SellerAddProduct = () => {
       await addProduct({
         name: formData.name,
         description: formData.description,
-        sub_catagory_id:formData.sub_catagory_id,
+        sub_catagory_id: formData.sub_catagory_id,
         base_image: formData.base_image,
         brand: formData.brand,
         status: formData.status,
@@ -50,11 +50,11 @@ export const SellerAddProduct = () => {
         sub_catagory_id: "",
         base_image: "",
         brand: "",
-        status: "Active"
-      })
-     toast.success("Producted inserted successfully!");
+        status: "Active",
+      });
+      toast.success("Producted inserted successfully!");
     } catch (err) {
-     toast.error("Failed to inserted product ❌");
+      toast.error("Failed to inserted product ❌");
     }
   };
 
@@ -103,7 +103,7 @@ export const SellerAddProduct = () => {
         </div>
 
         {/* Brand */}
-       <div>
+        <div>
           <label className="block font-medium mb-1">Brand</label>
           {isLoading ? (
             <p className="text-gray-500">Loading brands...</p>
