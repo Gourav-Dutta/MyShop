@@ -16,9 +16,10 @@ async function handleGetOneUser(req, res){
             include: { role: true, address: true },
         })
         if(!user) res.status(404).json({"message": "User not found", "status": "Failed"});
+        const { password, ...User } = user;
         return res.status(200).json({
             "Message": "User fetched Succesfully",
-            "data": user
+            "data": User
         })
     }catch(err){
         return res.status(500).json({

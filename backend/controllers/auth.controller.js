@@ -131,9 +131,10 @@ async function handleUserLogin(req, res){
     }
 
     const token = generateToken(userExists); 
+    const { password, ...safeUser } = userExists;
     return res.status(200).json({
         "message": "User Logged In Successfully",
-        "data": userExists,
+        "data": safeUser,
         "token": token
     })
     } catch(err){
