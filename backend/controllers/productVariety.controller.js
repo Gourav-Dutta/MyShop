@@ -24,7 +24,7 @@ async function handleVarietyEntery(req, res) {
   body.productId = parseInt(req.params.productId);
   const generatedSku = `SKU-${body.productId}-${Date.now()}`;
   body.sku = generatedSku;
-  console.log(body);
+  
 
   try {
     const findProduct = await prisma.product.findUnique({
@@ -36,7 +36,7 @@ async function handleVarietyEntery(req, res) {
         message: "No product find with the given productId",
       });
     }
-    console.log("Product found");
+    
 
     const newVariety = await prisma.product_Variety.create({
       data: {
@@ -348,7 +348,7 @@ async function handleUpdateVarietyByVarietyIdOfThatSeller(req, res) {
     if (price) updateData.price = parseInt(price);
     if (sku) updateData.sku = sku;
     if (stock) updateData.stock = parseInt(stock);
-    console.log(updateData);
+    // console.log(updateData);
 
     const variety = await prisma.product_Variety.findFirst({
       where: { id: varietyId, product: { user_id: sellerId } },

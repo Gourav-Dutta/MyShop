@@ -40,7 +40,7 @@ export function SignUp(){
 
         try{
             const response = await axios.post("http://127.0.0.1:8000/api/user/register", payload);
-            console.log(response.data);
+            // console.log(response.data);
             toast.success("Registration successful! Please log in.")
            navigate("/auth/login");
         }catch(err){

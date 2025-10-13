@@ -39,7 +39,7 @@ export function Login() {
 
       // Save token + user in redux
       dispatch(login({ token: response.data.token, user: response.data.data }));
-      console.log( "The role is: ", response);
+      // console.log( "The role is: ", response);
       if(response.data.data.role.role == "SELLER"){
         navigate("/seller/layout/sellerDashboard");
       }else{

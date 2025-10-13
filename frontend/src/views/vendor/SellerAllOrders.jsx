@@ -5,7 +5,7 @@ import { ProductPageLoader } from "../ProductPageLoader";
 
 export const SellerAllOrders = () => {
   const { data, isLoading, isError, error } = useGetOrderOfSellerQuery();
-  console.log(data);
+  // console.log(data);
   
   const navigate = useNavigate();
 

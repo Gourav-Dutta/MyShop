@@ -52,7 +52,7 @@ export const UpdateAddress = () => {
         state: formData.state,
         pin_no: formData.pin_no,
       });
-      console.log("Updated Data to send:", formData);
+      // console.log("Updated Data to send:", formData);
       toast.success("Successfully update address");
       navigate("/myProfile");
     } catch (err) {

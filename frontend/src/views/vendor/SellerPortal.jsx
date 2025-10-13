@@ -9,7 +9,7 @@ export const SellerPortal = () => {
   const { data, isLoading, isError } = useGetSellerOrderDetailsQuery();
   const { data: productData, isLoading: productLoading } =
     useGetProductOfLoginSellerQuery();
-  console.log(data);
+  // console.log(data);
   // console.log(productData);
 
   if (isLoading) return <ProductPageLoader/>;

@@ -25,7 +25,7 @@ const navigate = useNavigate();
     e.preventDefault();
     try {
       const res =  await insertNewVariety({ productId, ...formData }).unwrap();
-      console.log(res);
+      // console.log(res);
       toast.success("Successfully inserted the variety");
       navigate(`/seller/layout/add/productVarietyImage/${res.data.id}`)
       setFormData({

@@ -219,7 +219,7 @@ async function handleInsertProductOffer(req, res) {
 async function handleUpdateProductOffer(req, res) {
   try {
     const userId = parseInt(req.user.id);
-    console.log(userId);
+   
 
     const productId = parseInt(req.params.productId);
     const offerId = parseInt(req.params.offerId);
@@ -325,7 +325,7 @@ async function handleGetOneProductOffer(req, res) {
 async function handleDeleteProductOffer(req, res) {
   try {
     const userId = parseInt(req.user.id);
-    console.log(userId);
+    
 
     const productId = parseInt(req.params.productId);
     const offerId = parseInt(req.params.offerId);

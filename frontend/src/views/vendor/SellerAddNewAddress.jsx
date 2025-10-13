@@ -21,12 +21,12 @@ export const SellerAddNewAddress = () => {
       [e.target.name]: e.target.value,
     });
   };
-  console.log(formData);
+  // console.log(formData);
 
   const handleSubmit = (e) => {
     try {
       e.preventDefault();
-      console.log("Form Data Submitted:", formData);
+      // console.log("Form Data Submitted:", formData);
       AddAddress({
         city: formData.city,
         house_no: formData.house_no,

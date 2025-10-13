@@ -11,7 +11,7 @@ export const SellerUpdateProductVariety = () => {
   const { varietyId } = useParams();
   const { data, isLoading, isError, error } =
     useGetSpecificVarietyDetailsQuery(varietyId);
-    console.log(data);
+    // console.log(data);
     
     const [updateProductVariety] = useUpdateProductVarietyMutation();
 
@@ -51,7 +51,7 @@ export const SellerUpdateProductVariety = () => {
     e.preventDefault();
     try {
       const res=   await updateProductVariety({varietyId:varietyId, formData:formData});
-      console.log(res);
+      // console.log(res);
       
       toast.success("Product variety updated successfully!");
       navigate(`/seller/layout/productVeriety/${res.data.product.productId}`);

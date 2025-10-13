@@ -283,7 +283,7 @@ async function handleUpdateOneSub_CategoryItem(req, res) {
 async function handleDeleteOneSub_CategoryItem(req, res) {
   try {
     const categoryId = parseInt(req.params.categoryId);
-    console.log(categoryId);
+   
 
     const deletedSub_Category = await prisma.sub_Categories.delete({
       where: { id: categoryId },

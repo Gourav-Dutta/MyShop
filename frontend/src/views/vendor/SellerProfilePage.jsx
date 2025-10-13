@@ -15,10 +15,10 @@ export const SellerProfilePage = () => {
   }, [navigate]);
 
   const user = data?.data;
-  console.log(user);
+  
 
   const handleMakePrimary = async ({ addId, is_primary }) => {
-    console.log("Handle Make Primary Called");
+    // console.log("Handle Make Primary Called");
     updateAddIs_Primary({ addId: addId, is_primary: is_primary });
   };
   if (isLoading) return <ProductPageLoader/>;

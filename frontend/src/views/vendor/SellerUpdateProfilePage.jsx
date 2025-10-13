@@ -38,7 +38,6 @@ export const SellerUpdateProfilePage = () => {
   const handleSubmit = (e) => {
     try {
       e.preventDefault();
-      console.log("Updated data:", formData);
       UpdateProfile(formData);
       toast.success("Profile updated successfully!");
       navigate("/seller/layout/myProfile");

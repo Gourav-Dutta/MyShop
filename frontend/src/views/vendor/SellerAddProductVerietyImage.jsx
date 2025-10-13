@@ -22,7 +22,7 @@ export const SellerAddProductVerietyImage = () => {
     updatedImages[index][e.target.name] = e.target.value;
     setImages(updatedImages);
   };
-  console.log(images);
+  // console.log(images);
 
   // To add new Image field
   const addImageField = () => {

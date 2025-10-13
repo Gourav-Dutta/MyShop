@@ -16,7 +16,7 @@ export function DefaultLayout() {
 
   // Securing Default-Layout from seller :
   const user = JSON.parse(localStorage.getItem("USER") || "null");
-  console.log("user: ", user);
+  
   useEffect(() => {
     if (user?.role?.role === "SELLER") {
       navigate("/seller/layout/sellerDashboard");

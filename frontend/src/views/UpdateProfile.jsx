@@ -40,7 +40,7 @@ export const UpdateProfile = () => {
   const handleSubmit = (e) => {
     try {
       e.preventDefault();
-      console.log("Updated data:", formData);
+      // console.log("Updated data:", formData);
       UpdateProfile(formData);
       toast.success("Profile updated successfully!");
       navigate("/myProfile");

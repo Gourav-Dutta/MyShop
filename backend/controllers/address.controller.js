@@ -16,7 +16,7 @@ async function handleNewAddress(req, res) {
   try {
     const body = addressSchema.parse(req.body);
     const userId = parseInt(req.user.id);
-    // console.log(body.is_primary);
+    
 
     if (typeof body.is_primary === "string") {
       if (body.is_primary.toLowerCase() === "true") {
@@ -29,7 +29,7 @@ async function handleNewAddress(req, res) {
         );
       }
     }
-    console.log(body);
+    
     if (body.is_primary) {
       await prisma.address.updateMany({          // Check if any address is primary that make it false
         where: { user_id: userId, is_primary: true },
@@ -225,7 +225,7 @@ async function handleUpdateAddress(req, res) {
   if (state) body.state = state;
   if (pin_no) body.pin_no = pin_no;
   if (shop_line) body.shop_line = shop_line;
-  console.log(body);
+ 
 
   const updateAddress = await prisma.address.updateMany({
     where: { id: addId, user_id: userId },
@@ -249,11 +249,11 @@ async function handleUpdateAddress(req, res) {
 async function handleUpdateAddesssIs_Primary(req, res) {
   try {
     const userId = parseInt(req.user.id);
-    console.log(userId);
+   
 
     const addId = parseInt(req.body.addId);
     let is_primary = req.body.is_primary ?? req.body.is_primary;
-    console.log(req.body);
+    
 
     if (typeof is_primary === "string") {   
       if (is_primary.toLowerCase() === "true") {
@@ -268,8 +268,7 @@ async function handleUpdateAddesssIs_Primary(req, res) {
     }
     
     is_primary = Boolean(is_primary);
-    console.log(is_primary);
-
+    
     if (is_primary) {
       await prisma.address.updateMany({
         where: { user_id: userId, is_primary: true },

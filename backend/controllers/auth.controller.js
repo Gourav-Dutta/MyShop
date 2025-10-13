@@ -19,7 +19,7 @@ const userSchema = z.object({
 async function handleUserSignUp(req, res){
     try{
         const body = userSchema.parse(req.body);
-        console.log(body);
+       
 
 
         // check if user already exists 
@@ -116,7 +116,7 @@ async function handleUserLogin(req, res){
         where: {email: body.email},
         include: {role : true}
     })
-    // console.log(userExists);
+   
     
     if(!userExists) return res.status(404).json({"message": "User not found"});
 

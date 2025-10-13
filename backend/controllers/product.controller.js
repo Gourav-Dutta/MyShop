@@ -20,7 +20,7 @@ async function handleProductEntry(req, res) {
     body.sub_catagory_id = parseInt(body.sub_catagory_id);
     body.brand = parseInt(body.brand);
     const userId = parseInt(req.user.id);
-    console.log(body);
+   
 
     const newProduct = await prisma.product.create({
       data: {
@@ -47,7 +47,7 @@ async function handleProductEntry(req, res) {
       },
     });
 
-    console.log("The product is : ", productWithRelations);
+
 
     return res.status(201).json({
       message: "New Product Inserted Successfully",
@@ -289,7 +289,7 @@ async function handleUpdateProductproduct_Id(req, res) {
     if (base_image) updateData.base_image = base_image;
     if (brand) updateData.base_image = brand;
     if (status) updateData.status = status;
-    console.log(updateData);
+    
     
 
     const validateUser = await prisma.product.findFirst({
@@ -352,7 +352,7 @@ async function handleDeleteProductproduct_Id(req, res) {
 async function handleDeleteProductSub_Id(req, res) {
   try {
     const Sub_name = req.params.sub_id_name;
-    console.log(Sub_name);
+    
 
     const product = await prisma.product.deleteMany({
       where: {

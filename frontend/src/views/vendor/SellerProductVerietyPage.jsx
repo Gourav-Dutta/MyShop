@@ -10,7 +10,7 @@ export const SellerProductVerietyPage = () => {
     const [deleteVariety] = useDeleteVarietyMutation();
 
   const productVariety = data?.data || [];
-  console.log("Product Id: ", productId);
+  
   
 
   if (isLoading)

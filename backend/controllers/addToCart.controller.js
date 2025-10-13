@@ -23,7 +23,7 @@ async function handleAddToCart(req, res) {
       },
     });
 
-    // console.log(existingerUserProduct);
+    
 
     if (existingerUserProduct.length > 0) {
       return res.status(400).json({
@@ -81,7 +81,7 @@ async function handleUpdateAddToCart(req, res) {
       },
     });
 
-    console.log(updateValue);
+    
 
     if (updateValue.count === 0) {
       return res.status(400).json({
@@ -143,7 +143,7 @@ async function handleDeleteOneProduct(req, res) {
 async function handleGetAddToCartValue(req, res) {
   try {
     const userId = parseInt(req.user.id);
-    // console.log(userId);
+   
 
     const products = await prisma.add_To_Cart.findMany({
       where: { user_id: userId },

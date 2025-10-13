@@ -53,7 +53,7 @@ export const SellerUpdateAddressPage = () => {
         pin_no: formData.pin_no,
         shop_line: formData.shop_line
       });
-      console.log("Updated Data to send:", formData);
+      // console.log("Updated Data to send:", formData);
       toast.success("Successfully update address");
       navigate("/seller/layout/myProfile");
     } catch (err) {

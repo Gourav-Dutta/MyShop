@@ -244,8 +244,8 @@ async function handleGetOrderByDate(req, res) {
     const endOfDay = new Date(startOfDay);
     endOfDay.setUTCHours(23, 59, 59, 999); // End of IST day
     // End Date -> 2025-08-08T23:59:59.999   -> 2025.08.08 Time 11.59.59.999 PM
-    console.log(startOfDay);
-    console.log(endOfDay);
+    // console.log(startOfDay);
+    // console.log(endOfDay);
 
     const orders = await prisma.order.findMany({
       where: {
@@ -383,7 +383,7 @@ async function handleUpdateOrderStatus(req, res) {
     const orderItemId = parseInt(req.params.orderItemId);  
 
     if (status) updateData.status = status;
-    console.log(updateData.status);
+    // console.log(updateData.status);
     
 
     // const {status, orderId} = req.body;

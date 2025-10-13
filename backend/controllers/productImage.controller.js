@@ -51,7 +51,7 @@ async function handleInsertImage(req, res) {
       }
     });
 
-    console.log(body);
+   
 
     const productImage = await prisma.product_Image.createMany({
       data: body.map((img) => ({

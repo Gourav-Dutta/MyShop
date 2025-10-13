@@ -23,7 +23,7 @@ export const SellerAddProduct = () => {
     brand: "",
     status: "Active",
   });
-  console.log(formData);
+  // console.log(formData);
 
   const handleChange = (e) => {
     setFormData({
@@ -55,6 +55,8 @@ export const SellerAddProduct = () => {
       toast.success("Producted inserted successfully!");
     } catch (err) {
       toast.error("Failed to inserted product ❌");
+      console.error(err.message);
+      
     }
   };
 
