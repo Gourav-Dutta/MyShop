@@ -11,6 +11,15 @@ import { productImageRouter } from "./routes/productImage.js";
 import { productVarietyRouter } from "./routes/productVariety.js";
 import { brandRouter } from "./routes/brand.js";
 import { offerRouter } from "./routes/offer.js";
+import { prisma } from "./utils/prisma.js"; 
+
+prisma.$connect()
+  .then(() => console.log("✅ Prisma connected to Supabase"))
+  .catch((err) => {
+    console.error("❌ Prisma failed to connect to Supabase:", err.message);
+    process.exit(1); 
+  });
+
 
 const app = express();
 const PORT = process.env.PORT ||  8000;
