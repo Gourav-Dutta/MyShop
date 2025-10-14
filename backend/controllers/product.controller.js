@@ -1,6 +1,5 @@
 import { includes, z } from "zod";
-import { PrismaClient } from "@prisma/client";
-const prisma = new PrismaClient();
+import {prisma} from "../utils/prisma.js"
 
 const productSchema = z.object({
   name: z.string().min(1, "Name is must neede"),

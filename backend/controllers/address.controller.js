@@ -1,7 +1,7 @@
-import { PrismaClient } from "@prisma/client";
+import {prisma} from "../utils/prisma.js"
 import { z } from "zod";
 
-const prisma = new PrismaClient();
+
 
 const addressSchema = z.object({
   city: z.string().min(1, "You have to provide your city"),

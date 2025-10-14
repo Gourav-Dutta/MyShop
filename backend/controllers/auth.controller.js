@@ -1,8 +1,8 @@
-import {PrismaClient} from "@prisma/client";
+import {prisma} from "../utils/prisma.js"
 import { generateToken } from "../service/auth.js";
 import {z} from 'zod';
 import bcrypt from 'bcrypt'
-const prisma = new PrismaClient();
+
 
 
 

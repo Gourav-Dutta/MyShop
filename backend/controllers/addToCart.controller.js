@@ -1,6 +1,6 @@
-import { PrismaClient } from "@prisma/client";
+import {prisma} from "../utils/prisma.js"
 import { parse, z } from "zod";
-const prisma = new PrismaClient();
+
 
 const addToCartSchema = z.object({
   productVarietyId: z.string().min(1, "Product Variety Id is compulsory"),
