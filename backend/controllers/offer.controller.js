@@ -14,6 +14,7 @@ const offerSchema = z.object({
 async function handleNewDiscount(req, res) {
   try {
     const body = offerSchema.parse(req.body);
+    body.discount_value =  Number (body.discount_value);
 
     if (typeof body.is_active === "string") {
       if (body.is_active.toLowerCase() === "true") {
@@ -72,7 +73,7 @@ async function handleGetAllOffer(req, res) {
 
 async function handleGetOfferOnId(req, res) {
   try {
-    const offerId = parseInt(req.params.offerId);
+    const offerId = (req.params.offerId);
 
     const offer = await prisma.offer.findUnique({
       where: { id: offerId },
@@ -99,7 +100,7 @@ async function handleGetOfferOnId(req, res) {
 
 async function handleUpdateOffer(req, res) {
   try {
-    const offerId = parseInt(req.params.offerId);
+    const offerId = (req.params.offerId);
     const updateData = {};
     const { title, discount_type, discount_value, is_active } = req.body;
 
@@ -144,7 +145,7 @@ async function handleUpdateOffer(req, res) {
 
 async function handleDeleteOffer(req, res) {
   try {
-    const offerId = parseInt(req.params.offerId);
+    const offerId = (req.params.offerId);
 
     const Offer = await prisma.offer.delete({
       where: { id: offerId },
@@ -178,10 +179,10 @@ const productOfferSchema = z.object({
 
 async function handleInsertProductOffer(req, res) {
   try {
-    const userId = parseInt(req.user.id);
+    const userId = (req.user.id);
     const body = productOfferSchema.parse(req.body);
-    body.productId = parseInt(body.productId);
-    body.offerId = parseInt(body.offerId);
+    body.productId =(body.productId);
+    body.offerId =(body.offerId);
 
     const validateUser = await prisma.product.findFirst({
       // Validate teh seller
@@ -218,11 +219,11 @@ async function handleInsertProductOffer(req, res) {
 
 async function handleUpdateProductOffer(req, res) {
   try {
-    const userId = parseInt(req.user.id);
+    const userId = (req.user.id);
    
 
-    const productId = parseInt(req.params.productId);
-    const offerId = parseInt(req.params.offerId);
+    const productId = (req.params.productId);
+    const offerId = (req.params.offerId);
 
     const updateData = {};
     const { product_Id, offer_Id } = req.body;
@@ -292,8 +293,8 @@ async function handleGetAllProductOffer(req, res) {
 
 async function handleGetOneProductOffer(req, res) {
   try {
-    const productId = parseInt(req.params.productId);
-    const offerId = parseInt(req.params.offerId);
+    const productId = (req.params.productId);
+    const offerId = (req.params.offerId);
 
     const Data = await prisma.product_Offer.findFirst({
       where: {
@@ -324,7 +325,7 @@ async function handleGetOneProductOffer(req, res) {
 
 async function handleDeleteProductOffer(req, res) {
   try {
-    const userId = parseInt(req.user.id);
+    const userId = (req.user.id);
     
 
     const productId = parseInt(req.params.productId);

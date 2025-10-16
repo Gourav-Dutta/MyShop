@@ -13,7 +13,7 @@ const userSchema = z.object({
     email : z.string().email("Invalid email fromat"),
     password : z.string().min(6, "Password must be at least 6 character Long"),
     phone_no : z.string().min(10, "Phone number must be at least 10 digits").max(15, "Phone number must not exceed 15 digits"),
-    role_id : z.string().optional(),
+    role : z.string().optional(),
 })
 
 async function handleUserSignUp(req, res){
@@ -30,7 +30,7 @@ async function handleUserSignUp(req, res){
         if(existingerUser){
             return res.status(400).json({
                 "error"  : "Failed",
-                "message": "User with this emamil already exists"
+                "message": "User with this email already exists"
             })
         }
 
@@ -43,9 +43,9 @@ async function handleUserSignUp(req, res){
         const user = await prisma.UserTable.create({
         data : {
         ...body,
-        role_id: parseInt(body.role_id) || 3 // Default to customer role if not provided
+        role: (body.role) || "USER" // Default to customer role if not provided
         },
-        include: {role : true}
+       
         });
 
         if(!user){
@@ -114,7 +114,6 @@ async function handleUserLogin(req, res){
     // check if user exists
     const userExists = await prisma.UserTable.findFirst({
         where: {email: body.email},
-        include: {role : true}
     })
    
     

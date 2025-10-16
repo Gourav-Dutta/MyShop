@@ -11,12 +11,13 @@ import { productImageRouter } from "./routes/productImage.js";
 import { productVarietyRouter } from "./routes/productVariety.js";
 import { brandRouter } from "./routes/brand.js";
 import { offerRouter } from "./routes/offer.js";
+import { UserRoleRouter } from "./routes/userRole.js";
 import { prisma } from "./utils/prisma.js"; 
 
 prisma.$connect()
-  .then(() => console.log("✅ Prisma connected to Supabase"))
+  .then(() => console.log("✅ Prisma connected to Mongo-DB"))
   .catch((err) => {
-    console.error("❌ Prisma failed to connect to Supabase:", err.message);
+    console.error("❌ Prisma failed to connect to Mongo-DB:", err.message);
     process.exit(1); 
   });
 
@@ -53,3 +54,4 @@ app.use("/api", productImageRouter);
 app.use("/api", productVarietyRouter);
 app.use("/api", brandRouter);
 app.use("/api", offerRouter);
+app.use("/api", UserRoleRouter);

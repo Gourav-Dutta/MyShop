@@ -19,9 +19,9 @@ const varietySchema = z.object({
 
 async function handleVarietyEntery(req, res) {
   const body = varietySchema.parse(req.body);
-  body.price = parseInt(body.price);
-  body.stock = parseInt(body.stock);
-  body.productId = parseInt(req.params.productId);
+  body.price = Number (body.price);
+  body.stock = Number (body.stock);
+  body.productId = (req.params.productId);
   const generatedSku = `SKU-${body.productId}-${Date.now()}`;
   body.sku = generatedSku;
   
@@ -175,7 +175,7 @@ async function handleVarietyEntery(req, res) {
 
 async function handleGetProductVarietyByProductId(req, res) {
   try {
-    const productId = parseInt(req.params.productId);
+    const productId = (req.params.productId);
 
     const Products = await prisma.product_Variety.findMany({
       where: { productId: productId },
@@ -214,7 +214,7 @@ async function handleGetProductVarietyByProductId(req, res) {
 
 async function handleGetVarietyByThatSeller(req, res) {
   try {
-    const sellerId = parseInt(req.params.sellerId);
+    const sellerId = (req.params.sellerId);
 
     const Products = await prisma.product_Variety.findMany({
       where: {
@@ -246,7 +246,7 @@ async function handleGetVarietyByThatSeller(req, res) {
 
 async function handleGetVarietyUsingSellerIdByAdmin(req, res) {
   try {
-    const sellerId = parseInt(req.body.sellerId);
+    const sellerId = (req.body.sellerId);
 
     const Products = await prisma.product_Variety.findMany({
       where: {
@@ -278,7 +278,7 @@ async function handleGetVarietyUsingSellerIdByAdmin(req, res) {
 
 async function handleGetVarietyByVarietyId(req, res) {
   try {
-    const varietyId = parseInt(req.params.varietyId);
+    const varietyId = (req.params.varietyId);
 
     const Products = await prisma.product_Variety.findUnique({
       where: {
@@ -335,8 +335,8 @@ async function handleGetAllVariety(req, res) {
 
 async function handleUpdateVarietyByVarietyIdOfThatSeller(req, res) {
   try {
-    const sellerId = parseInt(req.user.id);
-    const varietyId = parseInt(req.params.varietyId);
+    const sellerId = (req.user.id);
+    const varietyId = (req.params.varietyId);
     const { color, size, product_id, weight, liter, price, sku, stock } =
       req.body;
     const updateData = {};
@@ -345,9 +345,9 @@ async function handleUpdateVarietyByVarietyIdOfThatSeller(req, res) {
     if (product_id) updateData.product_id = product_id;
     if (weight) updateData.weight = weight;
     if (liter) updateData.liter = liter;
-    if (price) updateData.price = parseInt(price);
+    if (price) updateData.price = Number(price);
     if (sku) updateData.sku = sku;
-    if (stock) updateData.stock = parseInt(stock);
+    if (stock) updateData.stock = Number(stock);
     // console.log(updateData);
 
     const variety = await prisma.product_Variety.findFirst({
@@ -386,7 +386,7 @@ async function handleUpdateVarietyByVarietyIdOfThatSeller(req, res) {
 
 async function handleUpdateVarietyByVarietyIdByAdmin(req, res) {
   try {
-    const varietyId = parseInt(req.params.varietyId);
+    const varietyId = (req.params.varietyId);
     // const userId = parseInt(req.user.id);
     const { color, size, product_id, weight, liter, price, sku, stock } =
       req.body;
@@ -467,8 +467,8 @@ async function handleUpdateVarietyByVarietyIdByAdmin(req, res) {
 
 async function handleDeleteVarietyByVarietyId(req, res) {
   try {
-    const varietyId = parseInt(req.params.varietyId);
-    const sellerId = parseInt(req.user.id);
+    const varietyId = (req.params.varietyId);
+    const sellerId = (req.user.id);
     const variety = await prisma.product_Variety.findFirst({
       where: { id: varietyId, product: { user_id: sellerId } },
     });
@@ -478,6 +478,15 @@ async function handleDeleteVarietyByVarietyId(req, res) {
         msg: "Sorry you are not authorizied to perform this action !",
       });
     }
+
+     await prisma.Product_Image.deleteMany({
+      where : { varietyId: varietyId}
+    });
+
+     await prisma.Add_To_Cart.deleteMany({
+      where: {productVariety_id: varietyId}
+    })
+
     const product = await prisma.product_Variety.deleteMany({
       where: {
         id: varietyId,
@@ -486,12 +495,12 @@ async function handleDeleteVarietyByVarietyId(req, res) {
 
     if (product.count === 0) {
       return res.status(200).json({
-        message: "Failed to update data",
+        message: "Failed to delete data",
       });
     }
 
     return res.status(200).json({
-      message: "Successfully Updated Product",
+      message: "Successfully delete Product",
       product: product,
     });
   } catch (err) {

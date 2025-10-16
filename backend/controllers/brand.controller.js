@@ -96,7 +96,7 @@ async function handleGetAllBrand(req, res){
 
 async function handleUpdateBrand(req, res){
 
-    const brandId = parseInt(req.params.brandId);
+    const brandId = (req.params.brandId);
     const brandData = {};
     const {name} = req.body;
     if(name) brandData.name = name;
@@ -129,7 +129,7 @@ async function handleUpdateBrand(req, res){
 
 async function handleDeleteBrand(req, res){
 
-    const branbdId = parseInt(req.params.branbdId);
+    const branbdId = (req.params.branbdId);
     try{
     const deletedBrand = await prisma.brand.delete({
         where : { id : branbdId}

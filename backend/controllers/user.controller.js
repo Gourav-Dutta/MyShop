@@ -8,11 +8,11 @@ import bcrypt from 'bcrypt';
 // Get one user using userId  -- All can have access
 async function handleGetOneUser(req, res){
     try{
-        const userId = parseInt(req.user.id);
+        const userId = (req.user.id);
 
         const user = await prisma.UserTable.findUnique({
             where: { id : userId},
-            include: { role: true, address: true },
+            include: { address: true },
         })
         if(!user) res.status(404).json({"message": "User not found", "status": "Failed"});
         const { password, ...User } = user;
@@ -59,7 +59,7 @@ async function handleGetAllUsers(req, res){
 async function handleUpdateUser(req, res){
     try{
 
-        const userId = parseInt(req.user.id);
+        const userId = (req.user.id);
         const {name, email, phone_no, password} = req.body;
         
         // Build my updateData Dynamically
@@ -78,7 +78,7 @@ async function handleUpdateUser(req, res){
         const user = await prisma.UserTable.update({
             where: {id : userId},
             data : updateData,
-            include : {role : true}
+            
         })
 
         if(!user){
@@ -106,7 +106,7 @@ async function handleUpdateUser(req, res){
 // Delete user - Admin
 async function handleDeleteOneUser(req, res){
     try{
-        const userId = parseInt(req.params.id);
+        const userId = (req.params.id);
 
         // Find and delete the user 
 
@@ -147,9 +147,7 @@ async function handleGetAllUserUsingRole(req, res){
 
         const user = await prisma.UserTable.findMany({
         where : {
-            role : {
                 role : userRole
-            }
         }
         })
 
@@ -180,7 +178,7 @@ async function handleGetUser_roleFromUserId(req, res){
 
     try{
 
-        const userId = parseInt(req.params.id);
+        const userId = (req.params.id);
         // console.log(userId);
         
 

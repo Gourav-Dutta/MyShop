@@ -1,5 +1,5 @@
 import { includes, z } from "zod";
-import {prisma} from "../utils/prisma.js"
+import { prisma } from "../utils/prisma.js";
 
 const productSchema = z.object({
   name: z.string().min(1, "Name is must neede"),
@@ -16,10 +16,9 @@ const productSchema = z.object({
 async function handleProductEntry(req, res) {
   try {
     const body = productSchema.parse(req.body);
-    body.sub_catagory_id = parseInt(body.sub_catagory_id);
-    body.brand = parseInt(body.brand);
-    const userId = parseInt(req.user.id);
-   
+    body.sub_catagory_id = body.sub_catagory_id;
+    body.brand = body.brand;
+    const userId = req.user.id;
 
     const newProduct = await prisma.product.create({
       data: {
@@ -46,8 +45,6 @@ async function handleProductEntry(req, res) {
       },
     });
 
-
-
     return res.status(201).json({
       message: "New Product Inserted Successfully",
       data: newProduct,
@@ -62,7 +59,7 @@ async function handleProductEntry(req, res) {
 //Get  All product by the user itself - User and Admin only
 async function handleGetProductByUserItself(req, res) {
   try {
-    const userId = parseInt(req.user.id);
+    const userId = req.user.id;
 
     const products = await prisma.product.findMany({
       where: {
@@ -116,7 +113,7 @@ async function handleGetAllProduct(req, res) {
 // // Get product on the basis of the userId - Admin Only
 async function handleGetProductUser_Id(req, res) {
   try {
-    const userId = parseInt(req.params.UserId);
+    const userId = req.params.UserId;
 
     const Products = await prisma.product.findMany({
       where: {
@@ -215,11 +212,12 @@ async function handleGetProductMain_category_name(req, res) {
 
 // Get product based on the product Id - Admin, seller
 async function handleGetProductByProductId(req, res) {
-  const Id = parseInt(req.params.productId);
+  const Id = req.params.productId;
 
   try {
     const product = await prisma.product.findUnique({
       where: { id: Id },
+      include: { brand: true, sub_category: true },
     });
 
     if (!product) {
@@ -277,19 +275,15 @@ async function handleUpdateProductproduct_Id(req, res) {
   try {
     // console.log(req.user);
 
-    const product_Id = parseInt(req.params.product_id);
-    const user_Id = parseInt(req.user.id);
+    const product_Id = req.params.product_id;
+    const user_Id = req.user.id;
 
-    const { name, description, sub_catagory_id, base_image, brand, status } = req.body;
+    const { name, description, base_image, status } = req.body;
     const updateData = {};
     if (name) updateData.name = name;
     if (description) updateData.description = description;
-    if (sub_catagory_id) updateData.sub_catagory_id = parseInt(sub_catagory_id);
     if (base_image) updateData.base_image = base_image;
-    if (brand) updateData.base_image = brand;
     if (status) updateData.status = status;
-    
-    
 
     const validateUser = await prisma.product.findFirst({
       where: { id: product_Id, user_id: user_Id },
@@ -325,24 +319,62 @@ async function handleUpdateProductproduct_Id(req, res) {
 
 async function handleDeleteProductproduct_Id(req, res) {
   try {
-    const product_Id = parseInt(req.params.product_id);
-    const product = await prisma.product.delete({
+    const product_Id = req.params.product_id;
+
+    const validateProduct = await prisma.product.findUnique({
       where: { id: product_Id },
+      include: {
+        varirties: {
+          include: {
+            images: true,
+          },
+        },
+      },
     });
 
-    if (!product) {
-      return res.status(200).json({
-        message: "Failed to delete data",
-      });
+    if (!validateProduct) {
+      return res.status(400).json({ msg: "Product not found!" });
     }
 
+    await prisma.$transaction(async (tx) => {
+      const varietyIds = validateProduct.varirties.map((v) => v.id);
+
+      if (varietyIds.length > 0) {
+        await tx.Add_To_Cart.deleteMany({
+          where: {
+            productVariety_id: { in: [varietyIds] },
+          },
+        });
+        await tx.product_Image.deleteMany({
+          where: {
+            varietyId: { in: [varietyIds] },
+          },
+        });
+
+        await tx.product_Variety.deleteMany({
+          where: {
+            id: { in: [varietyIds] },
+          },
+        });
+
+        
+      }
+
+      await tx.product_Offer.deleteMany({
+        where: { productId: { in: [product_Id] } },
+      });
+
+      await tx.product.delete({
+        where: { id: product_Id },
+      });
+    });
+
     return res.status(200).json({
-      message: "Successfully delete Product",
-      product: product,
+      message: "Product and its varieties & images deleted successfully!",
     });
   } catch (err) {
     return res.status(500).json({
-      Message: `An error occured durting delete  product : ${err.message}`,
+      message: `Error deleting product: ${err.message}`,
     });
   }
 }
@@ -351,7 +383,6 @@ async function handleDeleteProductproduct_Id(req, res) {
 async function handleDeleteProductSub_Id(req, res) {
   try {
     const Sub_name = req.params.sub_id_name;
-    
 
     const product = await prisma.product.deleteMany({
       where: {
@@ -383,7 +414,7 @@ async function handleDeleteProductSub_Id(req, res) {
 
 async function handleGetProductByBrand(req, res) {
   try {
-    const BrandId = parseInt(req.params.brandId);
+    const BrandId = req.params.brandId;
 
     const Products = await prisma.product.findMany({
       where: {
@@ -409,9 +440,9 @@ async function handleGetProductByBrand(req, res) {
   }
 }
 
-async function searchProducts  (req, res)  {
+async function searchProducts(req, res) {
   const q = req.query.q || "";
-  const brand = req.query.brand || ""; 
+  const brand = req.query.brand || "";
 
   try {
     const products = await prisma.product.findMany({
@@ -419,11 +450,11 @@ async function searchProducts  (req, res)  {
         AND: [
           {
             OR: [
-              { name: { contains: q, mode: 'insensitive' } },           // Since i am now in postgreSQL mode is necessary
+              { name: { contains: q, mode: "insensitive" } }, // Since i am now in postgreSQL mode is necessary
               {
                 sub_category: {
                   is: {
-                    name: { contains: q, mode: 'insensitive' },
+                    name: { contains: q, mode: "insensitive" },
                   },
                 },
               },
@@ -447,10 +478,10 @@ async function searchProducts  (req, res)  {
       },
     });
 
-    if(products.length === 0){
+    if (products.length === 0) {
       return res.status(200).json({
-        "message" : "No record found"
-      })
+        message: "No record found",
+      });
     }
     res.json({ data: products });
   } catch (error) {
@@ -459,16 +490,14 @@ async function searchProducts  (req, res)  {
       .status(500)
       .json({ message: "Something went wrong", error: error.message });
   }
-};
-
-
+}
 
 // Get specific product of a seller
 
-async function searchProductsBySeller  (req, res)  {
+async function searchProductsBySeller(req, res) {
   const q = req.query.q || "";
-  const brand = req.query.brand || ""; 
-  const userId = parseInt(req.user.id);
+  const brand = req.query.brand || "";
+  const userId = req.user.id;
 
   try {
     const products = await prisma.product.findMany({
@@ -476,11 +505,11 @@ async function searchProductsBySeller  (req, res)  {
         AND: [
           {
             OR: [
-              { name: { contains: q, mode: 'insensitive'  } },
+              { name: { contains: q, mode: "insensitive" } },
               {
                 sub_category: {
                   is: {
-                    name: { contains: q, mode: 'insensitive'  },
+                    name: { contains: q, mode: "insensitive" },
                   },
                 },
               },
@@ -496,7 +525,7 @@ async function searchProductsBySeller  (req, res)  {
                 },
               }
             : {}, // empty if no brand filter
-          { user_id : userId}
+          { user_id: userId },
         ],
       },
       include: {
@@ -512,7 +541,7 @@ async function searchProductsBySeller  (req, res)  {
       .status(500)
       .json({ message: "Something went wrong", error: error.message });
   }
-};
+}
 
 export {
   handleProductEntry as newProductEntryFunction,
@@ -528,5 +557,5 @@ export {
   handleGetProductByBrand as getProductByBrandId,
   handleGetProductOnSubCategoryandBrand as getProductOnSubCategoryAndBrand,
   searchProducts as searchProductFunction,
-  searchProductsBySeller as searchProductBySellerFunction
+  searchProductsBySeller as searchProductBySellerFunction,
 };

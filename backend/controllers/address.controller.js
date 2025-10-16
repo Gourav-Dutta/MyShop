@@ -15,7 +15,7 @@ const addressSchema = z.object({
 async function handleNewAddress(req, res) {
   try {
     const body = addressSchema.parse(req.body);
-    const userId = parseInt(req.user.id);
+    const userId =(req.user.id);
     
 
     if (typeof body.is_primary === "string") {
@@ -51,7 +51,7 @@ async function handleNewAddress(req, res) {
     });
 
     if (!newAddress) {
-      return res.status(200).json({
+      return res.status(400).json({
         message: "Failde to add new address",
       });
     }
@@ -129,7 +129,7 @@ async function handleGetAllUserByCity(req, res) {
 
 async function handleGetUserAddress(req, res) {
   try {
-    const userId = parseInt(req.user.id);
+    const userId =(req.user.id);
 
     const address = await prisma.address.findMany({
       where: { user_id: userId },
@@ -162,11 +162,11 @@ const userSchema = z.object({
 async function handleGetUserAddressByUserIdByAdmin(req, res) {
   try {
     const body = userSchema.parse(req.body);
-    const Id = parseInt(body.id);
+    const Id = (body.id);
 
     const userAddress = await prisma.address.findMany({
       where: {
-        user: { id: Id },
+        user_id: Id,
       },
       include: { user: true },
     });
@@ -193,8 +193,8 @@ async function handleGetUserAddressByUserIdByAdmin(req, res) {
 // Get the address based on userId and AddressId:
 
 async function handleGetAddressOnAddId(req, res) {
-  const userId = parseInt(req.user.id);
-  const addId = parseInt(req.params.addId);
+  const userId = (req.user.id);
+  const addId = (req.params.addId);
 
   const myAddress = await prisma.address.findMany({
     where: { id: addId, user_id: userId },
@@ -215,8 +215,8 @@ async function handleGetAddressOnAddId(req, res) {
 // To update address :
 
 async function handleUpdateAddress(req, res) {
-  const userId = parseInt(req.user.id);
-  const addId = parseInt(req.params.addId);
+  const userId = (req.user.id);
+  const addId = (req.params.addId);
 
   const { house_no, city, state, pin_no, shop_line } = req.body;
   const body = {};
@@ -248,11 +248,11 @@ async function handleUpdateAddress(req, res) {
 
 async function handleUpdateAddesssIs_Primary(req, res) {
   try {
-    const userId = parseInt(req.user.id);
+    const userId = (req.user.id);
    
 
-    const addId = parseInt(req.body.addId);
-    let is_primary = req.body.is_primary ?? req.body.is_primary;
+    const addId = (req.body.addId);
+    let is_primary = req.body.is_primary ;
     
 
     if (typeof is_primary === "string") {   

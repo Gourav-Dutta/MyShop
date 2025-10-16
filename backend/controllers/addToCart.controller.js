@@ -8,11 +8,10 @@ const addToCartSchema = z.object({
 });
 async function handleAddToCart(req, res) {
   try {
-    const userId = parseInt(req.user.id);
+    const userId =(req.user.id);
 
     const body = addToCartSchema.parse(req.body);
-    body.productVarietyId = parseInt(body.productVarietyId);
-    body.quantity = parseInt(body.quantity);
+    body.quantity = Number (body.quantity);
 
     const existingerUserProduct = await prisma.add_To_Cart.findMany({
       // Checking if the combination already exists
@@ -65,11 +64,11 @@ const updateAddToCartSchema = z.object({
 
 async function handleUpdateAddToCart(req, res) {
   try {
-    const userId = parseInt(req.user.id);
+    const userId = (req.user.id);
 
     const body = updateAddToCartSchema.parse(req.body);
-    body.productVarietyId = parseInt(body.productVarietyId);
-    body.quantity = parseInt(body.quantity);
+    body.productVarietyId = (body.productVarietyId);
+    body.quantity = Number (body.quantity);
 
     const updateValue = await prisma.add_To_Cart.updateMany({
       where: {
@@ -97,9 +96,7 @@ async function handleUpdateAddToCart(req, res) {
     return res.status(500).json({
       Message: `An internal server error : ${err.message}`,
     });
-  } finally {
-    await prisma.$disconnect();
-  }
+  } 
 }
 
 // Delete product using userId and productId
@@ -109,10 +106,10 @@ const deleteAddToCartSchema = z.object({
 
 async function handleDeleteOneProduct(req, res) {
   try {
-    const userId = parseInt(req.user.id);
+    const userId = (req.user.id);
     const body = deleteAddToCartSchema.parse(req.body);
 
-    const productVarietyId = parseInt(body.productVarietyId);
+    const productVarietyId = (body.productVarietyId);
 
     const user = await prisma.add_To_Cart.deleteMany({
       where: {
@@ -142,7 +139,7 @@ async function handleDeleteOneProduct(req, res) {
 
 async function handleGetAddToCartValue(req, res) {
   try {
-    const userId = parseInt(req.user.id);
+    const userId = (req.user.id);
    
 
     const products = await prisma.add_To_Cart.findMany({

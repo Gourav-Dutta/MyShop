@@ -23,7 +23,7 @@ router
 .get("/main_category/All", authMiddleware, adminMiddleware, getAllCategoryItem)
 .get("/main_category/One/:categoryId", authMiddleware, adminMiddleware, getOneCategoryItem )
 .patch("/main_category/update/:categoryId", authMiddleware, adminMiddleware, updateCategoryItem)
-.delete("/main_category/delete/:categoryId", authMiddleware, adminMiddleware, deleteCategoryItem)
+.delete("/main_category/delete/:categoryName", authMiddleware, adminMiddleware, deleteCategoryItem)
 
 
 
@@ -33,5 +33,5 @@ router
 .get("/sub_category/All", authMiddleware, sellerAdminMiddleware(["SELLER", "ADMIN"]), getAllSub_CategoryFunction)
 .get("/sub_category/one/:categoryId", authMiddleware, adminMiddleware,getOneSub_CategoryFunction )
 .patch("/sub_category/update/:categoryId", authMiddleware, adminMiddleware, updateOneSub_CategoryFunction)
-.delete("/sub_category/delete/:categoryId", authMiddleware, adminMiddleware, deleteOneSub_CategoryFunction )
+.delete("/sub_category/delete/:categoryName", authMiddleware, adminMiddleware, deleteOneSub_CategoryFunction )
 export { router as categoryRouter}

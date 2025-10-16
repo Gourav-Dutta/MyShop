@@ -22,7 +22,7 @@ const imagesSchema = z.array(imageSchema); // This is because my Backend is send
 async function handleInsertImage(req, res) {
   try {
     const body = imagesSchema.parse(req.body);
-    const varietyId = parseInt(req.params.varietyId);
+    const varietyId = (req.params.varietyId);
     // console.log(body);
 
     // if (typeof body.is_primary === "string") {
@@ -84,7 +84,7 @@ async function handleInsertImage(req, res) {
 
 async function handleGetProductImageByProductVariteyId(req, res) {
   try {
-    const varietyId = parseInt(req.params.varietyId);
+    const varietyId = (req.params.varietyId);
 
     const productImage = await prisma.product_Image.findMany({
       where: { varietyId: varietyId },
@@ -113,8 +113,8 @@ async function handleGetProductImageByProductVariteyId(req, res) {
 
 async function handleUpdateImageUsingImageIdOfThatSeller(req, res) {
   try {
-    const sellerId = parseInt(req.params.sellerId);
-    const imageId = parseInt(req.body.imageId);
+    const sellerId = (req.params.sellerId);
+    const imageId =(req.body.imageId);
     const { url, alt_text, is_primary } = req.body;
     const updateData = {};
     if (url) updateData.url = url;
@@ -158,7 +158,7 @@ async function handleUpdateImageUsingImageIdOfThatSeller(req, res) {
 
 async function handleUpdateImageUsingImageIdByAdmin(req, res) {
   try {
-    const imageId = parseInt(req.body.imageId);
+    const imageId = (req.body.imageId);
     const { url, alt_text, is_primary } = req.body;
     const updateData = {};
     if (url) updateData.url = url;
@@ -193,8 +193,8 @@ async function handleUpdateImageUsingImageIdByAdmin(req, res) {
 
 async function handleDeleteVarietyImageBySellerIdOfThatSeller(req, res) {
   try {
-    const sellerId = parseInt(req.params.sellerId);
-    const imageId = parseInt(req.body.imageId);
+    const sellerId = (req.params.sellerId);
+    const imageId = (req.body.imageId);
 
     const variety = await prisma.product_Image.findFirst({
       where: { id: imageId, variety: { product: { user_id: sellerId } } },
@@ -232,7 +232,7 @@ async function handleDeleteVarietyImageBySellerIdOfThatSeller(req, res) {
 
 async function handleDeleteVarietyImageByVarietyImageIdByAdmin(req, res) {
   try {
-    const imageId = parseInt(req.body.imageId);
+    const imageId = (req.body.imageId);
 
     const product = await prisma.product_Image.deleteMany({
       where: {

@@ -24,8 +24,8 @@ async function handleInsertOrder(req, res) {
     const body = orderSchema.parse(req.body);
     const userId = req.user.id;
     const total_price = body.items.reduce((sum, item) => {
-      const price = parseInt(item.price);
-      const quantity = parseInt(item.quantity) || 1;
+      const price = Number(item.price);
+      const quantity = Number(item.quantity) || 1;
       return sum + price * quantity;
     }, 0);
 
@@ -39,14 +39,14 @@ async function handleInsertOrder(req, res) {
 
     const orderDetails = await prisma.order.create({
       data: {
-        user: { connect: { id: parseInt(userId) } },
+        user: { connect: { id: (userId) } },
         total_price: parseInt(total_price),
 
         items: {
           create: body.items.map((item) => ({
-            productVariety_id: parseInt(item.productVariety_id),
-            price: parseInt(item.price),
-            quantity: parseInt(item.quantity) || 1,
+            productVariety_id: (item.productVariety_id),
+            price: Number(item.price),
+            quantity: Number(item.quantity) || 1,
           })),
 
           // If the user place two order it will look like
@@ -86,7 +86,7 @@ async function handleInsertOrder(req, res) {
 // Get order details by orderId
 async function handleGetOrderByOrder_Id(req, res) {
   try {
-    const orderId = parseInt(req.params.orderId);
+    const orderId =(req.params.orderId);
 
     const orderDetails = await prisma.order.findMany({
       where: { id: orderId },
@@ -141,7 +141,7 @@ async function handleGetAllOrder(req, res) {
 // Get order details by user Id
 async function handleGetOredrByUserId(req, res) {
   try {
-    const userId = parseInt(req.user.id);
+    const userId = (req.user.id);
 
     const order = await prisma.order.findMany({
       // findMany always return an Array . So order here is nothing but an array of object
@@ -183,7 +183,7 @@ async function handleGetOredrByUserId(req, res) {
 // Get order details by product Variety Id
 async function handleGetOrderByProductVarietyId(req, res) {
   try {
-    const productVariety_Id = parseInt(req.params.productVariety_Id);
+    const productVariety_Id = (req.params.productVariety_Id);
 
     const order = await prisma.order.findMany({
       where: {
@@ -288,7 +288,17 @@ async function handleGetOrderByDate(req, res) {
 // Delete Order by order ID
 async function handleDeleteOrderByOrderId(req, res) {
   try {
-    const orderId = parseInt(req.params.orderId);
+    const orderId = (req.params.orderId);
+
+    const order = await prisma.order.findMany({
+      where : { id: orderId}
+    });
+
+    if(!order) return res.status(400).json({ "msg" : "No order found"});
+
+    await prisma.Order_Item.deleteMany({
+      where: { order_id: orderId}
+    })
 
     const deletedOrder = await prisma.order.delete({
       where: { id: orderId },
@@ -297,7 +307,7 @@ async function handleDeleteOrderByOrderId(req, res) {
 
     if (!deletedOrder) {
       return res.status(200).json({
-        Message: "Order not founded",
+        Message: "Order not Deleted",
       });
     }
 
@@ -316,7 +326,7 @@ async function handleDeleteOrderByOrderId(req, res) {
 
 async function handleDeleteOrderByUserId(req, res) {
   try {
-    const userId = parseInt(req.user.id);
+    const userId = (req.user.id);
 
     const deletedOrder = await prisma.order.deleteMany({
       where: { user_id: userId },
@@ -344,7 +354,7 @@ async function handleDeleteOrderByUserId(req, res) {
 // Delete order by Product ID
 async function handleDeleteOrderByProductVarietyId(req, res) {
   try {
-    const productVariety_Id = parseInt(req.params.productVariety_id);
+    const productVariety_Id =(req.params.productVariety_id);
 
     const deletedOrder = await prisma.order.deleteMany({
       where: {
@@ -380,7 +390,7 @@ async function handleUpdateOrderStatus(req, res) {
   try {
     const updateData = {};
     const { status } = req.body;
-    const orderItemId = parseInt(req.params.orderItemId);  
+    const orderItemId = (req.params.orderItemId);  
 
     if (status) updateData.status = status;
     // console.log(updateData.status);
@@ -468,7 +478,7 @@ async function handleDeleteOrderByDate(req, res) {
 // Get order-Item of a seller 
 
 async function handleGetOrderItemOfSeller(req, res){
-  const userId = parseInt(req.user.id);
+  const userId = (req.user.id);
 
   try{
  const Items = await prisma.order_Item.findMany({
