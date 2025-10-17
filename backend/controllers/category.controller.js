@@ -146,16 +146,37 @@ async function handleDeleteOneCategoryItem(req, res) {
     if (!validateCategory) {
       return res.status(404).json({ msg: "No category found" });
     }
+     const subCategoryIds = validateCategory.sub_Categories.map((s) => s.id);
+      const productIds = validateCategory.sub_Categories.flatMap((s) =>
+        s.products.map((p) => p.id)
+      );
+      const varietyIds = validateCategory.sub_Categories.flatMap((s) =>
+        s.products.flatMap((p) => p.varirties.map((v) => v.id))
+      );
+       if (varietyIds.length > 0) {
+      const hasOrders = await prisma.Order_Item.findFirst({
+        where: { productVariety_id: { in: varietyIds } },
+      });
+
+      if (hasOrders) {
+        return res.status(400).json({
+          msg: "Cannot delete this Main category  because some of its product  has existing orders.",
+        });
+      }
+    }
 
     await prisma.$transaction(async (tx) => {
-      const subCategoryIds = validateCategory.sub_Categories.map(s => s.id);
-      const productIds = validateCategory.sub_Categories.flatMap(s =>
-        s.products.map(p => p.id)
-      );
-      const varietyIds = validateCategory.sub_Categories.flatMap(s =>
-        s.products.flatMap(p => p.varirties.map(v => v.id))
-      );
+      if (varietyIds.length > 0) {
+        const hasOrders = await prisma.Order_Item.findFirst({
+          where: { productVariety_id: { in: varietyIds } },
+        });
 
+        if (hasOrders) {
+          return res.status(400).json({
+            msg: "Cannot delete this product because it has existing orders.",
+          });
+        }
+      }
       // Delete variety-related data
       if (varietyIds.length > 0) {
         await tx.product_Image.deleteMany({
@@ -199,7 +220,6 @@ async function handleDeleteOneCategoryItem(req, res) {
       message: "Successfully deleted category and all related data",
       deletedCategory: categoryName,
     });
-
   } catch (err) {
     console.error("Delete category error:", err);
     return res.status(500).json({
@@ -207,7 +227,6 @@ async function handleDeleteOneCategoryItem(req, res) {
     });
   }
 }
-
 
 // sub-category functions :
 
@@ -339,8 +358,8 @@ async function handleDeleteOneSub_CategoryItem(req, res) {
 
     const validateSub_Category = await prisma.Sub_Categories.findFirst({
       where: { name: categoryName },
-      include: { products: { include : { varirties: true} },
-    } } );
+      include: { products: { include: { varirties: true } } },
+    });
 
     if (!validateSub_Category) {
       return res.status(400).json({
@@ -348,21 +367,32 @@ async function handleDeleteOneSub_CategoryItem(req, res) {
       });
     }
 
-     await prisma.$transaction(async (tx) => {
-      const subCategoryIds = validateSub_Category.id;
-      const productIds = validateSub_Category.products.map(p => p.id);
-      const varietyIds = validateSub_Category.products.flatMap(p =>
-         p.varirties.map(v => v.id)
-      );
+    const subCategoryIds = validateSub_Category.id;
+    const productIds = validateSub_Category.products.map((p) => p.id);
+    const varietyIds = validateSub_Category.products.flatMap((p) =>
+      p.varirties.map((v) => v.id)
+    );
 
+    if (varietyIds.length > 0) {
+      const hasOrders = await prisma.Order_Item.findFirst({
+        where: { productVariety_id: { in: varietyIds } },
+      });
+
+      if (hasOrders) {
+        return res.status(400).json({
+          msg: "Cannot delete this Sub-Category  because some of its product has existing orders.",
+        });
+      }
+    }
+
+    await prisma.$transaction(async (tx) => {
       // Delete variety-related data
       if (varietyIds.length > 0) {
-
-         await tx.Order_Item.deleteMany({
-          where: { productVariety_id: {in : varietyIds}}
+        await tx.Order_Item.deleteMany({
+          where: { productVariety_id: { in: varietyIds } },
         });
 
-         await tx.Add_To_Cart.deleteMany({
+        await tx.Add_To_Cart.deleteMany({
           where: { productVariety_id: { in: varietyIds } },
         });
 
@@ -370,19 +400,13 @@ async function handleDeleteOneSub_CategoryItem(req, res) {
           where: { varietyId: { in: varietyIds } },
         });
 
-       
-
         await tx.product_Variety.deleteMany({
           where: { id: { in: varietyIds } },
         });
-
-       
       }
 
       // Delete product-related data
       if (productIds.length > 0) {
-
-        
         await tx.product_Offer.deleteMany({
           where: { productId: { in: productIds } },
         });
@@ -393,12 +417,11 @@ async function handleDeleteOneSub_CategoryItem(req, res) {
       }
 
       // Delete subcategories
-      
-        await tx.sub_Categories.deleteMany({
-          where: { id: { in: subCategoryIds } },
-        });
+
+      await tx.sub_Categories.delete({
+        where: { id: subCategoryIds },
+      });
     });
-    
 
     return res.status(201).json({
       message: "Successfully deleted Data",

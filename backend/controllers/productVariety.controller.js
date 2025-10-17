@@ -478,7 +478,15 @@ async function handleDeleteVarietyByVarietyId(req, res) {
         msg: "Sorry you are not authorizied to perform this action !",
       });
     }
-
+    
+    const hasOrders = await prisma.Order_Item.findFirst({
+      where: { productVariety_id: varietyId}
+    });
+    if(hasOrders){
+      return res.status(400).json({"msg" : 
+        "Cannot delete this product because it has existing orders."
+      })
+    }
      await prisma.Product_Image.deleteMany({
       where : { varietyId: varietyId}
     });
@@ -505,7 +513,7 @@ async function handleDeleteVarietyByVarietyId(req, res) {
     });
   } catch (err) {
     return res.status(500).json({
-      Message: `An error occured durting get update  product : ${err.message}`,
+      Message: `An error occured durting deleteing  product variety : ${err.message}`,
     });
   }
 }

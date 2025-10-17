@@ -317,6 +317,7 @@ async function handleUpdateProductproduct_Id(req, res) {
 
 // Delete product based on product-Id -- Admin and seller
 
+
 async function handleDeleteProductproduct_Id(req, res) {
   try {
     const product_Id = req.params.product_id;
@@ -324,11 +325,7 @@ async function handleDeleteProductproduct_Id(req, res) {
     const validateProduct = await prisma.product.findUnique({
       where: { id: product_Id },
       include: {
-        varirties: {
-          include: {
-            images: true,
-          },
-        },
+        varirties: true,
       },
     });
 
@@ -336,32 +333,43 @@ async function handleDeleteProductproduct_Id(req, res) {
       return res.status(400).json({ msg: "Product not found!" });
     }
 
-    await prisma.$transaction(async (tx) => {
-      const varietyIds = validateProduct.varirties.map((v) => v.id);
+    const varietyIds = validateProduct.varirties.map((v) => v.id);
 
+    
+    if (varietyIds.length > 0) {
+      const hasOrders = await prisma.Order_Item.findFirst({
+        where: { productVariety_id: { in: varietyIds } },
+      });
+
+      if (hasOrders) {
+        return res.status(400).json({
+          msg: "Cannot delete this product because it has existing orders.",
+        });
+      }
+    }
+
+    
+    await prisma.$transaction(async (tx) => {
       if (varietyIds.length > 0) {
         await tx.Add_To_Cart.deleteMany({
-          where: {
-            productVariety_id: { in: [varietyIds] },
-          },
+          where: { productVariety_id: { in: varietyIds } },
         });
+
+        await tx.Order_Item.deleteMany({
+          where: { productVariety_id: { in: varietyIds } },
+        });
+
         await tx.product_Image.deleteMany({
-          where: {
-            varietyId: { in: [varietyIds] },
-          },
+          where: { varietyId: { in: varietyIds } },
         });
 
         await tx.product_Variety.deleteMany({
-          where: {
-            id: { in: [varietyIds] },
-          },
+          where: { id: { in: varietyIds } },
         });
-
-        
       }
 
       await tx.product_Offer.deleteMany({
-        where: { productId: { in: [product_Id] } },
+        where: { productId: product_Id },
       });
 
       await tx.product.delete({
@@ -378,6 +386,7 @@ async function handleDeleteProductproduct_Id(req, res) {
     });
   }
 }
+
 
 // Delete Product based on Sub-Category-name -->Admin
 async function handleDeleteProductSub_Id(req, res) {
