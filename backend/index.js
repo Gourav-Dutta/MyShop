@@ -27,7 +27,7 @@ const PORT = process.env.PORT ||  8000;
 
 app.use(
   cors({
-    origin: ["http://localhost:5173", "http://localhost:3000"], // React frontend
+    origin: ["http://localhost:5173", "http://localhost:3000", "https://myshop-backend-zap2.onrender.com"], // React frontend
     methods: ["GET", "POST", "PATCH", "DELETE", "PUT"],
     credentials: true,
   })
