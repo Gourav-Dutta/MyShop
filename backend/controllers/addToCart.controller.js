@@ -25,7 +25,7 @@ async function handleAddToCart(req, res) {
     
 
     if (existingerUserProduct.length > 0) {
-      return res.status(400).json({
+      return res.status(200).json({
         Message: `Hello  ${req.user.name}, you already added this product to your Add To Cart table kindle increase the equantity of that product or try with another one`,
       });
     }
