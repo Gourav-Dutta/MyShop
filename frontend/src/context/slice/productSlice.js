@@ -1,10 +1,17 @@
 import { fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { createApi } from "@reduxjs/toolkit/query/react";
 
+
+const baseUrl =
+  import.meta.env.MODE === "development"
+    ? import.meta.env.VITE_LOCAL_API
+    : import.meta.env.VITE_PROD_API;
+
+
 export const productApi = createApi({
   reducerPath: "productApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: "https://myshop-backend-zap2.onrender.com/api/",
+    baseUrl,
     prepareHeaders: (headers) => {
       const token = localStorage.getItem("ACCESS_TOKEN"); // or get from Redux
       if (token) {

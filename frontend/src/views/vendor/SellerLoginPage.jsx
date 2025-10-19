@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { login } from "../context/slice/authSlice";
+import { login } from "../../context/slice/authSlice";
 import { useDispatch } from "react-redux";
 import axios from "axios";
 
-export function Login() {
+export function SellerLoginPage() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -66,7 +66,7 @@ export function Login() {
     <div className="w-full max-w-sm p-6 bg-white rounded-xl shadow-md">
       <form onSubmit={handleSubmit} className="space-y-5">
         <h1 className="text-xl font-semibold text-center text-gray-800">
-          Login to your account
+          Login to your account 
         </h1>
 
         {error && (
@@ -109,7 +109,7 @@ export function Login() {
 
         <p className="text-center text-sm text-gray-600">
           Not Registered?{" "}
-          <Link to="/auth/signup" className="text-blue-600 hover:underline">
+          <Link to="/auth/seller/signup" className="text-blue-600 hover:underline">
             Create an account
           </Link>
         </p>

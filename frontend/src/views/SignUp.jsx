@@ -25,6 +25,11 @@ export function SignUp(){
 
     const payload = {name, email, phone_no, password, role};
 
+   const API_BASE_URL =
+  import.meta.env.MODE === "development"
+    ? import.meta.env.VITE_LOCAL_API
+    : import.meta.env.VITE_PROD_API;
+
    const handleSubmit = async (e) => {
          e.preventDefault();
          setError("");
@@ -39,7 +44,7 @@ export function SignUp(){
         setLoading(true);
 
         try{
-            const response = await axios.post("https://myshop-backend-zap2.onrender.com/api/user/register", payload);
+            const response = await axios.post(`${API_BASE_URL}user/register`, payload);
             // console.log(response.data);
             toast.success("Registration successful! Please log in.")
            navigate("/auth/login");

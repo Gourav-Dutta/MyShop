@@ -175,7 +175,7 @@ export function SellerLayout() {
             </div>
           ) : (
             <Link
-              to="/auth/login"
+              to="/auth/seller/login"
               className="px-3 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700"
             >
               Login
