@@ -1,6 +1,6 @@
 import { createBrowserRouter, Navigate} from "react-router-dom";
 import { AuthPageLayout } from "./components/AuthPageLayout";
-import { DefaultLayout } from "./components/defaultLayout";
+import { DefaultLayout } from "./components/DefaultLayout";
 import { Login} from "./views/Login";
 import { SignUp } from "./views/SignUp";
 import { HomePage } from "./views/HomePage";

@@ -18,7 +18,7 @@ export function DefaultLayout() {
   const user = JSON.parse(localStorage.getItem("USER") || "null");
   
   useEffect(() => {
-    if (user?.role?.role === "SELLER") {
+    if (user?.role === "SELLER") {
       navigate("/seller/layout/sellerDashboard");
     }
   }, [user, navigate]);
@@ -147,7 +147,7 @@ export function DefaultLayout() {
                         Settings
                       </a>
                     </li>
-                    {user?.role?.role === "ADMIN" && (
+                    {user?.role === "ADMIN" && (
                       <li>
                         <a
                           href="/adminDashboard"

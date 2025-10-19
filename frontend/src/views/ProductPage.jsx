@@ -84,11 +84,18 @@ export function ProductPage() {
     }
 
     try {
-      await addToCart({
+     const res =  await addToCart({
         productVarietyId,
         quantity,
       }).unwrap();
-      toast.success("Item added to your cart 🎉");
+      if (res.Message && res.Message.includes("already added")) {
+      toast(res.Message, {
+        icon: "🛒",
+      });
+      return;
+    }
+
+    toast.success("Product added to cart 🛍️");
     } catch (err) {
       console.error("Add to cart error:", err);
       toast.error("Failed to add to cart ❌");

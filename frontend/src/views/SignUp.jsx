@@ -9,7 +9,7 @@ export function SignUp(){
    const [email, setEmail] = useState("");
    const [phone_no, setPhone] = useState("");
    const [password, setPassword] = useState("");
-   const [role_id, setRole] = useState("3");
+   const [role, setRole] = useState("USER");
    const [error, setError] = useState("");
    const [loading, setLoading] = useState(false);
    const navigate = useNavigate();
@@ -23,7 +23,7 @@ export function SignUp(){
     return null;
     };
 
-    const payload = {name, email, phone_no, password, role_id};
+    const payload = {name, email, phone_no, password, role};
 
    const handleSubmit = async (e) => {
          e.preventDefault();
@@ -39,7 +39,7 @@ export function SignUp(){
         setLoading(true);
 
         try{
-            const response = await axios.post("http://127.0.0.1:8000/api/user/register", payload);
+            const response = await axios.post("https://myshop-backend-zap2.onrender.com/api/user/register", payload);
             // console.log(response.data);
             toast.success("Registration successful! Please log in.")
            navigate("/auth/login");

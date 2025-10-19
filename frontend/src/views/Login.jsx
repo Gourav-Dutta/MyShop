@@ -33,14 +33,14 @@ export function Login() {
     setLoading(true);
     try {
       const response = await axios.post(
-        "http://127.0.0.1:8000/api/user/login",
+        "https://myshop-backend-zap2.onrender.com/api/user/login",
         { email, password }
       );
 
       // Save token + user in redux
       dispatch(login({ token: response.data.token, user: response.data.data }));
-      // console.log( "The role is: ", response);
-      if(response.data.data.role.role == "SELLER"){
+      console.log( "The role is: ", response);
+      if(response.data.data.role == "SELLER"){
         navigate("/seller/layout/sellerDashboard");
       }else{
       // Redirect to homepage 

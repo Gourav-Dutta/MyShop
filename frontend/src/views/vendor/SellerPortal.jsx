@@ -12,7 +12,7 @@ export const SellerPortal = () => {
   // console.log(data);
   // console.log(productData);
 
-  if (isLoading) return <ProductPageLoader/>;
+  if (isLoading) return <ProductPageLoader />;
   if (isError)
     return (
       <p className="text-center mt-10 text-red-500">Failed to fetch orders</p>
@@ -71,14 +71,14 @@ export const SellerPortal = () => {
           </div>
         </Link>
         <Link to="/seller/layout/order/All">
-        <div className="bg-green-50 p-6 rounded-xl shadow hover:shadow-md transition cursor-pointer">
-          <h4 className="text-xl font-semibold text-green-700">
-            📦 Manage Orders
-          </h4>
-          <p className="text-gray-600 mt-2 text-sm">
-            Track, update, and fulfill customer orders.
-          </p>
-        </div>
+          <div className="bg-green-50 p-6 rounded-xl shadow hover:shadow-md transition cursor-pointer">
+            <h4 className="text-xl font-semibold text-green-700">
+              📦 Manage Orders
+            </h4>
+            <p className="text-gray-600 mt-2 text-sm">
+              Track, update, and fulfill customer orders.
+            </p>
+          </div>
         </Link>
         <div className="bg-amber-50 p-6 rounded-xl shadow hover:shadow-md transition cursor-pointer">
           <h4 className="text-xl font-semibold text-amber-700">
@@ -98,40 +98,46 @@ export const SellerPortal = () => {
         {orders.length === 0 ? (
           <p className="text-gray-500">No orders yet.</p>
         ) : (
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="border-b text-gray-600">
-                <th className="py-2">Order ID</th>
-                <th className="py-2">Product</th>
-                <th className="py-2">Customer</th>
-                <th className="py-2">Status</th>
-                <th className="py-2">Amount</th>
-              </tr>
-            </thead>
-            <tbody>
-              {orders.slice(0, 5).map((order) => (
-                <tr key={order.id} className="border-b hover:bg-gray-50">
-                  <td className="py-2">#{order.order_id}</td>
-                  <td className="py-2">
+          <div className="space-y-4">
+            {orders.slice(0, 5).map((order) => (
+              <div
+                key={order.id}
+                className="flex flex-col md:flex-row md:items-center justify-between border rounded-lg p-4 shadow-sm hover:shadow-md transition bg-white"
+              >
+                {/* Left Section */}
+                <div className="flex-1">
+                  <p className="text-sm text-gray-500 font-medium">
+                    Order ID:{" "}
+                    <span className="text-gray-700">#{order.order_id}</span>
+                  </p>
+
+                  <p className="text-base font-semibold text-gray-800 truncate max-w-[300px]">
                     {order.productVariety?.name || "N/A"}
-                  </td>
-                  <td className="py-2">
-                    {order.order?.user?.name || "Unknown"}
-                  </td>
-                  <td
-                    className={`py-2 font-medium ${
+                  </p>
+
+                  <p className="text-sm text-gray-600">
+                    Customer: {order.order?.user?.name || "Unknown"}
+                  </p>
+                </div>
+
+                {/* Right Section */}
+                <div className="flex items-center gap-6 mt-3 md:mt-0">
+                  <span
+                    className={`text-sm font-semibold px-3 py-1 rounded-full ${
                       order.status === "PENDING"
-                        ? "text-amber-600"
-                        : "text-green-600"
+                        ? "bg-amber-100 text-amber-700"
+                        : "bg-green-100 text-green-700"
                     }`}
                   >
                     {order.status}
-                  </td>
-                  <td className="py-2">₹{order.price}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                  </span>
+                  <span className="text-lg font-bold text-gray-900">
+                    ₹{order.price}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
         )}
       </div>
     </div>

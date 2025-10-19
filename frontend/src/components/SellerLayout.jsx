@@ -21,7 +21,7 @@ export function SellerLayout() {
     if (!token) {
       navigate("/auth/login");
     } else {
-      if (user?.role?.role !== "SELLER") {
+      if (user?.role !== "SELLER") {
         navigate("/homepage");
       }
     }

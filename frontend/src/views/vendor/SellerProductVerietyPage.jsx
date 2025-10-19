@@ -8,6 +8,8 @@ export const SellerProductVerietyPage = () => {
   const { data, isLoading, isError } =
     useGetProductVerityBtProductIdQuery(productId);
     const [deleteVariety] = useDeleteVarietyMutation();
+    console.log(data);
+    
 
   const productVariety = data?.data || [];
   

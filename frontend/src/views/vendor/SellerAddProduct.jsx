@@ -10,7 +10,7 @@ import { ProductPageLoader } from "../ProductPageLoader";
 export const SellerAddProduct = () => {
   const { data, isLoading, isError } = useGetAllSubCategoriesQuery();
   const { data: brandsData, isLoading: brandLoading } = useGetAllBrandsQuery();
-  //   console.log("Sub-Categories: ", data);
+    // console.log("Sub-Categories: ", data);
   //   console.log("Brand data : ", brandsData);
 
   const [addProduct] = useAddNewProductMutation();

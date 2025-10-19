@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { useGetProductDetailsByProductIdQuery, useUpdateProductMutation } from "../../context/slice/productSlice";
+import { useGetProductDetailsByProductIdQuery, useUpdateProductMutation, useGetAllBrandsQuery } from "../../context/slice/productSlice";
 import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import { ProductPageLoader } from "../ProductPageLoader";
@@ -7,6 +7,7 @@ import { ProductPageLoader } from "../ProductPageLoader";
 export const SellerUpdateProductPage = () => {
   const { productId } = useParams();
   const { data, isLoading, isError } = useGetProductDetailsByProductIdQuery(productId);
+  
   const [updateProduct] = useUpdateProductMutation();
   const navigate = useNavigate();
 
@@ -25,8 +26,8 @@ export const SellerUpdateProductPage = () => {
         name: data.data.name,
         description: data.data.description,
         base_image: data.data.base_image,
-        brand_id: data.data.brand_id,
-        sub_catagory_id: data.data.sub_catagory_id,
+        brand_id: data.data.brand.name,
+        sub_catagory_id: data.data.sub_category.name,
         status: data.data.status,
       });
     }
@@ -39,12 +40,18 @@ export const SellerUpdateProductPage = () => {
     });
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    updateProduct({productId: productId, formData: formData });
+  const handleSubmit = async (e) => {
+  e.preventDefault();
+  try {
+    await updateProduct({ productId, formData }).unwrap();
     toast.success("Product updated successfully!");
     navigate(-1);
-  };
+  } catch (err) {
+    console.error(err);
+    toast.error("Failed to update product!");
+  }
+};
+
 
   if (isLoading) return <ProductPageLoader/>;
   if (isError) return <p className="text-center text-red-500">Failed to load product.</p>;
@@ -102,27 +109,27 @@ export const SellerUpdateProductPage = () => {
           )}
         </div>
 
-        {/* Brand ID */}
+        {/* Brand */}
         <div>
-          <label className="block text-sm font-medium mb-1">Brand ID</label>
+          <label className="block text-sm font-medium mb-1">Brand </label>
           <input
             type="text"
             name="brand_id"
             value={formData.brand_id}
-            onChange={handleChange}
+            readOnly
             placeholder="Enter brand id"
             className="w-full border rounded-md p-2"
           />
         </div>
 
-        {/* Sub Category ID */}
+        {/* Sub Category  */}
         <div>
-          <label className="block text-sm font-medium mb-1">Sub Category ID</label>
+          <label className="block text-sm font-medium mb-1">Sub Category </label>
           <input
             type="text"
             name="sub_catagory_id"
             value={formData.sub_catagory_id}
-            onChange={handleChange}
+            readOnly
             placeholder="Enter sub category id"
             className="w-full border rounded-md p-2"
           />

@@ -4,7 +4,7 @@ import { createApi } from "@reduxjs/toolkit/query/react";
 export const productApi = createApi({
   reducerPath: "productApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: "http://127.0.0.1:8000/api/",
+    baseUrl: "https://myshop-backend-zap2.onrender.com/api/",
     prepareHeaders: (headers) => {
       const token = localStorage.getItem("ACCESS_TOKEN"); // or get from Redux
       if (token) {
