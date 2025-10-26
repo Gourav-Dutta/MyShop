@@ -36,7 +36,8 @@ export function Order() {
   };
 
   const orders = data?.data || [];
-
+//  console.log(orders);
+ 
   return (
     <div className="flex max-w-7xl mx-auto min-h-screen px-4 py-8">
       
@@ -82,88 +83,107 @@ export function Order() {
           <div className="text-center text-gray-500">You don’t have any orders yet.</div>
         ) : (
           <div className="space-y-6">
-            {orders.map((order) => {
-              const orderDate = new Date(order.order_at);
-              const deliveryDate = new Date(orderDate);
-              deliveryDate.setDate(deliveryDate.getDate() + 7);
-              const formattedDeliveryDate = deliveryDate.toLocaleDateString(undefined, {
-                day: "numeric",
-                month: "short",
-                year: "numeric",
-              });
+           {orders.map((order) => {
+  const orderDate = new Date(order.order_at);
+  const deliveryDate = new Date(orderDate);
+  deliveryDate.setDate(deliveryDate.getDate() + 7);
+  const formattedDeliveryDate = deliveryDate.toLocaleDateString(undefined, {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  });
 
-              return (
-                <div
-                  key={order.id}
-                  className="bg-white rounded-xl shadow border p-6 space-y-4"
-                >
-                  
-                  <div className="flex justify-between items-center">
-                    <div>
-                      <h2 className="text-lg font-semibold text-gray-800">
-                        Order #{order.id}
-                      </h2>
-                      <p className="text-sm text-gray-500">
-                        Ordered on: {orderDate.toLocaleDateString()} • Delivery by:{" "}
-                        <span className="text-gray-800 font-medium">{formattedDeliveryDate}</span>
-                      </p>
-                    </div>
+  // ✅ Check if any item is delivered
+  const hasDeliveredItem = order.items.some(
+    (item) => item.status === "DELIVERED"
+  );
 
-                    <div className="flex gap-2">
-                      <button className="text-sm px-4 py-2 bg-gray-100 text-gray-800 rounded-md hover:bg-gray-200 cursor-pointer">
-                        Order Details
-                      </button>
-                      <button
-                        onClick={() => handleDeleteOrder(order.id)}
-                        className="text-sm px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 cursor-pointer"
-                      >
-                        Cancel Order
-                      </button>
-                    </div>
-                  </div>
+  return (
+    <div
+      key={order.id}
+      className="bg-white rounded-xl shadow border p-6 space-y-4"
+    >
+      {/* Order Header */}
+      <div className="flex justify-between items-center">
+        <div>
+          <h2 className="text-lg font-semibold text-gray-800">
+            Order #{order.id}
+          </h2>
+          <p className="text-sm text-gray-500">
+            Ordered on: {orderDate.toLocaleDateString()} • Delivery by:{" "}
+            <span className="text-gray-800 font-medium">
+              {formattedDeliveryDate}
+            </span>
+          </p>
+        </div>
 
-                  
-                  <div className="flex items-center gap-4 mt-2">
-                    {["Confirmed", "Preparing", "Picked up", "Delivered"].map(
-                      (stage, index) => (
-                        <div key={stage} className="flex items-center gap-2">
-                          <div
-                            className={`w-3 h-3 rounded-full ${
-                              index <= 1
-                                ? "bg-emerald-500"
-                                : "bg-gray-300"
-                            }`}
-                          ></div>
-                          <p
-                            className={`text-xs ${
-                              index <= 1 ? "text-emerald-600" : "text-gray-400"
-                            }`}
-                          >
-                            {stage}
-                          </p>
-                          {index < 3 && (
-                            <div className="w-6 h-px bg-gray-300"></div>
-                          )}
-                        </div>
-                      )
-                    )}
-                  </div>
+        {/* Buttons Area */}
+        <div className="flex gap-2">
+          <button className="text-sm px-4 py-2 bg-gray-100 text-gray-800 rounded-md hover:bg-gray-200 cursor-pointer">
+            Order Details
+          </button>
 
-                  {/* Order Items  */}
-                  <div className="text-sm text-gray-600 mt-3 space-y-1">
-                    <p className="font-medium text-gray-800 mb-1">Items:</p>
-                    {order.items.map((item) => (
-                      <div key={item.id} className="pl-2">
-                        • {item.productVariety?.name || "Unnamed Product"} x {item.quantity}
-                      </div>
-                    ))}
-                    <p className="mt-2">
-                      <span className="font-medium">Total: ₹{order.total_price}</span>
-                    </p>
-                  </div>
-                </div>
-              );
-            })}
+          {/* Conditional cancel button or message */}
+          {hasDeliveredItem ? (
+            <span className="text-sm px-4 py-2 bg-gray-200 text-gray-500 rounded-md cursor-not-allowed">
+              ❌ Cannot cancel — item delivered
+            </span>
+          ) : (
+            <button
+              onClick={() => handleDeleteOrder(order.id)}
+              className="text-sm px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 cursor-pointer"
+            >
+              Cancel Order
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* Order Status Tracker */}
+      <div className="flex items-center gap-4 mt-2">
+        {["Confirmed", "Preparing", "Picked up", "Delivered"].map(
+          (stage, index) => (
+            <div key={stage} className="flex items-center gap-2">
+              <div
+                className={`w-3 h-3 rounded-full ${
+                  index <= 1 ? "bg-emerald-500" : "bg-gray-300"
+                }`}
+              ></div>
+              <p
+                className={`text-xs ${
+                  index <= 1 ? "text-emerald-600" : "text-gray-400"
+                }`}
+              >
+                {stage}
+              </p>
+              {index < 3 && <div className="w-6 h-px bg-gray-300"></div>}
+            </div>
+          )
+        )}
+      </div>
+
+      {/* Order Items */}
+      <div className="text-sm text-gray-600 mt-3 space-y-1">
+        <p className="font-medium text-gray-800 mb-1">Items:</p>
+        {order.items.map((item) => (
+          <div
+            key={item.id}
+            className={`pl-2 flex items-center gap-2 ${
+              item.status === "DELIVERED" ? "text-green-600" : ""
+            }`}
+          >
+            • {item.productVariety?.name || "Unnamed Product"} x {item.quantity}{" "}
+            <span className="text-xs text-gray-500">[{item.status}]</span>
+          </div>
+        ))}
+        <p className="mt-2">
+          <span className="font-medium">Total: ₹{order.total_price}</span>
+        </p>
+      </div>
+    </div>
+  );
+})}
+
           </div>
         )}
 

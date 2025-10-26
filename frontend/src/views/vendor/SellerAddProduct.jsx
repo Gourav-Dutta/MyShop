@@ -6,12 +6,13 @@ import {
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { ProductPageLoader } from "../ProductPageLoader";
+import { Navigate, useNavigate } from "react-router-dom";
 
 export const SellerAddProduct = () => {
   const { data, isLoading, isError } = useGetAllSubCategoriesQuery();
-  const { data: brandsData, isLoading: brandLoading } = useGetAllBrandsQuery();
-    // console.log("Sub-Categories: ", data);
-  //   console.log("Brand data : ", brandsData);
+  const { data: brandsData, isLoading: brandLoading, isError: brandError } =
+    useGetAllBrandsQuery();
+  const navigate = useNavigate();
 
   const [addProduct] = useAddNewProductMutation();
 
@@ -19,60 +20,77 @@ export const SellerAddProduct = () => {
     name: "",
     description: "",
     sub_catagory_id: "",
-    base_image: "",
     brand: "",
     status: "Active",
   });
-  // console.log(formData);
+
+  const [image, setImage] = useState(null);
+  const [preview, setPreview] = useState(null);
 
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
-  if (brandLoading) return <ProductPageLoader />;
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setImage(file);
+      setPreview(URL.createObjectURL(file)); 
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!image) {
+      toast.error("Please select an image.");
+      return;
+    }
+
+    const formDataToSend = new FormData();
+    formDataToSend.append("name", formData.name);
+    formDataToSend.append("description", formData.description);
+    formDataToSend.append("sub_catagory_id", formData.sub_catagory_id);
+    formDataToSend.append("brand", formData.brand);
+    formDataToSend.append("status", formData.status);
+    formDataToSend.append("image", image); 
+
     try {
-      await addProduct({
-        name: formData.name,
-        description: formData.description,
-        sub_catagory_id: formData.sub_catagory_id,
-        base_image: formData.base_image,
-        brand: formData.brand,
-        status: formData.status,
-      }).unwrap();
+      await addProduct(formDataToSend).unwrap();
+      toast.success("Product inserted successfully!");
+
+      // Reset form
       setFormData({
         name: "",
         description: "",
         sub_catagory_id: "",
-        base_image: "",
         brand: "",
         status: "Active",
       });
-      toast.success("Producted inserted successfully!");
+      setImage(null);
+      setPreview(null);
+      navigate("/seller/layout/sellerDashboard");
     } catch (err) {
-      toast.error("Failed to inserted product ❌");
-      console.error(err.message);
-      
+      toast.error("Failed to insert product ❌");
+      console.error(err);
     }
   };
 
-  return (
-    <div className="max-w-3xl mx-auto px-6 py-10 bg-gray-200 rounded-xl shadow mt-5">
-      <h2 className="text-2xl font-bold mb-6"> Add New Product</h2>
+  if (isLoading || brandLoading) return <ProductPageLoader />;
 
-      <form onSubmit={handleSubmit} className="space-y-5">
+  return (
+    <div className="max-w-3xl mx-auto px-6 py-10 bg-gray-100 rounded-xl shadow mt-5">
+      <h2 className="text-2xl font-bold mb-6">Add New Product</h2>
+
+      <form onSubmit={handleSubmit} className="space-y-5" encType="multipart/form-data">
         {/* Name */}
         <div>
           <label className="block font-medium mb-1">Product Name</label>
           <input
             type="text"
             name="name"
-            onChange={handleChange}
             value={formData.name}
+            onChange={handleChange}
             required
             className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-400"
           />
@@ -83,43 +101,48 @@ export const SellerAddProduct = () => {
           <label className="block font-medium mb-1">Description</label>
           <textarea
             name="description"
-            onChange={handleChange}
             value={formData.description}
-            rows="3"
-            required
-            className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-400"
-          ></textarea>
-        </div>
-
-        {/* Image */}
-        <div>
-          <label className="block font-medium mb-1">Image URL</label>
-          <input
-            type="text"
-            name="base_image"
             onChange={handleChange}
-            value={formData.base_image}
+            rows="3"
             required
             className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-400"
           />
         </div>
 
+        {/* Image Upload */}
+        <div>
+          <label className="block font-medium mb-1">Product Image</label>
+          <input
+            type="file"
+            name="image"
+            accept="image/*"
+            onChange={handleImageChange}
+            required
+            className="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-blue-400"
+          />
+          {preview && (
+            <img
+              src={preview}
+              alt="preview"
+              className="w-40 h-40 mt-3 object-cover rounded-lg border shadow"
+            />
+          )}
+        </div>
+
         {/* Brand */}
         <div>
           <label className="block font-medium mb-1">Brand</label>
-          {isLoading ? (
-            <p className="text-gray-500">Loading brands...</p>
-          ) : isError ? (
+          {brandError ? (
             <p className="text-red-500">Failed to load brands</p>
           ) : (
             <select
               name="brand"
-              onChange={handleChange}
               value={formData.brand}
+              onChange={handleChange}
               required
               className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-400"
             >
-              <option value="">-- Select Brand Name --</option>
+              <option value="">-- Select Brand --</option>
               {brandsData?.data?.map((brand) => (
                 <option key={brand.id} value={brand.id}>
                   {brand.name}
@@ -129,33 +152,16 @@ export const SellerAddProduct = () => {
           )}
         </div>
 
-        {/* Status */}
-        <div>
-          <label className="block font-medium mb-1">Status</label>
-          <select
-            name="status"
-            onChange={handleChange}
-            value={formData.status}
-            className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-400"
-          >
-            <option value="Active">Active</option>
-            <option value="Inactive">Inactive</option>
-            <option value="Draft">Draft</option>
-          </select>
-        </div>
-
         {/* Sub Category */}
         <div>
           <label className="block font-medium mb-1">Sub Category</label>
-          {isLoading ? (
-            <p className="text-gray-500">Loading categories...</p>
-          ) : isError ? (
+          {isError ? (
             <p className="text-red-500">Failed to load categories</p>
           ) : (
             <select
               name="sub_catagory_id"
-              onChange={handleChange}
               value={formData.sub_catagory_id}
+              onChange={handleChange}
               required
               className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-400"
             >
@@ -169,15 +175,34 @@ export const SellerAddProduct = () => {
           )}
         </div>
 
-        {/* Submit */}
+        {/* Status */}
         <div>
-          <button
-            type="submit"
-            className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"
+          <label className="block font-medium mb-1">Status</label>
+          <select
+            name="status"
+            value={formData.status}
+            onChange={handleChange}
+            className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-400"
           >
-            Add Product
-          </button>
+            <option value="Active">Active</option>
+            <option value="Inactive">Inactive</option>
+          </select>
         </div>
+
+        {/* Submit */}
+        <button
+          type="submit"
+          className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"
+        >
+          Add Product
+        </button>
+         <button
+          type="submit"
+          className="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition"
+          onClick={() => navigate(-1)}
+        >
+          Cancel
+        </button>
       </form>
     </div>
   );

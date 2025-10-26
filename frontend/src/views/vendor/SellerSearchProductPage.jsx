@@ -49,15 +49,30 @@ export function SellerSearchProductPage() {
     );
   }
 
-  const handleDeleteProduct = async (productId) => {
-      try{
-        await deleteProduct({productId: productId});
-        toast.success("Product deleted");
-      }catch(err){
-        console.log(err.message);
-        toast.fail("Failed to delete product");
-      }
+ const handleDeleteProduct = async (productId) => {
+  try {
+    const res = await deleteProduct({ productId });
+
+    // If the backend returned a 400 or 500 error
+    if (res?.error) {
+      const msg = res.error?.data?.msg || "Failed to delete product";
+      toast.error(msg);
+      return;
+    }
+
+    // If successful (200)
+    if (res?.data?.message) {
+      toast.success("✅ Item deleted Successfully");
+    } else {
+      toast.error("Unexpected response from server");
+    }
+  } catch (err) {
+    console.error(err);
+    toast.error("Something went wrong while deleting the product.");
   }
+};
+
+
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">

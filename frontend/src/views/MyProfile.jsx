@@ -40,7 +40,6 @@ export const MyProfile = () => {
             <h3 className="text-2xl font-semibold text-gray-800">
               {user.name}
             </h3>
-            <p className="text-sm text-gray-500">ID: {user.id}</p>
           </div>
         </div>
 

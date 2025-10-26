@@ -1,5 +1,8 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { useGetProductDetailsByProductIdQuery, useUpdateProductMutation, useGetAllBrandsQuery } from "../../context/slice/productSlice";
+import {
+  useGetProductDetailsByProductIdQuery,
+  useUpdateProductMutation,
+} from "../../context/slice/productSlice";
 import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import { ProductPageLoader } from "../ProductPageLoader";
@@ -7,58 +10,71 @@ import { ProductPageLoader } from "../ProductPageLoader";
 export const SellerUpdateProductPage = () => {
   const { productId } = useParams();
   const { data, isLoading, isError } = useGetProductDetailsByProductIdQuery(productId);
-  
-  const [updateProduct] = useUpdateProductMutation();
+  const [updateProduct, { isLoading: isUpdating }] = useUpdateProductMutation();
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     name: "",
     description: "",
-    base_image: "",
-    brand_id: "",
-    sub_catagory_id: "",
     status: "active",
   });
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [previewUrl, setPreviewUrl] = useState("");
 
   useEffect(() => {
     if (data?.data) {
       setFormData({
         name: data.data.name,
         description: data.data.description,
-        base_image: data.data.base_image,
-        brand_id: data.data.brand.name,
-        sub_catagory_id: data.data.sub_category.name,
         status: data.data.status,
       });
+      setPreviewUrl(data.data.base_image);
     }
   }, [data]);
 
+  // handle text input change
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  // handle image file selection
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    setSelectedFile(file);
+    if (file) {
+      setPreviewUrl(URL.createObjectURL(file));
+    }
+  };
+
+  // submit form
   const handleSubmit = async (e) => {
-  e.preventDefault();
-  try {
-    await updateProduct({ productId, formData }).unwrap();
-    toast.success("Product updated successfully!");
-    navigate(-1);
-  } catch (err) {
-    console.error(err);
-    toast.error("Failed to update product!");
-  }
-};
+    e.preventDefault();
 
+    try {
+      const payload = new FormData();
+      payload.append("name", formData.name);
+      payload.append("description", formData.description);
+      payload.append("status", formData.status);
 
-  if (isLoading) return <ProductPageLoader/>;
+      if (selectedFile) {
+        payload.append("base_image", selectedFile);
+      }
+
+      await updateProduct({ productId, formData: payload }).unwrap();
+      toast.success("Product updated successfully!");
+      navigate("/seller/layout/sellerDashboard");
+    } catch (err) {
+      console.error("Update Error:", err);
+      toast.error("Failed to update product!");
+    }
+  };
+
+  if (isLoading) return <ProductPageLoader />;
   if (isError) return <p className="text-center text-red-500">Failed to load product.</p>;
 
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow mt-10">
-      <h1 className="text-2xl font-bold mb-6">Update Product</h1>
+    <div className="max-w-3xl mx-auto p-6 bg-white rounded-2xl shadow-lg mt-10">
+      <h1 className="text-2xl font-bold mb-6 text-gray-900">Update Product</h1>
 
       <form onSubmit={handleSubmit} className="space-y-5">
         {/* Name */}
@@ -69,7 +85,6 @@ export const SellerUpdateProductPage = () => {
             name="name"
             value={formData.name}
             onChange={handleChange}
-            placeholder="Enter product name"
             required
             className="w-full border rounded-md p-2"
           />
@@ -82,7 +97,6 @@ export const SellerUpdateProductPage = () => {
             name="description"
             value={formData.description}
             onChange={handleChange}
-            placeholder="Enter product description"
             rows={5}
             required
             className="w-full border rounded-md p-2"
@@ -91,48 +105,25 @@ export const SellerUpdateProductPage = () => {
 
         {/* Image */}
         <div>
-          <label className="block text-sm font-medium mb-1">Image URL</label>
+          <label className="block text-sm font-medium mb-1">Upload New Image (Optional)</label>
           <input
-            type="text"
-            name="base_image"
-            value={formData.base_image}
-            onChange={handleChange}
-            placeholder="Enter image link"
+            type="file"
+            accept="image/*"
+            onChange={handleFileChange}
             className="w-full border rounded-md p-2"
           />
-          {formData.base_image && (
-            <img
-              src={formData.base_image}
-              alt="Product Preview"
-              className="mt-3 h-40 rounded-lg shadow"
-            />
+
+          {/* Image Preview */}
+          {previewUrl && (
+            <div className="mt-4">
+              <p className="text-sm text-gray-600 mb-1">Preview:</p>
+              <img
+                src={previewUrl}
+                alt="Preview"
+                className="h-40 rounded-lg border shadow object-cover"
+              />
+            </div>
           )}
-        </div>
-
-        {/* Brand */}
-        <div>
-          <label className="block text-sm font-medium mb-1">Brand </label>
-          <input
-            type="text"
-            name="brand_id"
-            value={formData.brand_id}
-            readOnly
-            placeholder="Enter brand id"
-            className="w-full border rounded-md p-2"
-          />
-        </div>
-
-        {/* Sub Category  */}
-        <div>
-          <label className="block text-sm font-medium mb-1">Sub Category </label>
-          <input
-            type="text"
-            name="sub_catagory_id"
-            value={formData.sub_catagory_id}
-            readOnly
-            placeholder="Enter sub category id"
-            className="w-full border rounded-md p-2"
-          />
         </div>
 
         {/* Status */}
@@ -152,9 +143,10 @@ export const SellerUpdateProductPage = () => {
         {/* Submit */}
         <button
           type="submit"
-          className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition"
+          disabled={isUpdating}
+          className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          Update Product
+          {isUpdating ? "Updating..." : "Update Product"}
         </button>
       </form>
     </div>

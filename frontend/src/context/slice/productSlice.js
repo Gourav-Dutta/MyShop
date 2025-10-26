@@ -151,17 +151,10 @@ export const productApi = createApi({
     }),
     // Inserted new product in seller list
     addNewProduct: builder.mutation({
-      query: ({
-        name,
-        description,
-        sub_catagory_id,
-        base_image,
-        brand,
-        status,
-      }) => ({
+      query: (formData) => ({
         url: "/seller/entry",
         method: "POST",
-        body: { name, description, sub_catagory_id, base_image, brand, status },
+        body: formData,
       }),
     }),
     // Get all sub-categories
@@ -179,10 +172,10 @@ export const productApi = createApi({
     }),
     // insert product variety image 
     insertImage : builder.mutation({
-      query : ({varietyId, images}) => ({
+      query : ({varietyId, formData}) => ({
          url: `image/upload/${varietyId}`,
          method: "POST",
-         body: images
+         body: formData
       }),
       invalidatesTags: ['getProductVerietyBtProductId']
     }),

@@ -18,13 +18,27 @@ export const SellerAllProduct = () => {
         Failed to fetch products.
       </p>
     );
-  const handleDeleteProduct = async (productId) => {
+
+   const handleDeleteProduct = async (productId) => {
     try {
-      await deleteProduct({ productId: productId });
-      toast.success("Product deleted");
+      const res = await deleteProduct({ productId });
+  
+      
+      if (res?.error) {
+        const msg = res.error?.data?.msg || "Failed to delete product";
+        toast.error(msg);
+        return;
+      }
+  
+     
+      if (res?.data?.message) {
+        toast.success("✅ Item deleted Successfully");
+      } else {
+        toast.error("Unexpected response from server");
+      }
     } catch (err) {
-      console.log(err.message);
-      toast.fail("Failed to delete product");
+      console.error(err);
+      toast.error("Something went wrong while deleting the product.");
     }
   };
 

@@ -26,11 +26,21 @@ export const SellerProductVerietyPage = () => {
 
     const handleDeleteVariety =  async (varietyId) => {
         try {
-          await deleteVariety({ varietyId: varietyId });
-          toast.success("Product variety deleted");
+        const res =  await deleteVariety({ varietyId: varietyId });
+        if(res?.error){
+        const msg = res.error?.data?.msg || "Failed to delete product";
+        toast.error(msg);
+        return;
+        }
+           
+      if (res?.data?.message) {
+        toast.success("✅ Item deleted Successfully");
+      } else {
+        toast.error("Unexpected response from server");
+      }
         } catch (err) {
           console.log(err.message);
-          toast.fail("Failed to delete variety");
+          toast.fail("Something went wrong while deleting the product variety.");
         }
       };
 
