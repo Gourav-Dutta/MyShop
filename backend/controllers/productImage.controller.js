@@ -1,79 +1,53 @@
-import {prisma} from "../utils/prisma.js"
+import { prisma } from "../utils/prisma.js";
 import { z } from "zod";
-
-
 
 // Insert :
 
-// Insert Product Image Schema
-
-const imageSchema = z.object({
-  url: z
-    .string()
-    .url("Image must be a valid URL")
-    .min(1, "Image URL is mendatory"),
-  alt_text: z.string().min(1, "Alt text is mendatory"),
-  is_primary: z.string().optional(),
-});
-const imagesSchema = z.array(imageSchema); // This is because my Backend is sending an Array not an object
-
-// Insert Product Image
-
 async function handleInsertImage(req, res) {
   try {
-    const body = imagesSchema.parse(req.body);
-    const varietyId = (req.params.varietyId);
-    // console.log(body);
+    const varietyId = req.params.varietyId;
 
-    // if (typeof body.is_primary === "string") {
-    //   if (body.is_primary.toLowerCase() === "true") {
-    //     body.is_primary = true;
-    //   } else if (body.is_primary.toLowerCase() === "false") {
-    //     body.is_primary = false;
-    //   } else {
-    //     throw new Error(
-    //       "This is a Invalid Boolean value, kindly use 'true' or 'false' "
-    //     );
-    //   }
-    // }
+    //  Check for uploaded files
+    if (!req.files || req.files.length === 0) {
+      return res
+        .status(400)
+        .json({ message: "Please upload at least 1 image." });
+    }
 
-    body.map((img) => {
-      if (typeof img.is_primary === "string") {
-        if (img.is_primary.toLowerCase() === "true") {
-          img.is_primary = true;
-        } else if (img.is_primary.toLowerCase() === "false") {
-          img.is_primary = false;
-        } else {
-          throw new Error(
-            "This is a Invalid Boolean value, kindly use 'true' or 'false' "
-          );
-        }
-      }
-    });
+    //  Limit number of pic
+    if (req.files.length > 10) {
+      return res
+        .status(400)
+        .json({
+          message: "You can upload a maximum of 10 images per request.",
+        });
+    }
 
-   
+    //  Insert into cloudinary
+    const images = req.files.map((file, index) => ({
+      url: file.path,
+      alt_text: file.originalname || `Image-${index + 1}`,
+      is_primary: index === 0, // Make first image primary
+    }));
 
+    //  Save to My Database
     const productImage = await prisma.product_Image.createMany({
-      data: body.map((img) => ({
-        varietyId: varietyId,
+      data: images.map((img) => ({
+        varietyId,
         url: img.url,
         alt_text: img.alt_text,
         is_primary: img.is_primary,
       })),
     });
-    if (!productImage) {
-      return res.status(400).json({
-        message: "Product Image is not inserted successfully",
-      });
-    }
 
     return res.status(201).json({
-      message: "Product Image is inserted successfully",
+      message: `${req.files.length} product image(s) uploaded successfully`,
+      count: req.files.length,
       data: productImage,
     });
   } catch (err) {
     return res.status(500).json({
-      message: `An internel server error during inserted product image : ${err.message}`,
+      message: `Internal server error during upload: ${err.message}`,
     });
   }
 }
@@ -84,8 +58,9 @@ async function handleInsertImage(req, res) {
 
 async function handleGetProductImageByProductVariteyId(req, res) {
   try {
-    const varietyId = (req.params.varietyId);
-
+    const varietyId = req.params.varietyId;
+    
+    
     const productImage = await prisma.product_Image.findMany({
       where: { varietyId: varietyId },
     });
@@ -113,14 +88,9 @@ async function handleGetProductImageByProductVariteyId(req, res) {
 
 async function handleUpdateImageUsingImageIdOfThatSeller(req, res) {
   try {
-    const sellerId = (req.params.sellerId);
-    const imageId =(req.body.imageId);
-    const { url, alt_text, is_primary } = req.body;
-    const updateData = {};
-    if (url) updateData.url = url;
-    if (alt_text) updateData.alt_text = alt_text;
-    if (is_primary) updateData.is_primary = is_primary;
-
+    const sellerId = req.params.sellerId;
+    const imageId = req.body.imageId;
+    console.log(req);
     const seller = await prisma.product_Image.findFirst({
       where: { id: imageId, variety: { product: { user_id: sellerId } } },
     });
@@ -130,9 +100,18 @@ async function handleUpdateImageUsingImageIdOfThatSeller(req, res) {
         .status(403)
         .json({ message: "This product is not linked with you !" });
 
+    if (!req.file) {
+      return res
+        .status(400)
+        .json({ message: "Please upload at least 1 image." });
+    }
+
     const product = await prisma.product_Image.update({
       where: { id: imageId },
-      data: updateData,
+      data: {
+        url: req.file.path,
+        alt_text: req.file.originalname || "Updated Image",
+      },
     });
 
     if (!product) {
@@ -154,47 +133,14 @@ async function handleUpdateImageUsingImageIdOfThatSeller(req, res) {
   }
 }
 
-// Update product Image by the Admin :
-
-async function handleUpdateImageUsingImageIdByAdmin(req, res) {
-  try {
-    const imageId = (req.body.imageId);
-    const { url, alt_text, is_primary } = req.body;
-    const updateData = {};
-    if (url) updateData.url = url;
-    if (alt_text) updateData.alt_text = alt_text;
-    if (is_primary) updateData.is_primary = is_primary;
-
-    const product = await prisma.product_Image.update({
-      where: { id: imageId },
-      data: updateData,
-    });
-
-    if (!product) {
-      return res.status(400).json({
-        message: "Failed to update data",
-      });
-    }
-
-    return res.status(200).json({
-      message: "Successfully Updated Image",
-      product: product,
-    });
-  } catch (err) {
-    return res.status(500).json({
-      Message: `An error occured durting get update  product  Image : ${err.message}`,
-    });
-  }
-}
-
 // Delete
 
 // Delete product image by image id and seller id of that seller :
 
 async function handleDeleteVarietyImageBySellerIdOfThatSeller(req, res) {
   try {
-    const sellerId = (req.params.sellerId);
-    const imageId = (req.body.imageId);
+    const sellerId = req.params.sellerId;
+    const imageId = req.body.imageId;
 
     const variety = await prisma.product_Image.findFirst({
       where: { id: imageId, variety: { product: { user_id: sellerId } } },
@@ -232,7 +178,7 @@ async function handleDeleteVarietyImageBySellerIdOfThatSeller(req, res) {
 
 async function handleDeleteVarietyImageByVarietyImageIdByAdmin(req, res) {
   try {
-    const imageId = (req.body.imageId);
+    const imageId = req.body.imageId;
 
     const product = await prisma.product_Image.deleteMany({
       where: {
@@ -261,7 +207,6 @@ export {
   handleInsertImage as InsertImageFunction,
   handleGetProductImageByProductVariteyId as GetImageByVarietyIdFunction,
   handleUpdateImageUsingImageIdOfThatSeller as UpdateImageByTheSellerFunction,
-  handleUpdateImageUsingImageIdByAdmin as UpdateImageByAdminFunction,
   handleDeleteVarietyImageBySellerIdOfThatSeller as DeleteImageByTheSellerFunction,
   handleDeleteVarietyImageByVarietyImageIdByAdmin as DeleteImageByAdminFunction,
 };

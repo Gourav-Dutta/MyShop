@@ -5,10 +5,6 @@ const productSchema = z.object({
   name: z.string().min(1, "Name is must neede"),
   description: z.string().min(10, "A product description is must neede"),
   sub_catagory_id: z.string().min(1, "Must provide a sub category id"),
-  base_image: z
-    .string()
-    .url("Image must be a valid URL")
-    .min(1, "Image for an product is must needed"),
   brand: z.string().min(1, "Brand name is must needed"),
   status: z.enum(["Active", "Inactive"]).optional().default("Active"),
 });
@@ -20,11 +16,17 @@ async function handleProductEntry(req, res) {
     body.brand = body.brand;
     const userId = req.user.id;
 
+    if (!req.file) {
+      return res
+        .status(400)
+        .json({ message: "Please upload at least 1 image." });
+    }
+
     const newProduct = await prisma.product.create({
       data: {
         name: body.name,
         description: body.description,
-        base_image: body.base_image,
+        base_image: req.file.path,
         sub_category: { connect: { id: body.sub_catagory_id } },
         user: { connect: { id: userId } },
         brand: { connect: { id: body.brand } },
@@ -278,11 +280,10 @@ async function handleUpdateProductproduct_Id(req, res) {
     const product_Id = req.params.product_id;
     const user_Id = req.user.id;
 
-    const { name, description, base_image, status } = req.body;
+    const { name, description, status } = req.body;
     const updateData = {};
     if (name) updateData.name = name;
     if (description) updateData.description = description;
-    if (base_image) updateData.base_image = base_image;
     if (status) updateData.status = status;
 
     const validateUser = await prisma.product.findFirst({
@@ -293,9 +294,17 @@ async function handleUpdateProductproduct_Id(req, res) {
         .status(200)
         .json({ message: "You are not authorized for this action" });
 
+     if (!req.file) {
+      return res
+        .status(400)
+        .json({ message: "Please upload at least 1 image." });
+    }
+
     const product = await prisma.product.update({
       where: { id: product_Id },
-      data: { ...updateData },
+      data: { ...updateData, 
+        base_image: req.file.path
+       },
     });
 
     if (!product) {

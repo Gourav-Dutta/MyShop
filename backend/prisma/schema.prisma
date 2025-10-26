@@ -33,12 +33,12 @@ enum User_role {
 // 2. User Table 
 // ─────────────────────────────
 model UserTable {
-  id        String @id @default(auto()) @map("_id") @db.ObjectId
+  id       String        @id @default(auto()) @map("_id") @db.ObjectId
   name     String
   email    String        @unique
   phone_no String
   password String
-  role  User_role
+  role     User_role
   product  Product[]
   cart     Add_To_Cart[]
   orders   Order[]
@@ -49,14 +49,14 @@ model UserTable {
 // Address Table
 //-----------------
 model Address {
-  id          String @id @default(auto()) @map("_id") @db.ObjectId
+  id         String    @id @default(auto()) @map("_id") @db.ObjectId
   city       String
   state      String
   house_no   String
   shop_line  String?
   pin_no     String
-  user_id    String @db.ObjectId
-  is_primary Boolean @default(false)
+  user_id    String    @db.ObjectId
+  is_primary Boolean   @default(false)
   user       UserTable @relation(fields: [user_id], references: [id])
 
   @@index([user_id])
@@ -66,16 +66,16 @@ model Address {
 // 3. Categories
 // ─────────────────────────────
 model Main_Categories {
-  id    String @id @default(auto()) @map("_id") @db.ObjectId
+  id   String @id @default(auto()) @map("_id") @db.ObjectId
   name String @unique
 
   sub_categories Sub_Categories[]
 }
 
 model Sub_Categories {
-  id              String @id @default(auto()) @map("_id") @db.ObjectId
+  id                String          @id @default(auto()) @map("_id") @db.ObjectId
   name              String
-  main_categoriy_id String @db.ObjectId
+  main_categoriy_id String          @db.ObjectId
   main_category     Main_Categories @relation(fields: [main_categoriy_id], references: [id])
 
   products Product[]
@@ -85,7 +85,7 @@ model Sub_Categories {
 // Brand 
 // ----------------------------
 model Brand {
-  id        String @id @default(auto()) @map("_id") @db.ObjectId
+  id       String    @id @default(auto()) @map("_id") @db.ObjectId
   name     String    @unique
   products Product[]
 }
@@ -94,16 +94,16 @@ model Brand {
 // 4. Products
 // ─────────────────────────────
 model Product {
-  id             String @id @default(auto()) @map("_id") @db.ObjectId
+  id              String         @id @default(auto()) @map("_id") @db.ObjectId
   name            String
-  description     String?        
+  description     String?
   status          String         @default("active")
-  user_id         String @db.ObjectId
-  base_image      String         
-  brand_id        String @db.ObjectId
+  user_id         String         @db.ObjectId
+  base_image      String
+  brand_id        String         @db.ObjectId
   created_at      DateTime       @default(now())
   updated_at      DateTime       @updatedAt
-  sub_catagory_id String @db.ObjectId
+  sub_catagory_id String         @db.ObjectId
   sub_category    Sub_Categories @relation(fields: [sub_catagory_id], references: [id])
   user            UserTable      @relation(fields: [user_id], references: [id])
   brand           Brand          @relation(fields: [brand_id], references: [id])
@@ -116,9 +116,9 @@ model Product {
 // Product Variety Table
 // -----------------------
 model Product_Variety {
-  id         String @id @default(auto()) @map("_id") @db.ObjectId
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
   name       String
-  productId  String @db.ObjectId
+  productId  String   @db.ObjectId
   sku        String   @unique
   color      String?
   size       String?
@@ -139,9 +139,9 @@ model Product_Variety {
 // Product Image Table
 // -----------------------
 model Product_Image {
-  id         String @id @default(auto()) @map("_id") @db.ObjectId
-  varietyId  String @db.ObjectId
-  url        String  
+  id         String  @id @default(auto()) @map("_id") @db.ObjectId
+  varietyId  String  @db.ObjectId
+  url        String
   alt_text   String?
   is_primary Boolean @default(false)
 
@@ -157,7 +157,7 @@ enum DiscountType {
 }
 
 model Offer {
-  id             String @id @default(auto()) @map("_id") @db.ObjectId
+  id             String       @id @default(auto()) @map("_id") @db.ObjectId
   title          String
   discount_type  DiscountType
   discount_value Float
@@ -172,9 +172,9 @@ model Offer {
 // Product Offer Table 
 // -------------------
 model product_Offer {
-  id   String @id @default(auto()) @map("_id") @db.ObjectId
-  productId  String @db.ObjectId
-  offerId    String @db.ObjectId
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  productId  String   @db.ObjectId
+  offerId    String   @db.ObjectId
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 
@@ -188,15 +188,13 @@ model product_Offer {
 // 5. Add to Cart
 // ─────────────────────────────
 model Add_To_Cart {
-  id                 String @id @default(auto()) @map("_id") @db.ObjectId
-  quantity          Int @default(1)
+  id                String @id @default(auto()) @map("_id") @db.ObjectId
+  quantity          Int    @default(1)
   user_id           String @db.ObjectId
   productVariety_id String @db.ObjectId
 
   user           UserTable       @relation(fields: [user_id], references: [id])
   productVariety Product_Variety @relation(fields: [productVariety_id], references: [id])
-
-
 }
 
 // -------------------
@@ -220,27 +218,26 @@ enum OrderStatus {
 // 6. Orders
 // ─────────────────────────────
 model Order {
-  id          String @id @default(auto()) @map("_id") @db.ObjectId
-  user_id      String @db.ObjectId
-  order_at     DateTime @default(now())
-  total_price  Int
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  user_id     String   @db.ObjectId
+  order_at    DateTime @default(now())
+  total_price Int
 
-  user    UserTable     @relation(fields: [user_id], references: [id])
-  items   Order_Item[]
+  user  UserTable    @relation(fields: [user_id], references: [id])
+  items Order_Item[]
 }
 
 // ─────────────────────────────
 // 7. Order Items
 // ─────────────────────────────
 model Order_Item {
-  id                 String @id @default(auto()) @map("_id") @db.ObjectId
-  order_id          String @db.ObjectId
-  productVariety_id String @db.ObjectId
+  id                String      @id @default(auto()) @map("_id") @db.ObjectId
+  order_id          String      @db.ObjectId
+  productVariety_id String      @db.ObjectId
   price             Float
-  quantity          Int             @default(1)
-  status            OrderStatus     @default(PENDING)
+  quantity          Int         @default(1)
+  status            OrderStatus @default(PENDING)
 
   order          Order           @relation(fields: [order_id], references: [id])
   productVariety Product_Variety @relation(fields: [productVariety_id], references: [id])
 }
-

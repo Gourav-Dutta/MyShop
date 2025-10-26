@@ -1,5 +1,7 @@
 import express from "express";
 import cors from "cors";
+import dotenv from "dotenv";
+import "./utils/cloudinary.js";
 import { authRouter } from "./routes/auth.js";
 import { userRouter } from "./routes/user.js";
 import { productRouter } from "./routes/product.js";
@@ -13,6 +15,8 @@ import { brandRouter } from "./routes/brand.js";
 import { offerRouter } from "./routes/offer.js";
 import { UserRoleRouter } from "./routes/userRole.js";
 import { prisma } from "./utils/prisma.js"; 
+
+dotenv.config();
 
 prisma.$connect()
   .then(() => console.log("✅ Prisma connected to Mongo-DB"))

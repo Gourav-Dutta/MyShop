@@ -15,12 +15,13 @@ import { newProductEntryFunction,
          searchProductBySellerFunction
        } from "../controllers/product.controller.js";
 import { sellerAdminMiddleware, authMiddleware, adminMiddleware } from "../middleware/auth.js";
+import { upload } from "../middleware/multer.js";
 const router = Router();
 
 
 // Product Routes
 router
-.post("/seller/entry", authMiddleware,  sellerAdminMiddleware(["ADMIN", "SELLER"]), newProductEntryFunction )
+.post("/seller/entry",upload.single("image"), authMiddleware,  sellerAdminMiddleware(["ADMIN", "SELLER"]), newProductEntryFunction )
 .get("/seller/get", authMiddleware, sellerAdminMiddleware(["ADMIN", "SELLER"]), getProductByTheLoginSeller)
 // .get("/product/getAll", authMiddleware, adminMiddleware, getAllProductFunction )
 .get("/product/getAll" , getAllProductFunction )
@@ -31,7 +32,7 @@ router
 .get("/product/:productId", getProductByProductId )
 .get("/product/:Sub_categoryName/:BrandName", getProductOnSubCategoryAndBrand)
 .get("/product/brand/:brandId", getProductByBrandId)
-.patch("/product/update/:product_id", authMiddleware, sellerAdminMiddleware(["ADMIN", "SELLER"]), updateProductByProduct_Id)
+.patch("/product/update/:product_id",upload.single("base_image"), authMiddleware, sellerAdminMiddleware(["ADMIN", "SELLER"]), updateProductByProduct_Id)
 .delete("/product/delete/:product_id", authMiddleware, sellerAdminMiddleware(["ADMIN", "SELLER"]), deleteProductByProduct_Id)
 .delete("/product/delete_sub/:sub_id_name", authMiddleware, sellerAdminMiddleware(["ADMIN", "SELLER"]), deleteProductBySub_name)
 .get("/search", searchProductFunction)

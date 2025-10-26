@@ -2,7 +2,6 @@ import {Router} from 'express';
 import {
         InsertImageFunction,
         GetImageByVarietyIdFunction,
-        UpdateImageByAdminFunction,
         UpdateImageByTheSellerFunction,
         DeleteImageByTheSellerFunction,
         DeleteImageByAdminFunction
@@ -12,6 +11,7 @@ import {
         adminMiddleware,
         sellerAdminMiddleware
 } from "../middleware/auth.js";
+import { upload } from '../middleware/multer.js';
 
 
 
@@ -22,10 +22,9 @@ const router = Router();
 
 
 router
-.post("/image/upload/:varietyId", authMiddleware, sellerAdminMiddleware(["ADMIN", "SELLER"]),InsertImageFunction )
+.post("/image/upload/:varietyId",upload.array("images"), authMiddleware, sellerAdminMiddleware(["ADMIN", "SELLER"]),InsertImageFunction )
 .get("/image/variety/:varietyId", GetImageByVarietyIdFunction)
-.patch('/image/update/admin', authMiddleware, adminMiddleware, UpdateImageByAdminFunction)
-.patch("/image/update/seller/:sellerId", authMiddleware, sellerAdminMiddleware(["SELLER"]), UpdateImageByTheSellerFunction)
+.patch("/image/update/seller/:sellerId", upload.single("image"), authMiddleware, sellerAdminMiddleware(["SELLER"]), UpdateImageByTheSellerFunction)
 .delete("/image/delete/seller/:sellerId", authMiddleware, sellerAdminMiddleware(["Seller"]), DeleteImageByTheSellerFunction)
 .delete("/image/delete/admin", authMiddleware, adminMiddleware, DeleteImageByAdminFunction)
 
