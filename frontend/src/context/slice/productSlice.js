@@ -13,7 +13,7 @@ export const productApi = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl,
     prepareHeaders: (headers) => {
-      const token = localStorage.getItem("ACCESS_TOKEN"); // or get from Redux
+      const token = localStorage.getItem("ACCESS_TOKEN"); 
       if (token) {
         headers.set("authorization", `Bearer ${token}`);
       }

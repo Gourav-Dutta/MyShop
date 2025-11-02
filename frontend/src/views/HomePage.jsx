@@ -14,7 +14,7 @@ export function HomePage() {
   return (
     <div className="p-6">
       {/* Hero Section */}
-      <div className="h-72 w-full bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-xl mb-6 flex flex-col justify-center items-center text-white shadow-lg cursor-pointer">
+      <div className="h-90 w-full bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-xl mb-6 flex flex-col justify-center items-center text-white shadow-lg cursor-pointer">
         <h1 className="text-4xl md:text-5xl font-extrabold mb-4 text-center drop-shadow-lg">
           GRAB THE BEST DEAL NOW!
         </h1>
@@ -22,7 +22,7 @@ export function HomePage() {
           Shop at <span className="font-bold">MyShop</span> and save big today!
         </p>
         <Link to={"/allProductPage"}>
-        <button className="mt-6 px-6 py-3 bg-white text-indigo-600 font-semibold rounded-full shadow hover:bg-gray-100 transition cursor-pointer">
+        <button className="mt-6 px-6 py-3 bg-white text-indigo-600 font-bold rounded-full shadow hover:bg-gray-100 transition cursor-pointer">
           Start Shopping
         </button>
         </Link>
@@ -34,13 +34,13 @@ export function HomePage() {
         {topProducts.map((product) => (
           <li
             key={product.id}
-            className="bg-gray-100 flex-shrink-0 flex flex-col justify-between items-center text-center w-48 p-2 rounded-lg shadow overflow-hidden "
+            className="bg-gray-300 flex-shrink-0 flex flex-col justify-between items-center text-center w-48 p-2 rounded-lg shadow overflow-hidden "
           >
             <Link
               to={`/product/${product.id}`}
               className="flex flex-col items-center w-full h-full transform transition-transform hover:scale-105"
             >
-              <div className="w-40 h-40 bg-white flex justify-center items-center rounded mb-2 overflow-hidden">
+              <div className="w-40 h-40 bg-gray-200 flex justify-center items-center rounded mb-2 overflow-hidden">
                 <img
                   src={product.base_image}
                   alt={product.name}
