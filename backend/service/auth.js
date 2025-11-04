@@ -1,7 +1,4 @@
 import jwt from 'jsonwebtoken';
-const secret = "GouravDev12@12$";
-
-
 
 function generateToken(user){
     return jwt.sign({
@@ -9,12 +6,12 @@ function generateToken(user){
         name: user.name,
         email: user.email,
         role: user.role
-    }, secret)
+    }, process.env.JWT_SECREAT_KEY, { expiresIn: "7d" })
 };
 
 function getTokenFromHeader(token){
   try{
-    return jwt.verify(token, secret)
+    return jwt.verify(token, process.env.JWT_SECREAT_KEY)
   } catch(err){
     console.log("An error occured while verifying token", err);
     return null;
