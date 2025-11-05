@@ -14,7 +14,8 @@ export const SellerAddProduct = () => {
     useGetAllBrandsQuery();
   const navigate = useNavigate();
 
-  const [addProduct] = useAddNewProductMutation();
+  const [addProduct, { isLoading: addingProduct }] = useAddNewProductMutation();
+
 
   const [formData, setFormData] = useState({
     name: "",
@@ -194,10 +195,10 @@ export const SellerAddProduct = () => {
           type="submit"
           className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"
         >
-          Add Product
+          {addingProduct  ? "Adding Product..." : "Add Product"}
         </button>
          <button
-          type="submit"
+          type="button"
           className="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition"
           onClick={() => navigate(-1)}
         >

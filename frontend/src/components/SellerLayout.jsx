@@ -96,7 +96,7 @@ export function SellerLayout() {
             Orders
           </Link>
           <Link
-            to="/seller/analytics"
+            to="#"
             className="hover:text-blue-500 text-xl font-normal text-shadow-black"
           >
             Analytics
